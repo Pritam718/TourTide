@@ -14,7 +14,9 @@ app.get("/", (req, res) => {
 app.get("/login", (req, res) => {
   res.send("login");
 });
-
+app.get("/register", (req, res) => {
+  res.send("register");
+});
 const port = process.env.PORT;
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../../controllers/ApiControllers/userController");
 
 router.post("/register", userController.register);
+router.post("/verifyOtp", userController.verifyOtp);
 router.post("/login", userController.login);
 
 module.exports = router;

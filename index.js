@@ -3,7 +3,7 @@ const app = express();
 const ejs = require("ejs");
 const path = require("path");
 const dbCon = require("./app/config/dbConnection");
-const userRouter = require("./app/routers/ApiRouters/userRouter");
+const apiRoutes = require("./app/routers/ApiRouters/index");
 const homeRouter = require("./app/routers/EjsRouters/homeRouter");
 require("dotenv").config();
 
@@ -16,7 +16,7 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/api", userRouter);
+app.use("/api", apiRoutes);
 app.use("/tourtide", homeRouter);
 
 const port = process.env.PORT;

@@ -1,10 +1,8 @@
 const statusCode = require("../../helper/httpsStatusCode");
 const { hashGenerate, verifyPassword } = require("../../helper/passwordHash");
 const { User, userSchemaValidation } = require("../../models/userModel");
-const sendEmailVerificationOTP = require('../../helper/smsValidation')
-const EmailVerifyModel = require('../../models/otpModel')
-const transporter = require('../../config/emailConfig')
-const bcrypt=require('bcryptjs')
+const sendEmailVerificationOTP = require("../../helper/smsValidation");
+const EmailVerifyModel = require("../../models/otpModel");
 
 class UserController {
   async register(req, res) {
@@ -38,10 +36,10 @@ class UserController {
         });
         const userData = await user.save();
 
-        sendEmailVerificationOTP(req,user)
+        sendEmailVerificationOTP(req, user);
 
         return res.status(statusCode.create).json({
-          message: "Registration successfully done",
+          message: "Registration successfully done. Now verify your email",
           data: userData,
         });
       }
@@ -57,50 +55,67 @@ class UserController {
       const { email, otp } = req.body;
 
       if (!email || !otp) {
-        return res.status(400).json({ status: false, message: "All fields are jhjjj required" });
+        return res
+          .status(statusCode.badRequest)
+          .json({ status: false, message: "All fields are required" });
       }
       const existingUser = await User.findOne({ email });
 
-
       if (!existingUser) {
-        return res.status(404).json({ status: "failed", message: "Email doesn't exists" });
+        return res
+          .status(statusCode.badRequest)
+          .json({ status: "failed", message: "Email doesn't exists" });
       }
-
 
       if (existingUser.is_verified) {
-        return res.status(400).json({ status: false, message: "Email is already verified" });
+        return res
+          .status(statusCode.badRequest)
+          .json({ status: false, message: "Email is already verified" });
       }
 
-      const emailVerification = await EmailVerifyModel.findOne({ userId: existingUser._id, otp });
+      const emailVerification = await EmailVerifyModel.findOne({
+        userId: existingUser._id,
+        otp,
+      });
       if (!emailVerification) {
         if (!existingUser.is_verified) {
-
           await sendEmailVerificationOTP(req, existingUser);
-          return res.status(400).json({ status: false, message: "Invalid OTP, new OTP sent to your email" });
+          return res.status(statusCode.badRequest).json({
+            status: false,
+            message: "Invalid OTP, new OTP sent to your email",
+          });
         }
-        return res.status(400).json({ status: false, message: "Invalid OTP" });
+        return res
+          .status(statusCode.badRequest)
+          .json({ status: false, message: "Invalid OTP" });
       }
 
       const currentTime = new Date();
 
-      const expirationTime = new Date(emailVerification.createdAt.getTime() + 15 * 60 * 1000);
+      const expirationTime = new Date(
+        emailVerification.createdAt.getTime() + 15 * 60 * 1000
+      );
       if (currentTime > expirationTime) {
-
         await sendEmailVerificationOTP(req, existingUser);
-        return res.status(400).json({ status: "failed", message: "OTP expired, new OTP sent to your email" });
+        return res.status(statusCode.badRequest).json({
+          status: "failed",
+          message: "OTP expired, new OTP sent to your email",
+        });
       }
 
       existingUser.is_verified = true;
       await existingUser.save();
 
-
       await EmailVerifyModel.deleteMany({ userId: existingUser._id });
-      return res.status(200).json({ status: true, message: "Email verified successfully" });
-
-
+      return res
+        .status(statusCode.success)
+        .json({ status: true, message: "Email verified successfully" });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ status: false, message: "Unable to verify email, please try again later" });
+      res.status(statusCode.internalServerError).json({
+        status: false,
+        message: "Unable to verify email, please try again later",
+      });
     }
   }
 

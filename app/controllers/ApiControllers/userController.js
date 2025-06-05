@@ -35,19 +35,25 @@ class UserController {
     try {
       const { email, password } = req?.body;
       if (!email || !password) {
-        res.status(statusCode.internalServerError).json({
+        return res.status(statusCode.internalServerError).json({
           message: "All fields are reuired",
         });
       }
       const existingUser = await User.findOne({ email });
       if (!existingUser) {
-        res.status(statusCode.badRequest).json({
+        return res.status(statusCode.badRequest).json({
           message: "User not found",
+        });
+      }
+      if (!existingUser.is_verified) {
+        await sendEmailVerificationOTP(req, existingUser);
+        return res.status(statusCode.badRequest).json({
+          message: "User not verified",
         });
       }
       const isVerify = await verifyPassword(password, existingUser.password);
       if (!isVerify) {
-        res.status(statusCode.badRequest).json({
+        return res.status(statusCode.badRequest).json({
           message: "Invalid credentials",
         });
       }

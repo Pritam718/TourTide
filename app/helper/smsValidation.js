@@ -1,29 +1,24 @@
-const transporter = require("../config/emailConfig")
-const otpVerifyModel = require('../models/otpModel')
+const transporter = require("../config/emailConfig");
+const otpVerifyModel = require("../models/otpModel");
 
 const sendEmailVerificationOTP = async (req, user) => {
-    
-    const otp = Math.floor(1000 + Math.random() * 9000);
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  const dhut = await new otpVerifyModel({ userId: user._id, otp: otp }).save();
 
-    
-    const dhut = await new otpVerifyModel({ userId: user._id, otp: otp }).save();
-    console.log('dhutdhut',dhut);
-
-    await transporter.sendMail({
-        from: process.env.EMAIL_FROM,
-        to: user.email,
-        subject: "OTP - Verify your account",
-        html: `<p>Dear ${user.name},</p>
+  await transporter.sendMail({
+    from: process.env.EMAIL_FROM,
+    to: user.email,
+    subject: "OTP - Verify your account",
+    html: `<p>Dear ${user.name},</p>
         <p>Thank you for signing up with our website.
          To complete your registration, please verify your email
           address by entering the following one-time password (OTP)</p>
     <h2>OTP: ${otp}</h2>
     <p>This OTP is valid for 15 minutes. 
-    If you didn't request this OTP, please ignore this email.</p>`
-    })
+    If you didn't request this OTP, please ignore this email.</p>`,
+  });
 
-    return otp
-}
+  return otp;
+};
 
-
-module.exports = sendEmailVerificationOTP
+module.exports = sendEmailVerificationOTP;

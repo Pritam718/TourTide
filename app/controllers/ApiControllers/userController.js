@@ -1,15 +1,12 @@
 const statusCode = require("../../helper/httpsStatusCode");
 const { hashGenerate, verifyPassword } = require("../../helper/passwordHash");
-<<<<<<< ft_auth
 const refreshAccessToken = require("../../helper/tokenGenerate");
 const RefreshToken = require("../../models/refreshTokenModel");
-const User = require("../../models/userModel");
 const jwt = require("jsonwebtoken");
-=======
 const { User, userSchemaValidation } = require("../../models/userModel");
 const sendEmailVerificationOTP = require("../../helper/smsValidation");
 const EmailVerifyModel = require("../../models/otpModel");
->>>>>>> main
+
 
 class UserController {
   async dashboard(req, res) {

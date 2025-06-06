@@ -5,6 +5,7 @@ const statusCode = {
   unauthorized: 401,
   badRequest: 400,
   paymentRequired: 402,
+  forbidden:403,
   internalServerError: 500,
   badGateWay: 502,
 };

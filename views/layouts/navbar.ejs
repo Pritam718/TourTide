@@ -21,10 +21,15 @@
         id="navbarCollapse"
       >
         <div class="navbar-nav ml-auto py-0">
-          <a href="/" class="nav-item nav-link active">Home</a>
-          <a href="/about" class="nav-item nav-link">About</a>
+          <a href="/tourtide/tour" class="nav-item nav-link active">Home</a>
+          <a href="/tourtide/tour/about" class="nav-item nav-link">About</a>
           <a href="package.html" class="nav-item nav-link">Tour Packages</a>
           <a href="contact.html" class="nav-item nav-link">Contact</a>
+          <% if (isAuthenticated) { %>
+          <a href="/tourtide/user/logout" class="nav-item nav-link">Logout</a>
+          <% } else { %>
+          <a href="/tourtide/user/signin" class="nav-item nav-link">Login</a>
+          <% } %>
         </div>
       </div>
     </nav>

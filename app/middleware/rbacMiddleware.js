@@ -2,7 +2,6 @@ const Permissions = require("../models/permissions");
 
 exports.checkPermission = (permission) => {
   return (req, res, next) => {
-    console.log(req.user);
     const userRole = req.user ? req.user.role : "anonymous";
 
     const userPermissions = new Permissions().getPermissionsByRoleName(

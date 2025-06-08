@@ -8,14 +8,6 @@ const sendEmailVerificationOTP = require("../../helper/smsValidation");
 const EmailVerifyModel = require("../../models/otpModel");
 
 class UserEjsController {
-  async dashboard(req, res) {
-    try {
-      res.render("home");
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async signupPage(req, res) {
     try {
       res.render("signup");
@@ -33,16 +25,14 @@ class UserEjsController {
       };
       const { error, value } = userSchemaValidation.validate(data);
       if (error) {
-        return res.status(statusCode.badRequest).json({
-          message: error.details[0].message,
-        });
+        req.flash("error_msg", error.details[0].message);
+        return res.redirect("/tourtide/user/signup");
       } else {
         const { name, email, phone, password, role } = req?.body;
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-          res.status(statusCode.badRequest).json({
-            message: "User Already exist",
-          });
+          req.flash("error_msg", "User Already Exist");
+          return res.redirect("/tourtide/user/signin");
         }
         const hashPassword = hashGenerate(password);
         const user = new User({
@@ -56,17 +46,15 @@ class UserEjsController {
 
         sendEmailVerificationOTP(req, user);
 
-        res.redirect("/tourtide/user/verifyOtp");
-
-        // return res.status(statusCode.create).json({
-        //   message: "Registration successfully done. Now verify your email",
-        //   data: userData,
-        // });
+        req.flash(
+          "success_msg",
+          "Registration successfully done. Now verify your email with otp.Please check your email"
+        );
+        return res.redirect("/tourtide/user/verifyOtp");
       }
     } catch (error) {
-      return res.status(statusCode.internalServerError).json({
-        message: error,
-      });
+      req.flash("error_msg", "Registration Failed");
+      res.redirect("/tourtide/user/signup");
     }
   }
   async otpPage(req, res) {
@@ -81,22 +69,19 @@ class UserEjsController {
       const { email, otp } = req.body;
 
       if (!email || !otp) {
-        return res
-          .status(statusCode.badRequest)
-          .json({ status: false, message: "All fields are required" });
+        req.flash("error_msg", "All fields are required");
+        return res.redirect("/tourtide/user/verifyOtp");
       }
       const existingUser = await User.findOne({ email });
 
       if (!existingUser) {
-        return res
-          .status(statusCode.badRequest)
-          .json({ status: "failed", message: "Email doesn't exists" });
+        req.flash("error_msg", "Email doesn't exists");
+        return res.redirect("/tourtide/user/verifyOtp");
       }
 
       if (existingUser.is_verified) {
-        return res
-          .status(statusCode.badRequest)
-          .json({ status: false, message: "Email is already verified" });
+        req.flash("error_msg", "Email is already verified");
+        return res.redirect("/tourtide/tour/signin");
       }
 
       const emailVerification = await EmailVerifyModel.findOne({
@@ -106,14 +91,11 @@ class UserEjsController {
       if (!emailVerification) {
         if (!existingUser.is_verified) {
           await sendEmailVerificationOTP(req, existingUser);
-          return res.status(statusCode.badRequest).json({
-            status: false,
-            message: "Invalid OTP, new OTP sent to your email",
-          });
+          req.flash("error_msg", "Invalid OTP, new OTP sent to your email");
+          return res.redirect("/tourtide/user/verifyOtp");
         }
-        return res
-          .status(statusCode.badRequest)
-          .json({ status: false, message: "Invalid OTP" });
+        req.flash("error_msg", "Invalid OTP, new OTP sent to your email");
+        return res.redirect("/tourtide/user/verifyOtp");
       }
 
       const currentTime = new Date();
@@ -123,19 +105,23 @@ class UserEjsController {
       );
       if (currentTime > expirationTime) {
         await sendEmailVerificationOTP(req, existingUser);
-        return res.status(statusCode.badRequest).json({
-          status: "failed",
-          message: "OTP expired, new OTP sent to your email",
-        });
+        req.flash("error_msg", "Invalid OTP, new OTP sent to your email");
+        return res.redirect("/tourtide/user/verifyOtp");
+        // return res.status(statusCode.badRequest).json({
+        //   status: "failed",
+        //   message: "OTP expired, new OTP sent to your email",
+        // });
       }
 
       existingUser.is_verified = true;
       await existingUser.save();
 
       await EmailVerifyModel.deleteMany({ userId: existingUser._id });
-      return res
-        .status(statusCode.success)
-        .json({ status: true, message: "Email verified successfully" });
+      req.flash("success_msg", "Email verified successfully");
+      return res.redirect("/tourtide/user/signin");
+      // return res
+      //   .status(statusCode.success)
+      //   .json({ status: true, message: "Email verified successfully" });
     } catch (error) {
       console.error(error);
       res.status(statusCode.internalServerError).json({

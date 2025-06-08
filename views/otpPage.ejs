@@ -36,9 +36,10 @@
 
   <body>
     <div class="otp-card">
+      <%- include("./layouts/flash") %>
       <h3 class="text-center mb-4">OTP Verification</h3>
 
-      <form action="/tourtide/user/verify-otp" method="POST">
+      <form action="/tourtide/user/verifyOtp" method="POST">
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
           <input

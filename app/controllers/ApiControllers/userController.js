@@ -7,7 +7,6 @@ const { User, userSchemaValidation } = require("../../models/userModel");
 const sendEmailVerificationOTP = require("../../helper/smsValidation");
 const EmailVerifyModel = require("../../models/otpModel");
 
-
 class UserController {
   async dashboard(req, res) {
     try {
@@ -144,12 +143,12 @@ class UserController {
           message: "User not found",
         });
       }
-      // if (!existingUser.is_verified) {
-      //   await sendEmailVerificationOTP(req, existingUser);
-      //   return res.status(statusCode.badRequest).json({
-      //     message: "User not verified",
-      //   });
-      // }
+      if (!existingUser.is_verified) {
+        await sendEmailVerificationOTP(req, existingUser);
+        return res.status(statusCode.badRequest).json({
+          message: "User not verified",
+        });
+      }
       const isMatchingPassword = await verifyPassword(
         password,
         existingUser.password
@@ -161,14 +160,22 @@ class UserController {
       }
 
       const accessToken = jwt.sign(
-        { userId: existingUser._id, name: existingUser.name },
+        {
+          userId: existingUser._id,
+          name: existingUser.name,
+          role: existingUser.role,
+        },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "20s" }
+        { expiresIn: "14m" }
       );
       const refreshToken = jwt.sign(
-        { userId: existingUser._id, name: existingUser.name },
+        {
+          userId: existingUser._id,
+          name: existingUser.name,
+          role: existingUser.role,
+        },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "1m" }
+        { expiresIn: "7d" }
       );
 
       const userToken = await RefreshToken.findOne({ user: existingUser._id });
@@ -195,7 +202,7 @@ class UserController {
   async createNewToken(req, res) {
     try {
       const refreshToken = req.cookies.refreshToken || req.body?.refreshToken;
-      const { accessToken } =await refreshAccessToken(refreshToken);
+      const { accessToken } = await refreshAccessToken(refreshToken);
 
       res.cookie("accessToken", accessToken, { httpOnly: true });
       return res.status(200).json({ accessToken: accessToken });

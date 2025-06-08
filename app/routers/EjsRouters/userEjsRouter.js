@@ -10,7 +10,9 @@ router.get("/verifyOtp", userEjsController.otpPage);
 router.post("/verifyOtp", userEjsController.verifyOtp);
 router.post("/login", userEjsController.login);
 router.get("/logout", userEjsController.logout);
-
-router.get("/", authenticationToken, userEjsController.dashboard);
+router.get("/forgot-password", userEjsController.forgotPasswordEmailForm);
+router.post("/forgot-password", userEjsController.forgotPassword);
+router.get("/reset-password", userEjsController.confirmPasswordForm);
+router.post("/reset-password", userEjsController.confirmPassword);
 
 module.exports = router;

@@ -182,14 +182,22 @@ class UserEjsController {
       }
 
       const accessToken = jwt.sign(
-        { userId: existingUser._id, name: existingUser.name },
+        {
+          userId: existingUser._id,
+          name: existingUser.name,
+          role: existingUser.role,
+        },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "20s" }
+        { expiresIn: "14m" }
       );
       const refreshToken = jwt.sign(
-        { userId: existingUser._id, name: existingUser.name },
+        {
+          userId: existingUser._id,
+          name: existingUser.name,
+          role: existingUser.role,
+        },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "1m" }
+        { expiresIn: "7d" }
       );
 
       const userToken = await RefreshToken.findOne({ user: existingUser._id });
@@ -210,6 +218,86 @@ class UserEjsController {
       //     accessToken: accessToken,
       //     refreshToken: refreshToken,
       //   });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async forgotPasswordEmailForm(req, res) {
+    try {
+      res.render("forgotWithEmail");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async forgotPassword(req, res) {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        res
+          .status(statusCode.badRequest)
+          .json({ message: "Email is required" });
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        res.status(statusCode.badRequest).json({ message: "User not found" });
+      }
+      sendEmailVerificationOTP(req, user);
+      res.redirect("/tourtide/user/reset-password");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async confirmPasswordForm(req, res) {
+    try {
+      res.render("resetPassword");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async confirmPassword(req, res) {
+    try {
+      const { email, otp, newPassword, confirmPassword } = req.body;
+      if (!email || !otp || !newPassword || !confirmPassword) {
+        res
+          .status(statusCode.badRequest)
+          .json({ message: "All fields are required" });
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        return res
+          .status(statusCode.pageNotFound)
+          .json({ message: "User not found" });
+      }
+      if (confirmPassword !== newPassword) {
+        return res.status(statusCode.badRequest).json({
+          message: "New Password and confirm Password does not match",
+        });
+      }
+      const otpverify = await EmailVerifyModel.findOne({
+        userId: user._id,
+        otp,
+      });
+      if (!otpverify) {
+        await sendEmailVerificationOTP(req, user);
+        return res.status(400).json({ status: false, message: "Invalid Otp" });
+      }
+      const currentTime = new Date();
+      const expirationTime = new Date(
+        otpverify.createdAt.getTime() + 15 * 60 * 1000
+      );
+      if (currentTime > expirationTime) {
+        await sendEmailVerificationOTP(req, user);
+        return res.status(400).json({
+          status: false,
+          message: "Otp expired, new otp sent to your email",
+        });
+      }
+      await EmailVerifyModel.deleteMany({ userId: user._id });
+      const newHashPassword = hashGenerate(confirmPassword);
+      await User.findByIdAndUpdate(user._id, {
+        $set: { password: newHashPassword },
+      });
+      res.redirect("/tourtide/user/signin");
     } catch (error) {
       console.log(error);
     }

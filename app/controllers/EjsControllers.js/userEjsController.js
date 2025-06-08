@@ -141,30 +141,38 @@ class UserEjsController {
     try {
       const { email, password } = req?.body;
       if (!email || !password) {
-        return res.status(statusCode.internalServerError).json({
-          message: "All fields are reuired",
-        });
+        req.flash("error_msg", "All fields are reuired");
+        return res.redirect("/tourtide/tour/signin");
+        // return res.status(statusCode.internalServerError).json({
+        //   message: "All fields are reuired",
+        // });
       }
       const existingUser = await User.findOne({ email });
       if (!existingUser) {
-        return res.status(statusCode.badRequest).json({
-          message: "User not found",
-        });
+        req.flash("error_msg", "User not found");
+        return res.redirect("/tourtide/tour/signin");
+        // return res.status(statusCode.badRequest).json({
+        //   message: "User not found",
+        // });
       }
       if (!existingUser.is_verified) {
         await sendEmailVerificationOTP(req, existingUser);
-        return res.status(statusCode.badRequest).json({
-          message: "User not verified",
-        });
+        req.flash("error_msg", "User not verified");
+        return res.redirect("/tourtide/tour/verifyOtp");
+        // return res.status(statusCode.badRequest).json({
+        //   message: "User not verified",
+        // });
       }
       const isMatchingPassword = await verifyPassword(
         password,
         existingUser.password
       );
       if (!isMatchingPassword) {
-        return res.status(statusCode.badRequest).json({
-          message: "Invalid credentials",
-        });
+        req.flash("error_msg", "Invalid credentials");
+        return res.render("/tourtide/tour/signin");
+        // return res.status(statusCode.badRequest).json({
+        //   message: "Invalid credentials",
+        // });
       }
 
       const accessToken = jwt.sign(
@@ -198,6 +206,7 @@ class UserEjsController {
       res.cookie("accessToken", accessToken, { httpOnly: true });
       res.cookie("refreshToken", refreshToken, { httpOnly: true });
 
+      req.flash("success_msg", "Login successfull");
       res.redirect("/tourtide/tour");
       //   return res.status(statusCode.success).json({
       //     message: "Login successfull",
@@ -219,13 +228,17 @@ class UserEjsController {
     try {
       const { email } = req.body;
       if (!email) {
-        res
-          .status(statusCode.badRequest)
-          .json({ message: "Email is required" });
+        req.flash("error_msg", "Email is required");
+        return res.redirect("/tourtide/tour/forgot-password");
+        // res
+        //   .status(statusCode.badRequest)
+        //   .json({ message: "Email is required" });
       }
       const user = await User.findOne({ email });
       if (!user) {
-        res.status(statusCode.badRequest).json({ message: "User not found" });
+        req.flash("error_msg", "User not found");
+        return res.redirect("/tourtide/tour/forgot-password");
+        // res.status(statusCode.badRequest).json({ message: "User not found" });
       }
       sendEmailVerificationOTP(req, user);
       res.redirect("/tourtide/user/reset-password");
@@ -244,20 +257,20 @@ class UserEjsController {
     try {
       const { email, otp, newPassword, confirmPassword } = req.body;
       if (!email || !otp || !newPassword || !confirmPassword) {
-        res
-          .status(statusCode.badRequest)
-          .json({ message: "All fields are required" });
+        req.flash("error_msg", "All fields are required");
+        return res.redirect("/tourtide/tour/reset-password");
       }
       const user = await User.findOne({ email });
       if (!user) {
-        return res
-          .status(statusCode.pageNotFound)
-          .json({ message: "User not found" });
+        req.flash("error_msg", "User not found");
+        return res.redirect("/tourtide/tour/reset-password");
       }
       if (confirmPassword !== newPassword) {
-        return res.status(statusCode.badRequest).json({
-          message: "New Password and confirm Password does not match",
-        });
+        req.flash(
+          "error_msg",
+          "New Password and confirm Password does not match"
+        );
+        return res.redirect("/tourtide/tour/forgot-password");
       }
       const otpverify = await EmailVerifyModel.findOne({
         userId: user._id,
@@ -265,7 +278,8 @@ class UserEjsController {
       });
       if (!otpverify) {
         await sendEmailVerificationOTP(req, user);
-        return res.status(400).json({ status: false, message: "Invalid Otp" });
+        req.flash("error_msg", "Invalid Otp");
+        return res.redirect("/tourtide/tour/forgot-password");
       }
       const currentTime = new Date();
       const expirationTime = new Date(
@@ -273,10 +287,8 @@ class UserEjsController {
       );
       if (currentTime > expirationTime) {
         await sendEmailVerificationOTP(req, user);
-        return res.status(400).json({
-          status: false,
-          message: "Otp expired, new otp sent to your email",
-        });
+        req.flash("error_msg", "Otp expired, new otp sent to your email");
+        return res.redirect("/tourtide/tour/forgot-password");
       }
       await EmailVerifyModel.deleteMany({ userId: user._id });
       const newHashPassword = hashGenerate(confirmPassword);
@@ -294,8 +306,8 @@ class UserEjsController {
       await RefreshToken.deleteOne({ token: refreshToken });
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
+      req.flash("success_msg", "Logout successfull");
       res.render("signin");
-      // res.status(200).json({ message: "Logged out." });
     } catch (error) {
       console.log(error);
     }

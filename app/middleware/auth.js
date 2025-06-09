@@ -11,32 +11,45 @@ const authenticationToken = async (req, res, next) => {
       req.cookies.accessToken;
 
     if (!accessToken) {
-      return res
-        .status(statusCode.unauthorized)
-        .json({ message: "Access Denied: No Token" });
+      res.locals.isAuthenticated = false; // <-- Set for EJS
+      return next(); // Still go to page, just unauthenticated
     }
+
     try {
       const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
       req.user = decoded;
+      res.locals.isAuthenticated = true; // <-- Authenticated
       return next();
     } catch (error) {
       if (error.name !== "TokenExpiredError") {
-        return res
-          .status(statusCode.forbidden)
-          .json({ message: "Invalid token" });
+        res.locals.isAuthenticated = false;
+        return next(); // Let frontend know not logged in
       }
 
       const refreshToken = req.cookies.refreshToken || req.body?.refreshToken;
-      const { accessToken, user } = await refreshAccessToken(refreshToken);
-      res.cookie("accessToken", accessToken, { httpOnly: true });
-      req.user = user;
-      return next();
+
+      if (!refreshToken) {
+        res.locals.isAuthenticated = false;
+        return next();
+      }
+
+      try {
+        const { accessToken: newAccessToken, user } = await refreshAccessToken(
+          refreshToken
+        );
+        res.cookie("accessToken", newAccessToken, { httpOnly: true });
+        req.user = user;
+        res.locals.isAuthenticated = true;
+        return next();
+      } catch (refreshError) {
+        res.locals.isAuthenticated = false;
+        return next();
+      }
     }
   } catch (error) {
     console.error("Auth error:", error);
-    return res
-      .status(500)
-      .json({ message: error.message || "Authentication failed" });
+    res.locals.isAuthenticated = false;
+    return next(); // Still render page unauthenticated
   }
 };
 

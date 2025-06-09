@@ -1,6 +1,5 @@
 const statusCode = require("../../helper/httpsStatusCode");
 const { hashGenerate, verifyPassword } = require("../../helper/passwordHash");
-const refreshAccessToken = require("../../helper/tokenGenerate");
 const RefreshToken = require("../../models/refreshTokenModel");
 const jwt = require("jsonwebtoken");
 const { User, userSchemaValidation } = require("../../models/userModel");

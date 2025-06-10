@@ -43,6 +43,7 @@ const authenticationToken = async (req, res, next) => {
         );
         res.cookie("accessToken", newAccessToken, { httpOnly: true });
         req.user = user;
+        res.locals.user = req.user.role;
         res.locals.isAuthenticated = true;
         return next();
       } catch (refreshError) {

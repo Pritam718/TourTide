@@ -1,3 +1,4 @@
+const { required } = require("joi");
 const mongoose = require("mongoose");
 
 const tourSchema = new mongoose.Schema(
@@ -24,6 +25,10 @@ const tourSchema = new mongoose.Schema(
         required: true,
       },
       pin: {
+        type: Number,
+        required: true,
+      },
+      country: {
         type: Number,
         required: true,
       },

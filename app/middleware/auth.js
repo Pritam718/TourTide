@@ -3,6 +3,8 @@ const jwt = require("jsonwebtoken");
 const refreshAccessToken = require("../helper/tokenGenerate");
 
 const authenticationToken = async (req, res, next) => {
+  res.locals.user = null;
+  res.locals.isAuthenticated = false;
   try {
     const accessToken =
       req.body?.token ||
@@ -13,11 +15,13 @@ const authenticationToken = async (req, res, next) => {
     if (!accessToken) {
       res.locals.isAuthenticated = false; // <-- Set for EJS
       return next(); // Still go to page, just unauthenticated
+      // return res.json("Access token required");
     }
 
     try {
       const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
       req.user = decoded;
+      res.locals.user = req.user.role;
       res.locals.isAuthenticated = true; // <-- Authenticated
       return next();
     } catch (error) {

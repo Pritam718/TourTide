@@ -4,7 +4,7 @@ const homeController = require("../../controllers/EjsControllers.js/HomeControll
 const authenticationToken = require("../../middleware/auth");
 const { checkPermission } = require("../../middleware/rbacMiddleware");
 
-router.get("/", authenticationToken, homeController.homePage);
+router.get("/", homeController.homePage);
 router.get(
   "/about",
   authenticationToken,

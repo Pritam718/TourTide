@@ -35,6 +35,7 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 app.use("/tourtide/tour", express.static(path.join(__dirname, "public")));
 app.use("/tourtide/user", express.static(path.join(__dirname, "public")));
+app.use("/tourtide/admin", express.static(path.join(__dirname, "public")));
 
 app.use("/api", apiRoutes);
 app.use("/tourtide", ejsRoutes);

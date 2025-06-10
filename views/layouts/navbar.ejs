@@ -25,7 +25,11 @@
           <a href="/tourtide/tour/about" class="nav-item nav-link">About</a>
           <a href="package.html" class="nav-item nav-link">Tour Packages</a>
           <a href="contact.html" class="nav-item nav-link">Contact</a>
-          <% if (isAuthenticated) { %>
+          <% if (user==="admin") { %>
+          <a href="/tourtide/admin/" class="nav-item nav-link"
+            >Admin Dashboard</a
+          >
+          <% } %> <% if (isAuthenticated) { %>
           <a href="/tourtide/user/logout" class="nav-item nav-link">Logout</a>
           <% } else { %>
           <a href="/tourtide/user/signin" class="nav-item nav-link">Login</a>

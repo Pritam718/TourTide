@@ -29,7 +29,7 @@ const tourSchema = new mongoose.Schema(
         required: true,
       },
       country: {
-        type: Number,
+        type: String,
         required: true,
       },
     },
@@ -47,10 +47,12 @@ const tourSchema = new mongoose.Schema(
     },
     packageSummary: [
       {
-        day: {
-          type: String,
-          required: true,
-        },
+        day: [
+          {
+            type: String,
+            required: true,
+          },
+        ],
         daySummary: [
           {
             type: String,

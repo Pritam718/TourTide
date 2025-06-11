@@ -4,8 +4,14 @@ const router = express.Router();
 router.get("/", (req, res) => {
   res.render("adminDashboard");
 });
-router.get("/form", (req, res) => {
-  res.render("adminForm");
+router.get("/touraddform", (req, res) => {
+  res.render("tourAddForm");
+});
+router.get("/hoteladdform", (req, res) => {
+  res.render("hotelAddForm");
+});
+router.get("/foodaddform", (req, res) => {
+  res.render("foodAddForm");
 });
 router.get("/table", (req, res) => {
   res.render("adminTable");

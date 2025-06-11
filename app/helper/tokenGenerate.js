@@ -17,6 +17,7 @@ async function refreshAccessToken(refreshToken) {
       {
         userId: decoded.userId,
         name: decoded.name,
+        role: decoded.role,
       },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "20s" }

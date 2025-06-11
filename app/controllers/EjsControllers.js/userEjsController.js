@@ -181,7 +181,7 @@ class UserEjsController {
           role: existingUser.role,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "14m" }
+        { expiresIn: "20s" }
       );
       const refreshToken = jwt.sign(
         {
@@ -190,7 +190,7 @@ class UserEjsController {
           role: existingUser.role,
         },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "1m" }
       );
 
       const userToken = await RefreshToken.findOne({ user: existingUser._id });

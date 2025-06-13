@@ -25,9 +25,7 @@
           <a href="/about" class="nav-item nav-link">About</a>
           <a href="package.html" class="nav-item nav-link">Tour Packages</a>
           <a href="contact.html" class="nav-item nav-link">Contact</a>
-          <% if (user==="admin") { %>
-          <a href="/admin/" class="nav-item nav-link">Admin Dashboard</a>
-          <% } %> <% if (isAuthenticated) { %>
+          <% if (isAuthenticated) { %>
           <a href="/logout" class="nav-item nav-link">Logout</a>
           <% } else { %>
           <a href="/signin" class="nav-item nav-link">Login</a>

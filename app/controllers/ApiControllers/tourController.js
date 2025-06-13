@@ -14,7 +14,6 @@ class TourController {
   }
   async addPlace(req, res) {
     try {
-      console.log(req.body);
       const {
         place,
         fullAddress,

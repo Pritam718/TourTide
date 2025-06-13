@@ -102,6 +102,7 @@
                         action="/admin/tourAdd"
                         method="post"
                         novalidate="novalidate"
+                        enctype="multipart/form-data"
                       >
                         <div class="form-group">
                           <label for="place" class="control-label mb-1"
@@ -287,18 +288,19 @@
                         >
                           Add Item
                         </button>
-                        <!-- <div class="form-group">
+                        <div class="form-group">
                           <label for="image" class="form-control-label"
                             >Upload Image</label
                           >
                           <input
                             type="file"
                             id="image"
-                            name="tourImage"
+                            name="image"
                             accept="image/*"
                             class="form-control-file"
+                            multiple
                           />
-                        </div> -->
+                        </div>
                         <div>
                           <button
                             id="payment-button"

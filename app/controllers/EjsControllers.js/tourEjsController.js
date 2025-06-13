@@ -14,7 +14,6 @@ class TourEjsController {
   }
   async addPlace(req, res) {
     try {
-      console.log(req.body);
       const {
         place,
         fullAddress,
@@ -34,6 +33,7 @@ class TourEjsController {
         day: d,
         daySummary: daySummary[i],
       }));
+
       const tour = new Tour({
         place,
         address: { fullAddress, city, district, state, pin, country },
@@ -42,6 +42,11 @@ class TourEjsController {
         packageDays,
         packageSummary,
       });
+
+      if (req.files) {
+        const imagePaths = req.files.map((file) => file.path);
+        tour.image = imagePaths;
+      }
       const data = await tour.save();
 
       res

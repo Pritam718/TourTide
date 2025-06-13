@@ -34,8 +34,9 @@ app.use((req, res, next) => {
 
 app.set("view engine", "ejs");
 app.set("views", "views");
+app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
 app.use(express.static(path.join(__dirname, "public")));
-app.use( express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use("/admin", express.static(path.join(__dirname, "public")));
 
 app.use("/api", apiRoutes);

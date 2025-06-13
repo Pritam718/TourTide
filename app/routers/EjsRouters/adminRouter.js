@@ -1,6 +1,7 @@
 const express = require("express");
 const tourController = require("../../controllers/ApiControllers/tourController");
-const tourImage = require("../../helper/tourImage")
+const tourImage = require("../../helper/tourImage");
+const tourEjsController = require("../../controllers/EjsControllers.js/tourEjsController");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -9,7 +10,7 @@ router.get("/", (req, res) => {
 router.get("/touraddform", (req, res) => {
   res.render("tourAddForm");
 });
-router.post("/tourAdd",tourImage.array("image"), tourController.addPlace);
+router.post("/tourAdd", tourImage.array("image"), tourEjsController.addPlace);
 router.get("/hoteladdform", (req, res) => {
   res.render("hotelAddForm");
 });

@@ -1,4 +1,5 @@
 const express = require("express");
+const tourController = require("../../controllers/ApiControllers/tourController");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -7,6 +8,7 @@ router.get("/", (req, res) => {
 router.get("/touraddform", (req, res) => {
   res.render("tourAddForm");
 });
+router.post("/tourAdd", tourController.addPlace);
 router.get("/hoteladdform", (req, res) => {
   res.render("hotelAddForm");
 });

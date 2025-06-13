@@ -1,7 +1,7 @@
 const statusCode = require("../../helper/httpsStatusCode");
 const Tour = require("../../models/tourModel");
 
-class TourController {
+class TourEjsController {
   async getPlace(req, res) {
     try {
       const data = await Tour.find({});
@@ -53,4 +53,4 @@ class TourController {
   }
 }
 
-module.exports = new TourController();
+module.exports = new TourEjsController();

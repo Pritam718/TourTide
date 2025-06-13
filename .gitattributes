@@ -1,0 +1,10 @@
+# Auto-normalize line endings
+* text=auto
+
+# Force Unix-style (LF) endings for JavaScript and config files
+*.js text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.ts text eol=lf
+*.md text eol=lf

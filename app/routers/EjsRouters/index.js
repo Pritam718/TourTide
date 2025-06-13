@@ -8,8 +8,8 @@ const { checkPermission } = require("../../middleware/rbacMiddleware");
 
 router.use(authenticationToken);
 
-router.use("/user", userEjsRouter);
-router.use("/tour", homeEjsRouter);
+router.use(homeEjsRouter);
+router.use(userEjsRouter);
 router.use("/admin", checkPermission("admin_record"), adminEjsRouter);
 
 module.exports = router;

@@ -34,12 +34,12 @@ app.use((req, res, next) => {
 
 app.set("view engine", "ejs");
 app.set("views", "views");
-app.use("/tourtide/tour", express.static(path.join(__dirname, "public")));
-app.use("/tourtide/user", express.static(path.join(__dirname, "public")));
-app.use("/tourtide/admin", express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
+app.use( express.static(path.join(__dirname, "public")));
+app.use("/admin", express.static(path.join(__dirname, "public")));
 
 app.use("/api", apiRoutes);
-app.use("/tourtide", ejsRoutes);
+app.use(ejsRoutes);
 
 const port = process.env.PORT;
 app.listen(port, () => {

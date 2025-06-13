@@ -25,13 +25,13 @@ class UserEjsController {
       const { error, value } = userSchemaValidation.validate(data);
       if (error) {
         req.flash("error_msg", error.details[0].message);
-        return res.redirect("/tourtide/user/signup");
+        return res.redirect("/signup");
       } else {
         const { name, email, phone, password, role } = req?.body;
         const existingUser = await User.findOne({ email });
         if (existingUser) {
           req.flash("error_msg", "User Already Exist");
-          return res.redirect("/tourtide/user/signin");
+          return res.redirect("/signin");
         }
         const hashPassword = hashGenerate(password);
         const user = new User({
@@ -49,11 +49,11 @@ class UserEjsController {
           "success_msg",
           "Registration successfully done. Now verify your email with otp.Please check your email"
         );
-        return res.redirect("/tourtide/user/verifyOtp");
+        return res.redirect("/verifyOtp");
       }
     } catch (error) {
       req.flash("error_msg", "Registration Failed");
-      res.redirect("/tourtide/user/signup");
+      res.redirect("/signup");
     }
   }
   async otpPage(req, res) {
@@ -69,18 +69,18 @@ class UserEjsController {
 
       if (!email || !otp) {
         req.flash("error_msg", "All fields are required");
-        return res.redirect("/tourtide/user/verifyOtp");
+        return res.redirect("/verifyOtp");
       }
       const existingUser = await User.findOne({ email });
 
       if (!existingUser) {
         req.flash("error_msg", "Email doesn't exists");
-        return res.redirect("/tourtide/user/verifyOtp");
+        return res.redirect("/verifyOtp");
       }
 
       if (existingUser.is_verified) {
         req.flash("error_msg", "Email is already verified");
-        return res.redirect("/tourtide/tour/signin");
+        return res.redirect("/signin");
       }
 
       const emailVerification = await EmailVerifyModel.findOne({
@@ -91,10 +91,10 @@ class UserEjsController {
         if (!existingUser.is_verified) {
           await sendEmailVerificationOTP(req, existingUser);
           req.flash("error_msg", "Invalid OTP, new OTP sent to your email");
-          return res.redirect("/tourtide/user/verifyOtp");
+          return res.redirect("/verifyOtp");
         }
         req.flash("error_msg", "Invalid OTP, new OTP sent to your email");
-        return res.redirect("/tourtide/user/verifyOtp");
+        return res.redirect("/verifyOtp");
       }
 
       const currentTime = new Date();
@@ -105,7 +105,7 @@ class UserEjsController {
       if (currentTime > expirationTime) {
         await sendEmailVerificationOTP(req, existingUser);
         req.flash("error_msg", "Invalid OTP, new OTP sent to your email");
-        return res.redirect("/tourtide/user/verifyOtp");
+        return res.redirect("/verifyOtp");
         // return res.status(statusCode.badRequest).json({
         //   status: "failed",
         //   message: "OTP expired, new OTP sent to your email",
@@ -117,7 +117,7 @@ class UserEjsController {
 
       await EmailVerifyModel.deleteMany({ userId: existingUser._id });
       req.flash("success_msg", "Email verified successfully");
-      return res.redirect("/tourtide/user/signin");
+      return res.redirect("/signin");
       // return res
       //   .status(statusCode.success)
       //   .json({ status: true, message: "Email verified successfully" });
@@ -141,7 +141,7 @@ class UserEjsController {
       const { email, password } = req?.body;
       if (!email || !password) {
         req.flash("error_msg", "All fields are reuired");
-        return res.redirect("/tourtide/tour/signin");
+        return res.redirect("/signin");
         // return res.status(statusCode.internalServerError).json({
         //   message: "All fields are reuired",
         // });
@@ -149,7 +149,7 @@ class UserEjsController {
       const existingUser = await User.findOne({ email });
       if (!existingUser) {
         req.flash("error_msg", "User not found");
-        return res.redirect("/tourtide/tour/signin");
+        return res.redirect("/signin");
         // return res.status(statusCode.badRequest).json({
         //   message: "User not found",
         // });
@@ -157,7 +157,7 @@ class UserEjsController {
       if (!existingUser.is_verified) {
         await sendEmailVerificationOTP(req, existingUser);
         req.flash("error_msg", "User not verified");
-        return res.redirect("/tourtide/tour/verifyOtp");
+        return res.redirect("/verifyOtp");
         // return res.status(statusCode.badRequest).json({
         //   message: "User not verified",
         // });
@@ -168,7 +168,7 @@ class UserEjsController {
       );
       if (!isMatchingPassword) {
         req.flash("error_msg", "Invalid credentials");
-        return res.render("/tourtide/tour/signin");
+        return res.render("/signin");
         // return res.status(statusCode.badRequest).json({
         //   message: "Invalid credentials",
         // });
@@ -206,7 +206,7 @@ class UserEjsController {
       res.cookie("refreshToken", refreshToken, { httpOnly: true });
 
       req.flash("success_msg", "Login successfull");
-      res.redirect("/tourtide/tour");
+      res.redirect("/");
       //   return res.status(statusCode.success).json({
       //     message: "Login successfull",
       //     accessToken: accessToken,
@@ -228,7 +228,7 @@ class UserEjsController {
       const { email } = req.body;
       if (!email) {
         req.flash("error_msg", "Email is required");
-        return res.redirect("/tourtide/tour/forgot-password");
+        return res.redirect("/forgot-password");
         // res
         //   .status(statusCode.badRequest)
         //   .json({ message: "Email is required" });
@@ -236,11 +236,11 @@ class UserEjsController {
       const user = await User.findOne({ email });
       if (!user) {
         req.flash("error_msg", "User not found");
-        return res.redirect("/tourtide/tour/forgot-password");
+        return res.redirect("/forgot-password");
         // res.status(statusCode.badRequest).json({ message: "User not found" });
       }
       sendEmailVerificationOTP(req, user);
-      res.redirect("/tourtide/user/reset-password");
+      res.redirect("/reset-password");
     } catch (error) {
       console.log(error);
     }
@@ -257,19 +257,19 @@ class UserEjsController {
       const { email, otp, newPassword, confirmPassword } = req.body;
       if (!email || !otp || !newPassword || !confirmPassword) {
         req.flash("error_msg", "All fields are required");
-        return res.redirect("/tourtide/tour/reset-password");
+        return res.redirect("/reset-password");
       }
       const user = await User.findOne({ email });
       if (!user) {
         req.flash("error_msg", "User not found");
-        return res.redirect("/tourtide/tour/reset-password");
+        return res.redirect("/reset-password");
       }
       if (confirmPassword !== newPassword) {
         req.flash(
           "error_msg",
           "New Password and confirm Password does not match"
         );
-        return res.redirect("/tourtide/tour/forgot-password");
+        return res.redirect("/forgot-password");
       }
       const otpverify = await EmailVerifyModel.findOne({
         userId: user._id,
@@ -278,7 +278,7 @@ class UserEjsController {
       if (!otpverify) {
         await sendEmailVerificationOTP(req, user);
         req.flash("error_msg", "Invalid Otp");
-        return res.redirect("/tourtide/tour/forgot-password");
+        return res.redirect("/forgot-password");
       }
       const currentTime = new Date();
       const expirationTime = new Date(
@@ -287,14 +287,14 @@ class UserEjsController {
       if (currentTime > expirationTime) {
         await sendEmailVerificationOTP(req, user);
         req.flash("error_msg", "Otp expired, new otp sent to your email");
-        return res.redirect("/tourtide/tour/forgot-password");
+        return res.redirect("/forgot-password");
       }
       await EmailVerifyModel.deleteMany({ userId: user._id });
       const newHashPassword = hashGenerate(confirmPassword);
       await User.findByIdAndUpdate(user._id, {
         $set: { password: newHashPassword },
       });
-      res.redirect("/tourtide/user/signin");
+      res.redirect("/signin");
     } catch (error) {
       console.log(error);
     }
@@ -306,7 +306,7 @@ class UserEjsController {
       res.clearCookie("accessToken");
       res.clearCookie("refreshToken");
       req.flash("success_msg", "Logout successfull");
-      res.render("signin");
+      res.redirect("/signin");
     } catch (error) {
       console.log(error);
     }

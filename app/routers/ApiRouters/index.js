@@ -3,7 +3,7 @@ const router = express.Router();
 const userRouter = require("./userRouter");
 const tourRouter = require("./tourRouter");
 
-router.use("/user", userRouter);
-router.use("/tour", tourRouter);
+router.use(userRouter);
+router.use(tourRouter);
 
 module.exports = router;

@@ -20,33 +20,28 @@ class FoodController {
         return res.redirect("/admin/foodaddform");
       }
 
-      const { breakfastItems, lunchItems, snackItems, dinnerItems } = req.body;
-
-      const breakfastTotalPrice = breakfastItems.reduce(
-        (accumulator, currentVal) => {
-          return accumulator + Number(currentVal.price);
-        },
-        0
-      );
-      const lunchTotalPrice = lunchItems.reduce((accumulator, currentVal) => {
-        return accumulator + Number(currentVal.price);
-      }, 0);
-      const snackTotalPrice = snackItems.reduce((accumulator, currentVal) => {
-        return accumulator + Number(currentVal.price);
-      }, 0);
-      const dinnerTotalPrice = dinnerItems.reduce((accumulator, currentVal) => {
-        return accumulator + Number(currentVal.price);
-      }, 0);
+      const {
+        breakfastItems,
+        lunchItems,
+        snackItems,
+        dinnerItems,
+        breakfastTime,
+        lunchTime,
+        snackTime,
+        dinnerTime,
+        totalFoodPackage,
+      } = req.body;
 
       const food = new Food({
         breakfastItems,
-        breakfastTotalPrice,
         lunchItems,
-        lunchTotalPrice,
         snackItems,
-        snackTotalPrice,
         dinnerItems,
-        dinnerTotalPrice,
+        breakfastTime,
+        lunchTime,
+        snackTime,
+        dinnerTime,
+        totalFoodPackage,
       });
       const data = await food.save();
 

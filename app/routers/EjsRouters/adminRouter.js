@@ -4,9 +4,9 @@ const tourImage = require("../../helper/tourImage");
 const tourEjsController = require("../../controllers/EjsControllers.js/tourEjsController");
 const { checkPermission } = require("../../middleware/rbacMiddleware");
 const adminEjsController = require("../../controllers/EjsControllers.js/adminEjsController");
-const authenticationToken = require("../../middleware/auth");
 const hotelEjsController = require("../../controllers/EjsControllers.js/hotelEjsController");
 const foodEjsController = require("../../controllers/EjsControllers.js/foodEjsController");
+const adminCheckauthenticationToken = require("../../middleware/adminAuth");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -15,8 +15,9 @@ router.get("/", (req, res) => {
 
 router.post("/login", adminEjsController.login);
 
-router.use(authenticationToken);
+router.use(adminCheckauthenticationToken);
 router.use(checkPermission("admin_record"));
+router.get("/logout", adminEjsController.logout);
 
 router.get("/dashboard", (req, res) => {
   res.render("adminDashboard");

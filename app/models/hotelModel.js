@@ -16,6 +16,7 @@ const hotelValidationSchema = Joi.object({
   price: Joi.number().min(0).required(),
   childPrice: Joi.number().min(0).optional(),
   accommodation: Joi.string().required(),
+  image: Joi.array().items(Joi.string())
 });
 
 const hotelSchema = new mongoose.Schema(
@@ -74,6 +75,10 @@ const hotelSchema = new mongoose.Schema(
     accommodation: {
       type: String,
       required: true,
+    },
+    image: {
+      type: [String],
+      require: true,
     },
   },
   { timestamps: true }

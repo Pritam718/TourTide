@@ -1,61 +1,53 @@
 const statusCode = require("../helper/httpsStatusCode");
 const jwt = require("jsonwebtoken");
-const refreshAccessToken = require("../helper/tokenGenerate");
+const {
+  validateAccessToken,
+  validateRefreshToken,
+  generateAccessToken,
+} = require("../helper/tokenGenerate");
 
 const authenticationToken = async (req, res, next) => {
-  res.locals.user = null;
-  res.locals.isAuthenticated = false;
   try {
-    const accessToken =
-      req.body?.token ||
-      req.query?.token ||
-      req.headers["x-access-token"] ||
-      req.cookies.accessToken;
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
 
-    if (!accessToken) {
-      res.locals.isAuthenticated = false; // <-- Set for EJS
-      return next(); // Still go to page, just unauthenticated
-      // return res.json("Access token required");
-    }
-
-    try {
-      const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-      req.user = decoded;
-      res.locals.user = req.user.role;
-      res.locals.isAuthenticated = true; // <-- Authenticated
-      return next();
-    } catch (error) {
-      if (error.name !== "TokenExpiredError") {
-        res.locals.isAuthenticated = false;
-        return next(); // Let frontend know not logged in
-      }
-
-      const refreshToken = req.cookies.refreshToken || req.body?.refreshToken;
-
-      if (!refreshToken) {
-        res.locals.isAuthenticated = false;
+    if (accessToken) {
+      const user = await validateAccessToken(
+        process.env.ACCESS_TOKEN_SECRET,
+        accessToken
+      );
+      if (user) {
+        req.user = user;
         return next();
       }
+    }
 
-      try {
-        const { accessToken: newAccessToken, user } = await refreshAccessToken(
-          refreshToken
+    // Access token missing or invalid, fallback to refresh token
+    if (refreshToken) {
+      const user = await validateRefreshToken(
+        process.env.REFRESH_TOKEN_SECRET,
+        refreshToken
+      );
+      if (user) {
+        const newAccessToken = generateAccessToken(
+          user,
+          process.env.ACCESS_TOKEN_SECRET
         );
-        res.cookie("accessToken", newAccessToken, { httpOnly: true });
+
+        // Set new access token in HTTP-only cookie
+        res.cookie("accessToken", newAccessToken, {
+          httpOnly: true,
+        });
 
         req.user = user;
-        res.locals.user = req.user.role;
-        res.locals.isAuthenticated = true;
-        return next();
-      } catch (refreshError) {
-        res.locals.isAuthenticated = false;
         return next();
       }
     }
+    res.clearCookie("accessToken");
+    res.clearCookie("refreshToken");
+    res.redirect("/signin");
   } catch (error) {
-    console.error("Auth error:", error);
-    res.locals.isAuthenticated = false;
-    return next(); // Still render page unauthenticated
+    res.redirect("/sigin");
   }
 };
 

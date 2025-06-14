@@ -1,5 +1,5 @@
 const statusCode = require("../../helper/httpsStatusCode");
-const Tour = require("../../models/tourModel");
+const { Tour, tourValidationSchema } = require("../../models/tourModel");
 
 class TourEjsController {
   async getPlace(req, res) {
@@ -14,6 +14,14 @@ class TourEjsController {
   }
   async addPlace(req, res) {
     try {
+
+      const { error } = tourValidationSchema.validate(req.body);
+      if (error) {
+        console.log(error)
+        req.flash(error.details[0].message)
+        return res.redirect("/admin/touraddform")
+      }
+
       const {
         place,
         fullAddress,
@@ -47,6 +55,10 @@ class TourEjsController {
         const imagePaths = req.files.map((file) => file.path);
         tour.image = imagePaths;
       }
+
+
+
+
       const data = await tour.save();
 
       res

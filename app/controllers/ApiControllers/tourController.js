@@ -1,5 +1,5 @@
 const statusCode = require("../../helper/httpsStatusCode");
-const Tour = require("../../models/tourModel");
+const { Tour, tourValidationSchema } = require("../../models/tourModel");
 
 class TourController {
   async getPlace(req, res) {
@@ -14,6 +14,14 @@ class TourController {
   }
   async addPlace(req, res) {
     try {
+
+      const { error } = tourValidationSchema.validate(req.body);
+      if (error) {
+        return res.status(statusCode.badRequest).json({
+          message: error.details[0].message,
+        });
+      }
+
       const {
         place,
         fullAddress,

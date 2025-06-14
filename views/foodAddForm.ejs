@@ -67,13 +67,22 @@
     <!-- Main CSS-->
     <link href="css/theme.css" rel="stylesheet" media="all" />
   </head>
-  <body>
+  <body class="animsition">
     <div class="page-wrapper">
-      <%- include('./layouts/adminHeaderMobile') %> <%-
-      include('./layouts/adminSidebar') %>
+      <!-- HEADER MOBILE-->
+      <%-include("./layouts/adminHeaderMobile")%>
 
+      <!-- END HEADER MOBILE-->
+
+      <!-- MENU SIDEBAR-->
+      <%-include("./layouts/adminSidebar")%>
+      <!-- END MENU SIDEBAR-->
+
+      <!-- PAGE CONTAINER-->
       <div class="page-container">
-        <%- include('./layouts/adminHeader') %>
+        <!-- HEADER DESKTOP-->
+        <%-include("./layouts/adminHeader")%>
+        <!-- HEADER DESKTOP-->
 
         <div class="main-content">
           <div class="section__content section__content--p30">
@@ -91,7 +100,7 @@
 
                     <div id="<%= meal %>Items" class="item-list">
                       <div class="form-row item-row">
-                        <div class="form-group col-md-5">
+                        <div class="form-group col-md-3">
                           <input
                             type="text"
                             name="<%= meal %>Items[0][name]"
@@ -99,7 +108,7 @@
                             placeholder="Item name"
                           />
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-3">
                           <input
                             type="number"
                             name="<%= meal %>Items[0][price]"
@@ -107,6 +116,7 @@
                             placeholder="Item price"
                           />
                         </div>
+
                         <div class="form-group col-md-3">
                           <button
                             class="btn btn-danger"
@@ -115,6 +125,14 @@
                           >
                             Remove
                           </button>
+                        </div>
+                        <div class="form-group col-md-3">
+                          <input
+                            type="text"
+                            name="<%= meal %>Time"
+                            class="form-control"
+                            placeholder="<%=meal %> Timing with am/pm"
+                          />
                         </div>
                       </div>
                     </div>
@@ -128,7 +146,14 @@
                     </button>
 
                     <% }) %>
-
+                    <div class="form-group col-md-9">
+                      <input
+                        type="number"
+                        name="totalFoodPackage"
+                        class="form-control"
+                        placeholder="Total food package prices"
+                      />
+                    </div>
                     <div>
                       <button type="submit" class="btn btn-primary">
                         Submit
@@ -143,6 +168,40 @@
       </div>
     </div>
 
+    <script>
+      const counters = {
+        breakfast: 1,
+        lunch: 1,
+        snack: 1,
+        dinner: 1,
+      };
+
+      function addItem(meal) {
+        const container = document.getElementById(`${meal}Items`);
+        const index = counters[meal]++;
+        const div = document.createElement("div");
+        div.className = "form-row item-row";
+
+        div.innerHTML = `
+          <div class="form-group col-md-3">
+            <input type="text" name="${meal}Items[${index}][name]" class="form-control" placeholder="Item name"/>
+          </div>
+          <div class="form-group col-md-3">
+            <input type="number" name="${meal}Items[${index}][price]" class="form-control" placeholder="Item price" />
+          </div>
+         
+          <div class="form-group col-md-3">
+            <button class="btn btn-danger" type="button" onclick="removeItem(this)">Remove</button>
+          </div>
+        `;
+        container.appendChild(div);
+      }
+
+      function removeItem(button) {
+        const row = button.closest(".item-row");
+        if (row) row.remove();
+      }
+    </script>
     <!-- Jquery JS-->
     <script src="vendor/jquery-3.2.1.min.js"></script>
     <!-- Bootstrap JS-->
@@ -162,39 +221,5 @@
 
     <!-- Main JS-->
     <script src="js/main1.js"></script>
-
-    <script>
-      const counters = {
-        breakfast: 1,
-        lunch: 1,
-        snack: 1,
-        dinner: 1,
-      };
-
-      function addItem(meal) {
-        const container = document.getElementById(`${meal}Items`);
-        const index = counters[meal]++;
-        const div = document.createElement("div");
-        div.className = "form-row item-row";
-
-        div.innerHTML = `
-          <div class="form-group col-md-5">
-            <input type="text" name="${meal}Items[${index}][name]" class="form-control" placeholder="Item name"/>
-          </div>
-          <div class="form-group col-md-4">
-            <input type="number" name="${meal}Items[${index}][price]" class="form-control" placeholder="Item price" />
-          </div>
-          <div class="form-group col-md-3">
-            <button class="btn btn-danger" type="button" onclick="removeItem(this)">Remove</button>
-          </div>
-        `;
-        container.appendChild(div);
-      }
-
-      function removeItem(button) {
-        const row = button.closest(".item-row");
-        if (row) row.remove();
-      }
-    </script>
   </body>
 </html>

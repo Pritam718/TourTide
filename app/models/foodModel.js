@@ -3,7 +3,7 @@ const Joi = require("joi");
 
 const itemSchemaValidation = Joi.object({
   name: Joi.string().required(),
-  price: Joi.number().optional(),
+  price: Joi.number().optional().allow(""),
 });
 
 const foodSchemaValidation = Joi.object({
@@ -12,10 +12,11 @@ const foodSchemaValidation = Joi.object({
   snackItems: Joi.array().items(itemSchemaValidation).optional(),
   dinnerItems: Joi.array().items(itemSchemaValidation).optional(),
 
-  breakfastTotalPrice: Joi.number().optional(),
-  lunchTotalPrice: Joi.number().optional(),
-  snackTotalPrice: Joi.number().optional(),
-  dinnerTotalPrice: Joi.number().optional(),
+  breakfastTime: Joi.string().required(),
+  lunchTime: Joi.string().required(),
+  snackTime: Joi.string().required(),
+  dinnerTime: Joi.string().required(),
+  totalFoodPackage: Joi.string().required(),
 });
 
 // const foodSchemaValidation = Joi.object({
@@ -39,7 +40,7 @@ const foodSchemaValidation = Joi.object({
 
 const itemSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  price: { type: Number, required: true },
+  price: { type: Number },
 });
 
 const foodSchema = new mongoose.Schema(
@@ -49,19 +50,12 @@ const foodSchema = new mongoose.Schema(
     snackItems: [itemSchema],
     dinnerItems: [itemSchema],
 
-    // Manually entered total prices
-    breakfastTotalPrice: {
-      type: Number,
-    },
-    lunchTotalPrice: {
-      type: Number,
-    },
-    snackTotalPrice: {
-      type: Number,
-    },
-    dinnerTotalPrice: {
-      type: Number,
-    },
+    breakfastTime: { type: String, required: true },
+    lunchTime: { type: String, required: true },
+    snackTime: { type: String, required: true },
+    dinnerTime: { type: String, required: true },
+
+    totalFoodPackage: { type: Number, required: true },
   },
   { timestamps: true }
 );

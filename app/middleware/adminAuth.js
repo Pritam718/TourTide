@@ -6,7 +6,7 @@ const {
   generateAccessToken,
 } = require("../helper/tokenGenerate");
 
-const userCheckauthenticationToken = async (req, res, next) => {
+const adminCheckauthenticationToken = async (req, res, next) => {
   try {
     const accessToken = req.cookies.accessToken;
     const refreshToken = req.cookies.refreshToken;
@@ -45,10 +45,10 @@ const userCheckauthenticationToken = async (req, res, next) => {
     }
     res.clearCookie("accessToken");
     res.clearCookie("refreshToken");
-    res.redirect("/signin");
+    res.redirect("/admin/");
   } catch (error) {
-    res.redirect("/sigin");
+    res.redirect("/admin/");
   }
 };
 
-module.exports = userCheckauthenticationToken;
+module.exports = adminCheckauthenticationToken;

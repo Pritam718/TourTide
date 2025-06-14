@@ -63,6 +63,18 @@ class AdminEjsController {
       console.log(error);
     }
   }
+  async logout(req, res) {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      await RefreshToken.deleteOne({ token: refreshToken });
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+      req.flash("success_msg", "Logout successfull");
+      res.redirect("/admin/");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 module.exports = new AdminEjsController();

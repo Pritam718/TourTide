@@ -10,6 +10,10 @@ const hotelSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    // tourPlace: {
+    //   type: mongoose.Schema.Types.ObjectId,
+    //   ref: "Tour",
+    // },
     bedRoom: {
       type: Number,
       required: true,

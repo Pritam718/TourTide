@@ -5,5 +5,6 @@ const checkAuthentication = require("../../middleware/checkAuthentication");
 
 router.get("/", homeController.homePage);
 router.get("/about", homeController.aboutPage);
+router.get("/tour", homeController.tourPackagePage);
 
 module.exports = router;

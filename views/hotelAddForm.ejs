@@ -86,7 +86,9 @@
                     <div class="card-body">
                       <h3 class="text-center title-2">Hotel Details</h3>
                       <hr />
-                      <form action="/admin/hotels" method="POST" novalidate>
+                      <%- include("./layouts/flash") %>
+
+                      <form action="/admin/hotelAdd" method="POST" novalidate>
                         <div class="form-group">
                           <label for="name">Hotel Name</label>
                           <input

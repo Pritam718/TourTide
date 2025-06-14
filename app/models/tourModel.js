@@ -1,5 +1,33 @@
-const { required } = require("joi");
+const Joi = require("joi");
 const mongoose = require("mongoose");
+
+const tourValidationSchema = Joi.object({
+  place: Joi.string().required(),
+
+  address: Joi.object({
+    fullAddress: Joi.string().required(),
+    city: Joi.string().required(),
+    district: Joi.string().required(),
+    state: Joi.string().required(),
+    pin: Joi.number().required(),
+    country: Joi.string().required(),
+  }).required(),
+
+  description: Joi.string().required(),
+
+  price: Joi.number().required(),
+
+  packageDays: Joi.number().required(),
+
+  image: Joi.array().items(Joi.string()).min(1).required(),
+
+  packageSummary: Joi.array().items(
+    Joi.object({
+      day: Joi.array().items(Joi.string().required()).required(),
+      daySummary: Joi.array().items(Joi.string().required()).required(),
+    })
+  ).required(),
+});
 
 const tourSchema = new mongoose.Schema(
   {
@@ -70,4 +98,5 @@ const tourSchema = new mongoose.Schema(
 );
 
 const Tour = mongoose.model("Tour", tourSchema);
-module.exports = Tour;
+module.exports = {Tour,tourValidationSchema};
+

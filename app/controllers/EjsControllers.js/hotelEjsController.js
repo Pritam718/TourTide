@@ -50,6 +50,12 @@ class HotelController {
                 childPrice,
                 accommodation,
             });
+
+            if (req.files) {
+                const imagePaths = req.files.map((file) => file.path);
+                tour.image = imagePaths;
+            }
+
             const data = await hotel.save();
 
             res

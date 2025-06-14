@@ -30,7 +30,7 @@ router.post("/tourAdd", tourImage.array("image"), tourEjsController.addPlace);
 router.get("/hoteladdform", (req, res) => {
   res.render("hotelAddForm");
 });
-router.post("/hotelAdd", hotelEjsController.addHotel);
+router.post("/hotelAdd", tourImage.array("image"), hotelEjsController.addHotel);
 
 
 router.get("/foodaddform", (req, res) => {

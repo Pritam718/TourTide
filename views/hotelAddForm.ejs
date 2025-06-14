@@ -88,7 +88,12 @@
                       <hr />
                       <%- include("./layouts/flash") %>
 
-                      <form action="/admin/hotelAdd" method="POST" novalidate>
+                      <form
+                        action="/admin/hotelAdd"
+                        enctype="multipart/form-data"
+                        method="POST"
+                        novalidate
+                      >
                         <div class="form-group">
                           <label for="name">Hotel Name</label>
                           <input

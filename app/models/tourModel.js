@@ -12,14 +12,9 @@ const tourValidationSchema = Joi.object({
   description: Joi.string().required(),
   price: Joi.number().required(),
   packageDays: Joi.number().required(),
-  packageSummary: Joi.array()
-    .items(
-      Joi.object({
-        day: Joi.array().items(Joi.string().required()).required(),
-        daySummary: Joi.array().items(Joi.string().required()).required(),
-      })
-    )
-    .required(),
+
+  day: Joi.array().items(Joi.string().required()).required(),
+  daySummary: Joi.array().items(Joi.string().required()).required(),
 });
 
 const tourSchema = new mongoose.Schema(

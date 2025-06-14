@@ -1,6 +1,38 @@
-const jwt = require("jsonwebtoken");
 const statusCode = require("./httpsStatusCode");
 const RefreshToken = require("../models/refreshTokenModel");
+const jwt = require("jsonwebtoken");
+
+async function validateAccessToken(tokenSecret, accessToken) {
+  try {
+    const decode = jwt.verify(accessToken, tokenSecret);
+    return decode;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function validateRefreshToken(tokenSecret, refreshToken) {
+  try {
+    const decode = jwt.verify(refreshToken, tokenSecret);
+    return decode;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function generateAccessToken(payload, access_token_secret) {
+  return jwt.sign(
+    {
+      user_name: payload.user_name,
+      user_id: payload.user_id,
+      user_email: payload.user_email,
+    },
+    access_token_secret,
+    {
+      expiresIn: "10m",
+    }
+  );
+}
 
 async function refreshAccessToken(refreshToken) {
   if (!refreshToken) {
@@ -31,4 +63,9 @@ async function refreshAccessToken(refreshToken) {
   }
 }
 
-module.exports = refreshAccessToken;
+module.exports = {
+  refreshAccessToken,
+  generateAccessToken,
+  validateAccessToken,
+  validateRefreshToken,
+};

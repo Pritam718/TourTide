@@ -168,7 +168,7 @@ class UserEjsController {
       );
       if (!isMatchingPassword) {
         req.flash("error_msg", "Invalid credentials");
-        return res.render("/signin");
+        return res.redirect("/signin");
         // return res.status(statusCode.badRequest).json({
         //   message: "Invalid credentials",
         // });

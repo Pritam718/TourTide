@@ -18,9 +18,28 @@ const foodSchemaValidation = Joi.object({
   dinnerTotalPrice: Joi.number().optional(),
 });
 
+// const foodSchemaValidation = Joi.object({
+//   breakfastItems: Joi.array().items(
+//     Joi.string().required(),
+//     Joi.number().required()
+//   ),
+//   lunchItems: Joi.array().items(
+//     Joi.string().required(),
+//     Joi.number().required()
+//   ),
+//   snackItems: Joi.array().items(
+//     Joi.string().required(),
+//     Joi.number().required()
+//   ),
+//   dinnerItems: Joi.array().items(
+//     Joi.string().required(),
+//     Joi.number().required()
+//   ),
+// });
+
 const itemSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  price: { type: Number },
+  price: { type: Number, required: true },
 });
 
 const foodSchema = new mongoose.Schema(
@@ -48,4 +67,4 @@ const foodSchema = new mongoose.Schema(
 );
 
 const Food = mongoose.model("Food", foodSchema);
-module.exports = {Food,foodSchemaValidation};
+module.exports = { Food, foodSchemaValidation };

@@ -14,12 +14,11 @@ class TourEjsController {
   }
   async addPlace(req, res) {
     try {
-
       const { error } = tourValidationSchema.validate(req.body);
       if (error) {
-        console.log(error)
-        req.flash(error.details[0].message)
-        return res.redirect("/admin/touraddform")
+        console.log(error);
+        req.flash("error_msg", error.details[0].message);
+        return res.redirect("/admin/touraddform");
       }
 
       const {
@@ -55,9 +54,6 @@ class TourEjsController {
         const imagePaths = req.files.map((file) => file.path);
         tour.image = imagePaths;
       }
-
-
-
 
       const data = await tour.save();
 

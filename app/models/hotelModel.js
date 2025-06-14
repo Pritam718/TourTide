@@ -1,4 +1,22 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
+
+const hotelValidationSchema = Joi.object({
+
+  name: Joi.string().required(),
+  location: Joi.string().required(),
+  bedRoom: Joi.number().integer().min(0).required(),
+  hallRoom: Joi.number().integer().min(0).required(),
+  kitchen: Joi.number().integer().min(0).required(),
+  bathRoom: Joi.number().integer().min(0).required(),
+  minPerson: Joi.number().integer().min(1).required(),
+  maxPerson: Joi.number().integer().min(Joi.ref('minPerson')).required(),
+  extraAdult: Joi.number().integer().min(0).optional(),
+  extraChild: Joi.number().integer().min(0).optional(),
+  price: Joi.number().min(0).required(),
+  childPrice: Joi.number().min(0).optional(),
+  accommodation: Joi.string().required(),
+});
 
 const hotelSchema = new mongoose.Schema(
   {
@@ -62,4 +80,4 @@ const hotelSchema = new mongoose.Schema(
 );
 
 const Hotel = mongoose.model("Hotel", hotelSchema);
-module.exports = Hotel;
+module.exports = {Hotel,hotelValidationSchema};

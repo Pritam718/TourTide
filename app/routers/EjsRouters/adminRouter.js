@@ -5,6 +5,7 @@ const tourEjsController = require("../../controllers/EjsControllers.js/tourEjsCo
 const { checkPermission } = require("../../middleware/rbacMiddleware");
 const adminEjsController = require("../../controllers/EjsControllers.js/adminEjsController");
 const authenticationToken = require("../../middleware/auth");
+const hotelEjsController = require("../../controllers/EjsControllers.js/hotelEjsController")
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -24,9 +25,14 @@ router.get("/touraddform", (req, res) => {
   res.render("tourAddForm");
 });
 router.post("/tourAdd", tourImage.array("image"), tourEjsController.addPlace);
+
+
 router.get("/hoteladdform", (req, res) => {
   res.render("hotelAddForm");
 });
+router.post("/hotelAdd", hotelEjsController.addHotel);
+
+
 router.get("/foodaddform", (req, res) => {
   res.render("foodAddForm");
 });

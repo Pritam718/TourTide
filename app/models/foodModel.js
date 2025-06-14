@@ -1,4 +1,22 @@
 const mongoose = require("mongoose");
+const Joi = require("joi");
+
+const itemSchemaValidation = Joi.object({
+  name: Joi.string().required(),
+  price: Joi.number().optional(),
+});
+
+const foodSchemaValidation = Joi.object({
+  breakfastItems: Joi.array().items(itemSchemaValidation).optional(),
+  lunchItems: Joi.array().items(itemSchemaValidation).optional(),
+  snackItems: Joi.array().items(itemSchemaValidation).optional(),
+  dinnerItems: Joi.array().items(itemSchemaValidation).optional(),
+
+  breakfastTotalPrice: Joi.number().optional(),
+  lunchTotalPrice: Joi.number().optional(),
+  snackTotalPrice: Joi.number().optional(),
+  dinnerTotalPrice: Joi.number().optional(),
+});
 
 const itemSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -30,4 +48,4 @@ const foodSchema = new mongoose.Schema(
 );
 
 const Food = mongoose.model("Food", foodSchema);
-module.exports = Food;
+module.exports = {Food,foodSchemaValidation};

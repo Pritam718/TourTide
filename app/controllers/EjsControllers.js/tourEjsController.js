@@ -12,6 +12,13 @@ class TourEjsController {
       console.log(error);
     }
   }
+  async tourAddForm(req, res) {
+    try {
+      res.render("tourAddForm");
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async addPlace(req, res) {
     try {
       const { error } = tourValidationSchema.validate(req.body);

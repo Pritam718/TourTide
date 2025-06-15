@@ -4,6 +4,20 @@ const { verifyPassword } = require("../../helper/passwordHash");
 const jwt = require("jsonwebtoken");
 
 class AdminEjsController {
+  async dashboard(req, res) {
+    try {
+      res.render("adminDashboard");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async table(req, res) {
+    try {
+      res.render("adminTable");
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async login(req, res) {
     try {
       const { email, password } = req?.body;

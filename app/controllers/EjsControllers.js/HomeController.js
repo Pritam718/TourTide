@@ -28,6 +28,13 @@ class HomeController {
       console.log(error);
     }
   }
+  async tourdetails(req, res) {
+    try {
+      res.render("tourDetails", { isAuthenticated: req.isAuthenticated });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 module.exports = new HomeController();

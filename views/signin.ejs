@@ -19,6 +19,27 @@
       rel="stylesheet"
       href="https://unicons.iconscout.com/release/v4.0.0/css/line.css"
     />
+    <style>
+      .close {
+        padding: 0.75rem 1.25rem;
+        background: transparent;
+        border: none;
+        /* -webkit-appearance: none; */
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+        color: #000;
+        text-shadow: 0 1px 0 #fff;
+        opacity: 0.5;
+        position: absolute;
+        top: 0;
+        right: 0;
+      }
+      .close:hover {
+        opacity: 0.75;
+      }
+    </style>
+
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -87,6 +108,22 @@
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
     ></script>
+    <script>
+      // Custom dismiss logic for Bootstrap 4-style `.close` buttons (in Bootstrap 5)
+      document.addEventListener("click", function (e) {
+        if (e.target.closest(".close")) {
+          const alert = e.target.closest(".alert");
+          if (alert) {
+            alert.classList.remove("show");
+            alert.classList.add("fade");
+            setTimeout(() => {
+              alert.remove();
+            }, 150); // Match Bootstrap's fade-out timing
+          }
+        }
+      });
+    </script>
+
     <script src="js/custom.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>

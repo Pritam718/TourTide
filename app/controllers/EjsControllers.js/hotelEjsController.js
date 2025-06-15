@@ -1,10 +1,20 @@
 const statusCode = require("../../helper/httpsStatusCode");
 const { Hotel, hotelValidationSchema } = require("../../models/hotelModel");
+const { Tour } = require("../../models/tourModel");
 
 class HotelController {
   async getHotel(req, res) {
     try {
-      const data = await Hotel.find({});
+      const data = await Hotel.aggregate([
+        {
+          $lookup: {
+            from: "tours",
+            localField: "tour",
+            foreignField: "_id",
+            as: "tourInfo",
+          },
+        },
+      ]);
       res
         .status(statusCode.success)
         .json({ message: "Data fetch successfully done", data: data });
@@ -12,6 +22,15 @@ class HotelController {
       console.log(error);
     }
   }
+  async addHotelForm(req, res) {
+    try {
+      const tours = await Tour.find({});
+      res.render("hotelAddForm", { tours });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async addHotel(req, res) {
     try {
       const { error } = hotelValidationSchema.validate(req.body);
@@ -35,6 +54,7 @@ class HotelController {
         price,
         childPrice,
         accommodation,
+        tour,
       } = req.body;
 
       const hotel = new Hotel({
@@ -48,6 +68,7 @@ class HotelController {
         price,
         childPrice,
         accommodation,
+        tour,
       });
 
       if (req.files) {

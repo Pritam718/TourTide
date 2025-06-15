@@ -12,6 +12,13 @@ class FoodController {
       console.log(error);
     }
   }
+  async addFoodForm(req, res) {
+    try {
+      res.render("foodAddForm");
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async addFood(req, res) {
     try {
       const { error } = foodSchemaValidation.validate(req.body);

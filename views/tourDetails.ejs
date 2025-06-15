@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>TourTide</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <meta content="Free HTML Templates" name="keywords" />
+    <meta content="Free HTML Templates" name="description" />
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon" />
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+    <link
+      href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <%- include("./layouts/flash") %>
+    <!-- Topbar -->
+    <%-include("./layouts/topbar") %>
+    <!-- Navbar -->
+    <%-include("./layouts/navbar") %>
+
+    <!-- Header Start -->
+    <div class="container-fluid page-header">
+      <div class="container">
+        <div
+          class="d-flex flex-column align-items-center justify-content-center"
+          style="min-height: 400px"
+        >
+          <h3 class="display-4 text-white text-uppercase">Explore More</h3>
+          <div class="d-inline-flex text-white">
+            <p class="m-0 text-uppercase">
+              <a class="text-white" href="">Tour Packages</a>
+            </p>
+            <i class="fa fa-angle-double-right pt-1 px-3"></i>
+            <p class="m-0 text-uppercase">Explore</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Header End -->
+    <!-- carousal-->
+    <div
+      class="d-flex justify-content-center align-items-center"
+      style="min-height: 80vh"
+    >
+      <div class="container" style="max-width: 1100px">
+        <div id="header-carousel" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner">
+            <div class="carousel-item shadow active">
+              <img class="w-100 rounded" src="img/carousel-1.jpg" alt="Image" />
+            </div>
+            <div class="carousel-item shadow">
+              <img class="w-100 rounded" src="img/carousel-2.jpg" alt="Image" />
+            </div>
+          </div>
+
+          <a
+            class="carousel-control-prev"
+            href="#header-carousel"
+            data-slide="prev"
+          >
+            <div class="btn btn-dark" style="width: 45px; height: 45px">
+              <span class="carousel-control-prev-icon mb-n2"></span>
+            </div>
+          </a>
+          <a
+            class="carousel-control-next"
+            href="#header-carousel"
+            data-slide="next"
+          >
+            <div class="btn btn-dark" style="width: 45px; height: 45px">
+              <span class="carousel-control-next-icon mb-n2"></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="container py-3 px-4 shadow rounded bg-white d-flex justify-content-between align-items-center"
+    >
+      <div>
+        <h4 class="mb-0 text-primary font-weight-bold">Kolkata</h4>
+      </div>
+      <div>
+        <a href="#" class="btn btn-success px-4 py-2 font-weight-bold shadow-sm"
+          >Book Now</a
+        >
+      </div>
+    </div>
+
+    <div class="container pt-5">
+      <div class="row align-items-center">
+        <!-- Left Column: Info -->
+        <div class="col-md-6 mb-4">
+          <div class="p-4 shadow rounded bg-white h-100">
+            <h1 class="text-primary font-weight-bold mb-3">Kolkata Explore</h1>
+            <p class="text-muted mb-2">
+              <i class="fas fa-map-marker-alt text-danger mr-2"></i>Location:
+              Kolkata, India
+            </p>
+            <h5 class="text-dark font-weight-bold">Discover Kolkata</h5>
+            <p class="text">
+              Explore the cultural capital of India with its rich heritage,
+              historic landmarks, and vibrant street life.
+            </p>
+          </div>
+        </div>
+
+        <!-- Right Column: Table -->
+        <div class="col-md-6 mb-4">
+          <div class="p-4 shadow rounded bg-white h-100">
+            <h4 class="text-center text-success mb-4">Package Summary</h4>
+            <table class="table table-bordered table-striped">
+              <tbody>
+                <tr>
+                  <td><strong>Day 1</strong></td>
+                  <td>Arrival and local sightseeing</td>
+                </tr>
+                <tr>
+                  <td><strong>Day 2</strong></td>
+                  <td>Visit Victoria Memorial & Howrah Bridge</td>
+                </tr>
+                <tr>
+                  <td><strong>Day 3</strong></td>
+                  <td>Shopping at New Market and Departure</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/tempusdominus/js/moment.min.js"></script>
+    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+  </body>
+</html>

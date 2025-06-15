@@ -15,6 +15,7 @@ const hotelValidationSchema = Joi.object({
   price: Joi.number().min(0).required(),
   childPrice: Joi.number().min(0).optional(),
   accommodation: Joi.string().required(),
+  tour: Joi.string().required(),
 });
 
 const hotelSchema = new mongoose.Schema(
@@ -27,10 +28,11 @@ const hotelSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // tourPlace: {
-    //   type: mongoose.Schema.Types.ObjectId,
-    //   ref: "Tour",
-    // },
+    tour: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tour",
+      required: true,
+    },
     bedRoom: {
       type: Number,
       required: true,

@@ -28,9 +28,8 @@ router.get("/touraddform", (req, res) => {
 });
 router.post("/tourAdd", tourImage.array("image"), tourEjsController.addPlace);
 
-router.get("/hoteladdform", (req, res) => {
-  res.render("hotelAddForm");
-});
+router.get("/hoteladdform", hotelEjsController.addHotelForm);
+router.get("/gethotel", hotelEjsController.getHotel);
 router.post("/hotelAdd", tourImage.array("image"), hotelEjsController.addHotel);
 
 router.get("/foodaddform", (req, res) => {

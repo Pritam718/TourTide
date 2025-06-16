@@ -1,12 +1,12 @@
 const express = require("express");
 const tourController = require("../../controllers/ApiControllers/tourController");
-const tourImage = require("../../helper/tourImage");
 const tourEjsController = require("../../controllers/EjsControllers.js/tourEjsController");
 const { checkPermission } = require("../../middleware/rbacMiddleware");
 const adminEjsController = require("../../controllers/EjsControllers.js/adminEjsController");
 const hotelEjsController = require("../../controllers/EjsControllers.js/hotelEjsController");
 const foodEjsController = require("../../controllers/EjsControllers.js/foodEjsController");
 const adminCheckauthenticationToken = require("../../middleware/adminAuth");
+const tourImageUpload = require("../../helper/tourImage");
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -24,13 +24,38 @@ router.get("/dashboard", adminEjsController.dashboard);
 router.get("/table", adminEjsController.table);
 
 router.get("/touraddform", tourEjsController.tourAddForm);
-router.post("/tourAdd", tourImage.array("image"), tourEjsController.addPlace);
+router.post(
+  "/tourAdd",
+  tourImageUpload.array("image"),
+  tourEjsController.addPlace
+);
+router.get("/tourEditPage/:id", tourEjsController.tourEditPage);
+router.post(
+  "/tourEdit/:id",
+  tourImageUpload.array("image", 6),
+  tourEjsController.tourEdit
+);
+router.get("/tourDelete/:id", tourEjsController.deleteTour);
 
 router.get("/hoteladdform", hotelEjsController.addHotelForm);
 router.get("/gethotel", hotelEjsController.getHotel);
-router.post("/hotelAdd", tourImage.array("image"), hotelEjsController.addHotel);
+router.post(
+  "/hotelAdd",
+  tourImageUpload.array("image"),
+  hotelEjsController.addHotel
+);
+router.get("/hotelEditPage/:id", hotelEjsController.hotelEditPage);
+router.post(
+  "/hotelEdit/:id",
+  tourImageUpload.array("image"),
+  hotelEjsController.hotelEdit
+);
+router.get("/hotelDelete/:id", hotelEjsController.deleteHotel);
 
 router.get("/foodaddform", foodEjsController.addFoodForm);
 router.post("/addFood", foodEjsController.addFood);
+router.get("/foodEditPage/:id", foodEjsController.foodEditPage);
+router.post("/foodEdit/:id", foodEjsController.foodEdit);
+router.get("/foodDelete/:id", foodEjsController.deleteFood);
 
 module.exports = router;

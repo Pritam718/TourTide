@@ -19,9 +19,9 @@ const tourValidationSchema = Joi.object({
 
 const tourSchema = new mongoose.Schema(
   {
-    tourUniqueId: {
-      type: String,
-    },
+    // tourUniqueId: {
+    //   type: String,
+    // },
     place: {
       type: String,
       required: true,
@@ -64,14 +64,14 @@ const tourSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    startingDate: {
-      type: Date,
-      required: true,
-    },
-    endingDate: {
-      type: Date,
-      required: true,
-    },
+    // startingDate: {
+    //   type: Date,
+    //   required: true,
+    // },
+    // endingDate: {
+    //   type: Date,
+    //   required: true,
+    // },
     image: {
       type: [String],
       require: true,

@@ -1,6 +1,8 @@
 const statusCode = require("../../helper/httpsStatusCode");
 const { Hotel, hotelValidationSchema } = require("../../models/hotelModel");
 const { Tour } = require("../../models/tourModel");
+const path = require("path");
+const fs = require("fs");
 
 class HotelController {
   async getHotel(req, res) {
@@ -81,6 +83,128 @@ class HotelController {
       res
         .status(statusCode.create)
         .json({ message: "Hotel add successfull", data: data });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async hotelEditPage(req, res) {
+    try {
+      const id = req.params.id;
+      const tours = await Tour.find({});
+      const hotelData = await Hotel.findById(id);
+      if (!hotelData) {
+        console.log("Hotel data not found");
+      }
+      res.render("hotelEditForm", { data: hotelData, tours });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async hotelEdit(req, res) {
+    try {
+      const id = req.params.id;
+      const existinData = await Hotel.findById(id);
+      if (!existinData) {
+        console.log("Data not found");
+      }
+
+      let updateImagePaths = existinData.image;
+      if (req.files && req.files.length > 0) {
+        existinData.image.map((img) => {
+          const imageFullPath = path.join(__dirname, "../../../", img);
+          fs.unlink(imageFullPath, (err) => {
+            if (err) console.error("Failed to delete image", err);
+          });
+        });
+        updateImagePaths = req.files.map((file) => file.path);
+      }
+      const {
+        name,
+        location,
+        bedRoom,
+        hallRoom,
+        kitchen,
+        bathRoom,
+        minPerson,
+        maxPerson,
+        extraAdult,
+        extraChild,
+        price,
+        childPrice,
+        accommodation,
+        tour,
+      } = req.body;
+
+      const data = {
+        name,
+        location,
+        bedRoom,
+        hallRoom,
+        kitchen,
+        bathRoom,
+        minPerson,
+        maxPerson,
+        extraAdult,
+        extraChild,
+        price,
+        childPrice,
+        accommodation,
+        tour,
+      };
+      const { error, value } = hotelValidationSchema.validate(data);
+      if (error) {
+        console.log(error);
+      } else {
+        const updateData = await Hotel.findByIdAndUpdate(
+          id,
+          {
+            name,
+            location,
+            bedRoom,
+            hallRoom,
+            kitchen,
+            bathRoom,
+            minPerson,
+            maxPerson,
+            extraAdult,
+            extraChild,
+            price,
+            childPrice,
+            accommodation,
+            tour,
+            image: updateImagePaths,
+          },
+          { new: true }
+        );
+      }
+      return res.status(200).json({
+        message: "Update Successfully",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async deleteHotel(req, res) {
+    try {
+      const id = req.params.id;
+      const hotelData = await Hotel.findById(id);
+      if (!hotelData) {
+        // req.flash("error_msg", "Product not found");
+        res.json("Food not found");
+      }
+      if (hotelData.image) {
+        hotelData.image.map((img) => {
+          const imageFullPath = path.join(__dirname, "../../../", img);
+
+          fs.unlink(imageFullPath, (err) => {
+            if (err) res.json("Failed to delete image:", err);
+          });
+        });
+      }
+      await Hotel.findByIdAndDelete(id);
+      res.status(200).json({
+        message: "Delete Successfully",
+      });
     } catch (error) {
       console.log(error);
     }

@@ -144,12 +144,13 @@
           <div class="card p-4 h-100 shadow-sm">
             <h4 class="text-success text-center mb-4">Package Summary</h4>
             <table class="table table-bordered">
-              <% tour.packageSummary[0].day.forEach(function(d, index) { %>
+              <% tour.packageSummary.forEach(function(pkg, i) { %> <%
+              pkg.day.forEach(function(d, index) { %>
               <tr>
                 <th>Day <%= d %></th>
-                <td><%= tour.packageSummary[0].daySummary[index] %></td>
+                <td><%= pkg.daySummary[index] %></td>
               </tr>
-              <% })%>
+              <% })%> <% }) %>
             </table>
           </div>
         </div>
@@ -179,6 +180,7 @@
           <div class="card p-4 h-100 shadow-sm">
             <h4 class="text-success text-center mb-4">Food Details</h4>
             <table class="table table-bordered">
+              <% if(tour.foods.length>0) {%>
               <tr>
                 <th>Breakfast</th>
                 <% tour.foods.forEach(function(food) {
@@ -207,6 +209,9 @@
                 <td><%= item.name %></td>
                 <% }) }) %>
               </tr>
+              <% } else { %>
+              <p class="text-muted">No Food available.</p>
+              <% } %>
             </table>
           </div>
         </div>

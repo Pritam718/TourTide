@@ -92,6 +92,19 @@
                 <div class="card-body">
                   <%- include("./layouts/flash") %>
                   <form action="/admin/addFood" method="POST">
+                    <div class="form-group">
+                      <label for="tour">Related Tour Place</label>
+                      <select id="tour" name="tour" class="form-control">
+                        <option value="" disabled selected>
+                          Select a Tour
+                        </option>
+                        <% tours.forEach(tour => { %>
+                        <option value="<%= tour._id %>">
+                          <%= tour.place %> - <%= tour.address.city %>
+                        </option>
+                        <% }) %>
+                      </select>
+                    </div>
                     <% const mealTypes = ['breakfast', 'lunch', 'snack',
                     'dinner']; %> <% mealTypes.forEach(meal => { %>
                     <div class="section-title text-capitalize">

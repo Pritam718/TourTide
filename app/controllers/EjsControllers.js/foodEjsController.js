@@ -1,5 +1,6 @@
 const statusCode = require("../../helper/httpsStatusCode");
 const { Food, foodSchemaValidation } = require("../../models/foodModel");
+const { Tour } = require("../../models/tourModel");
 
 class FoodController {
   async getFood(req, res) {
@@ -14,7 +15,8 @@ class FoodController {
   }
   async addFoodForm(req, res) {
     try {
-      res.render("foodAddForm");
+      const tours = await Tour.find({});
+      res.render("foodAddForm",{tours});
     } catch (error) {
       console.log(error);
     }
@@ -37,6 +39,7 @@ class FoodController {
         snackTime,
         dinnerTime,
         totalFoodPackage,
+        tour,
       } = req.body;
 
       const food = new Food({
@@ -49,6 +52,7 @@ class FoodController {
         snackTime,
         dinnerTime,
         totalFoodPackage,
+        tour,
       });
       const data = await food.save();
 

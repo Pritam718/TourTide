@@ -17,6 +17,7 @@ const foodSchemaValidation = Joi.object({
   snackTime: Joi.string().required(),
   dinnerTime: Joi.string().required(),
   totalFoodPackage: Joi.string().required(),
+  tour: Joi.string().required(),
 });
 
 // const foodSchemaValidation = Joi.object({
@@ -45,6 +46,11 @@ const itemSchema = new mongoose.Schema({
 
 const foodSchema = new mongoose.Schema(
   {
+    tour: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Tour",
+      required: true,
+    },
     breakfastItems: [itemSchema],
     lunchItems: [itemSchema],
     snackItems: [itemSchema],

@@ -31,7 +31,13 @@
     />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/style.css" rel="stylesheet" />
+    <style>
+      .carousel-inner img {
+        max-height: 650px;
+        object-fit: contain;
+      }
+    </style>
+    <link href="/css/style.css" rel="stylesheet" />
   </head>
 
   <body>
@@ -61,6 +67,9 @@
     </div>
     <!-- Header End -->
     <!-- carousal-->
+    <!-- Page Header -->
+
+    <!-- Image Carousel -->
     <div
       class="d-flex justify-content-center align-items-center"
       style="min-height: 80vh"
@@ -68,14 +77,18 @@
       <div class="container" style="max-width: 1100px">
         <div id="header-carousel" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner">
-            <div class="carousel-item shadow active">
-              <img class="w-100 rounded" src="img/carousel-1.jpg" alt="Image" />
+            <% tour.image.forEach((imageFilename, index) => { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+              <img
+                class="d-block w-100 rounded"
+                src="/<%= imageFilename %>"
+                alt="Image"
+              />
             </div>
-            <div class="carousel-item shadow">
-              <img class="w-100 rounded" src="img/carousel-2.jpg" alt="Image" />
-            </div>
+            <% }); %>
           </div>
 
+          <!-- Controls -->
           <a
             class="carousel-control-prev"
             href="#header-carousel"
@@ -97,156 +110,190 @@
         </div>
       </div>
     </div>
-
-    <div
-      class="container py-3 px-4 shadow rounded bg-white d-flex justify-content-between align-items-center"
-    >
-      <div>
-        <h4 class="mb-0 text-primary font-weight-bold">Kolkata</h4>
-      </div>
-      <div>
-        <a href="#" class="btn btn-success px-4 py-2 font-weight-bold shadow-sm"
-          >Book Now</a
+    <!-- Tour Summary Card -->
+    <div class="container my-5">
+      <div
+        class="card p-4 d-flex flex-md-row flex-column justify-content-between align-items-center shadow-sm"
+      >
+        <h3 class="text-primary font-weight-bold mb-md-0 mb-3">
+          <%= tour.place %>
+        </h3>
+        <a href="#" class="btn btn-success font-weight-bold px-4 py-2"
+          >Plan your Trip</a
         >
       </div>
     </div>
 
-    <div class="container pt-5">
-      <div class="row align-items-center">
-        <!-- Left Column: Info -->
+    <!-- Tour Information Section -->
+    <div class="container mb-5">
+      <div class="row">
         <div class="col-md-6 mb-4">
-          <div class="p-4 shadow rounded bg-white h-100">
-            <h1 class="text-primary font-weight-bold mb-3">Kolkata Explore</h1>
-            <p class="text-muted mb-2">
-              <i class="fas fa-map-marker-alt text-danger mr-2"></i>Location:
-              Kolkata, India
+          <div class="card p-4 h-100 shadow-sm">
+            <h2 class="text-primary font-weight-bold mb-3">
+              Discover <%= tour.place %>
+            </h2>
+            <p class="mb-2">
+              <i class="fas fa-map-marker-alt text-danger"></i> <%=
+              tour.address.city %>, <%= tour.address.state %>, <%=
+              tour.address.district %>, <%= tour.address.country %>
             </p>
-            <h5 class="text-dark font-weight-bold">Discover Kolkata</h5>
-            <p class="text">
-              Explore the cultural capital of India with its rich heritage,
-              historic landmarks, and vibrant street life.
-            </p>
+            <p class="text-muted mb-3"><%= tour.description %></p>
           </div>
         </div>
-
-        <!-- Right Column: Table -->
         <div class="col-md-6 mb-4">
-          <div class="p-4 shadow rounded bg-white h-100">
-            <h4 class="text-center text-success mb-4">Package Summary</h4>
-            <table class="table table-bordered table-striped">
-              <tbody>
-                <tr>
-                  <td><strong>Day 1</strong></td>
-                  <td>Arrival and local sightseeing</td>
-                </tr>
-                <tr>
-                  <td><strong>Day 2</strong></td>
-                  <td>Visit Victoria Memorial & Howrah Bridge</td>
-                </tr>
-                <tr>
-                  <td><strong>Day 3</strong></td>
-                  <td>Shopping at New Market and Departure</td>
-                </tr>
-              </tbody>
+          <div class="card p-4 h-100 shadow-sm">
+            <h4 class="text-success text-center mb-4">Package Summary</h4>
+            <table class="table table-bordered">
+              <% tour.packageSummary[0].day.forEach(function(d, index) { %>
+              <tr>
+                <th>Day <%= d %></th>
+                <td><%= tour.packageSummary[0].daySummary[index] %></td>
+              </tr>
+              <% })%>
             </table>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="container pt-5">
-      <div class="row align-items-center">
-        <!-- Carousel Column -->
+    <!-- Amenities and Food -->
+    <div class="container mb-5">
+      <div class="row">
         <div class="col-md-6 mb-4">
-          <div
-            id="carouselExampleIndicators"
-            class="carousel slide"
-            data-ride="carousel"
-          >
-            <ol class="carousel-indicators">
-              <li
-                data-target="#carouselExampleIndicators"
-                data-slide-to="0"
-                class="active"
-              ></li>
-              <li
-                data-target="#carouselExampleIndicators"
-                data-slide-to="1"
-              ></li>
-              <li
-                data-target="#carouselExampleIndicators"
-                data-slide-to="2"
-              ></li>
-            </ol>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img
-                  class="d-block w-100"
-                  src="img/carousel-1.jpg"
-                  alt="First slide"
-                />
-              </div>
-              <div class="carousel-item">
-                <img
-                  class="d-block w-100"
-                  src="img/carousel-2.jpg"
-                  alt="Second slide"
-                />
-              </div>
-              <div class="carousel-item">
-                <img
-                  class="d-block w-100"
-                  src="img/carousel-1.jpg"
-                  alt="Third slide"
-                />
-              </div>
-            </div>
-            <a
-              class="carousel-control-prev"
-              href="#carouselExampleIndicators"
-              role="button"
-              data-slide="prev"
-            >
-              <span
-                class="carousel-control-prev-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a
-              class="carousel-control-next"
-              href="#carouselExampleIndicators"
-              role="button"
-              data-slide="next"
-            >
-              <span
-                class="carousel-control-next-icon"
-                aria-hidden="true"
-              ></span>
-              <span class="sr-only">Next</span>
-            </a>
+          <div class="card p-4 h-100 shadow-sm">
+            <h3 class="text-primary font-weight-bold mb-3">Amenities</h3>
+            <% if (tour.accommodation) { %>
+            <ul class="list-unstyled">
+              <% tour.accommodation.split(",").forEach(function(acc) { %>
+              <li>
+                <i class="fas fa-check text-success mr-2"></i><%= acc.trim() %>
+              </li>
+              <% }) %>
+            </ul>
+            <% } else { %>
+            <p class="text-muted">No amenity details available.</p>
+            <% } %>
           </div>
         </div>
-
-        <!-- Hotel Info Column -->
-        <div class="col-md-6">
-          <div class="p-4 bg-white shadow rounded h-100">
-            <h2 class="text-primary font-weight-bold">Hotel Name</h2>
-            <p class="text-muted">
-              <strong>Occupancy:</strong> Min-2 Person, Max-3 Person (Extra-1
-              Adult/1 Child)
-            </p>
-            <p>
-              <strong>Facilities:</strong><br />
-              Attached Bath, Bed & Blankets, Breakfast, Dinner, Electricity,
-              Evening Snacks, Fan, Hot Water, Lunch, Secured, Welcome Drinks
-            </p>
-            <h4 class="text-success mt-3">Price: ₹1234 / person</h4>
-            <a href="#" class="btn btn-success mt-3 px-4">Book Now</a>
+        <div class="col-md-6 mb-4">
+          <div class="card p-4 h-100 shadow-sm">
+            <h4 class="text-success text-center mb-4">Food Details</h4>
+            <table class="table table-bordered">
+              <tr>
+                <th>Breakfast</th>
+                <% tour.foods.forEach(function(food) {
+                food.breakfastItems.forEach(function(item) { %>
+                <td><%= item.name %></td>
+                <% }) }) %>
+              </tr>
+              <tr>
+                <th>Lunch</th>
+                <% tour.foods.forEach(function(food) {
+                food.lunchItems.forEach(function(item) { %>
+                <td><%= item.name %></td>
+                <% }) }) %>
+              </tr>
+              <tr>
+                <th>Snack</th>
+                <% tour.foods.forEach(function(food) {
+                food.snackItems.forEach(function(item) { %>
+                <td><%= item.name %></td>
+                <% }) }) %>
+              </tr>
+              <tr>
+                <th>Dinner</th>
+                <% tour.foods.forEach(function(food) {
+                food.dinnerItems.forEach(function(item) { %>
+                <td><%= item.name %></td>
+                <% }) }) %>
+              </tr>
+            </table>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Hotel Section -->
+    <% if (tour.hotels.length > 0) { %>
+    <div class="container mb-5">
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <div
+            class="carousel slide shadow rounded"
+            id="hotel-carousel"
+            data-ride="carousel"
+          >
+            <div class="carousel-inner">
+              <% tour.hotels[0].image.forEach(function(img, index) { %>
+              <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                <img
+                  src="/<%= img %>"
+                  class="d-block w-100"
+                  alt="Hotel Image"
+                />
+              </div>
+              <% }) %>
+            </div>
+            <a
+              class="carousel-control-prev"
+              href="#hotel-carousel"
+              role="button"
+              data-slide="prev"
+            >
+              <span class="carousel-control-prev-icon"></span>
+            </a>
+            <a
+              class="carousel-control-next"
+              href="#hotel-carousel"
+              role="button"
+              data-slide="next"
+            >
+              <span class="carousel-control-next-icon"></span>
+            </a>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-4 h-100 shadow-sm">
+            <h2 class="text-primary font-weight-bold mb-2">
+              <%= tour.hotels[0].name %>
+            </h2>
+            <p class="text-muted">
+              <i class="fas fa-map-marker-alt text-danger"></i> <%=
+              tour.hotels[0].location %>
+            </p>
+            <p>
+              <strong>Occupancy:</strong> <%= tour.hotels[0].occupancy.minPerson
+              %> - <%= tour.hotels[0].occupancy.maxPerson %> persons (Extra: <%=
+              tour.hotels[0].occupancy.extraAdult %> adults / <%=
+              tour.hotels[0].occupancy.extraChild %> children)
+            </p>
+            <p>
+              <strong>Room Details:</strong> <%= tour.hotels[0].bedRoom %> Bed
+              Room, <%= tour.hotels[0].hallRoom %> Hall, <%=
+              tour.hotels[0].kitchen %> Kitchen, <%= tour.hotels[0].bathRoom %>
+              Bathroom
+            </p>
+            <p>
+              <strong>Facilities:</strong> <%= tour.hotels[0].accommodation %>
+            </p>
+            <h4 class="text-success">
+              Price: ₹<%= tour.hotels[0].price %> / person
+            </h4>
+            <% if (tour.hotels[0].childPrice) { %>
+            <h5 class="text-success">
+              Child Price: ₹<%= tour.hotels[0].childPrice %> / child
+            </h5>
+            <% } %>
+            <a href="#" class="btn btn-success mt-3">Book Now</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% } else { %>
+    <div class="container pt-5">
+      <h4 class="text-muted">No hotels available</h4>
+    </div>
+    <% } %>
 
     <div
       class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5"

@@ -4,6 +4,7 @@ const { Tour } = require("../../models/tourModel");
 const path = require("path");
 const fs = require("fs");
 const { Hotel } = require("../../models/hotelModel");
+const { log } = require("console");
 
 class FoodController {
   async getFood(req, res) {
@@ -156,6 +157,18 @@ class FoodController {
       await Food.findByIdAndDelete(id);
       res.status(200).json({
         message: "Delete Successfully",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async foodList(req,res){
+    try {
+      const data = await Food.find()
+      //console.log(data);
+      res.render("foodAllDataList",{
+        title: "food list",
+        data: data
       });
     } catch (error) {
       console.log(error);

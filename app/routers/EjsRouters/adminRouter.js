@@ -36,6 +36,7 @@ router.post(
   tourEjsController.tourEdit
 );
 router.get("/tourDelete/:id", tourEjsController.deleteTour);
+router.get("/tourList" ,tourEjsController.tourList)
 
 router.get("/hoteladdform", hotelEjsController.addHotelForm);
 router.get("/gethotel", hotelEjsController.getHotel);
@@ -51,11 +52,13 @@ router.post(
   hotelEjsController.hotelEdit
 );
 router.get("/hotelDelete/:id", hotelEjsController.deleteHotel);
+router.get("/hotelList", hotelEjsController.hotelList)
 
 router.get("/foodaddform", foodEjsController.addFoodForm);
 router.post("/addFood", foodEjsController.addFood);
 router.get("/foodEditPage/:id", foodEjsController.foodEditPage);
 router.post("/foodEdit/:id", foodEjsController.foodEdit);
 router.get("/foodDelete/:id", foodEjsController.deleteFood);
+router.get("/foodList", foodEjsController.foodList)
 
 module.exports = router;

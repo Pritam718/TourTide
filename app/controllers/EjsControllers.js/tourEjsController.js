@@ -3,6 +3,7 @@ const statusCode = require("../../helper/httpsStatusCode");
 const { Tour, tourValidationSchema } = require("../../models/tourModel");
 const path = require("path");
 const fs = require("fs");
+const { title } = require("process");
 
 class TourEjsController {
   async getPlace(req, res) {
@@ -224,6 +225,17 @@ class TourEjsController {
     } catch (error) {
       console.error("Error deleting tour:", error);
       res.status(500).json({ message: "Internal Server Error" });
+    }
+  }
+  async tourList(req,res){
+    try {
+      const data = await Tour.find();
+      res.render("tourAllDataList",{
+        title: "tour list",
+        data: data
+      })
+    } catch (error) {
+      console.log(err)
     }
   }
 }

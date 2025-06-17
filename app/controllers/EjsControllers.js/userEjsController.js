@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const { User, userSchemaValidation } = require("../../models/userModel");
 const sendEmailVerificationOTP = require("../../helper/smsValidation");
 const EmailVerifyModel = require("../../models/otpModel");
+const { equal } = require("joi");
 
 class UserEjsController {
   async signupPage(req, res) {
@@ -307,6 +308,61 @@ class UserEjsController {
       res.clearCookie("refreshToken");
       req.flash("success_msg", "Logout successfull");
       res.redirect("/signin");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async userEditForm(req, res) {
+    try {
+      const userId = req.user ? req.user.userId : "null";
+      const user = await User.findById(userId);
+      const redirectTo = req.query.redirectTo || "/user/dashboard";
+
+      res.render("userEditForm", { user, redirectTo });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async userEdit(req, res) {
+    try {
+      const id = req.params.id;
+      const existingUser = await User.findById(id);
+      if (!existingUser) {
+        console.log("User not found");
+      }
+
+      const {
+        name,
+        email,
+        phone,
+        country,
+        street,
+        houseNumber,
+        apartment,
+        city,
+        state,
+        postcode,
+        redirectTo,
+      } = req.body;
+      const updateData = await User.findByIdAndUpdate(
+        id,
+        {
+          name,
+          email,
+          phone,
+          country,
+          street,
+          houseNumber,
+          apartment,
+          city,
+          state,
+          postcode,
+        },
+        { new: true }
+      );
+      return res.status(200).json({
+        message: "Update Successfully",
+      });
     } catch (error) {
       console.log(error);
     }

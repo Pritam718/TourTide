@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const { Hotel } = require("../../models/hotelModel");
 const { User } = require("../../models/userModel");
 const booking = require("../../models/bookingModel");
+const bookingSms = require("../../helper/booking.Sms");
 
 class BookingEjs {
   async bookingPage(req, res) {
@@ -48,6 +49,8 @@ class BookingEjs {
       const userId = req.user ? req.user.userId : "null";
       const id = req.params.id;
       const hotelData = await Hotel.findById(id);
+      const user = await User.find({ _id: userId });
+      console.log(user);
       const { personNumber, childNumber, startingDate } = req.body;
       const bookingData = new booking({
         personNumber,
@@ -58,10 +61,8 @@ class BookingEjs {
         userId: userId,
       });
       const data = await bookingData.save();
-      res.status(200).json({
-        message: "Booking suucessfull",
-        data: data,
-      });
+      await bookingSms(req, user[0]);
+      res.render("bookingConfirmed", { user: user[0] });
     } catch (error) {
       console.log(error);
     }

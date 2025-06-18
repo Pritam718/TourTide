@@ -80,6 +80,17 @@ const hotelSchema = new mongoose.Schema(
       type: [String],
       require: true,
     },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
+    bookingCount: {
+      type: Number,
+      default: 0,
+    },
+    capacity: {
+      type: Number,
+    },
   },
   { timestamps: true }
 );

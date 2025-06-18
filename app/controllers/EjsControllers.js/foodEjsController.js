@@ -128,7 +128,6 @@ class FoodController {
           },
           { new: true }
         );
-        console.log(updateData);
         return res.status(200).json({
           message: "Update Successfully",
         });

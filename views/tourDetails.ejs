@@ -36,6 +36,20 @@
         max-height: 650px;
         object-fit: contain;
       }
+      .bg-photo {
+        background-image: url("/img/photo-1650558534077-2ee93bed41cf.jpg");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+      }
+
+      /* Optional: Add backdrop for better readability */
+      .overlay-bg {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 8px;
+        padding: 20px;
+      }
     </style>
     <link href="/css/style.css" rel="stylesheet" />
   </head>
@@ -111,321 +125,324 @@
       </div>
     </div>
     <!-- Tour Summary Card -->
-    <div class="container my-5">
-      <div
-        class="card p-4 d-flex flex-md-row flex-column justify-content-between align-items-center shadow-sm"
-      >
-        <h3 class="text-primary font-weight-bold mb-md-0 mb-3">
-          <%= tour.place %>
-        </h3>
-        <a href="#" class="btn btn-success font-weight-bold px-4 py-2"
-          >Plan your Trip</a
+    <div class="">
+      <div class="container my-5">
+        <div
+          class="card p-4 d-flex flex-md-row flex-column justify-content-between align-items-center shadow-sm"
         >
-      </div>
-    </div>
-
-    <!-- Tour Information Section -->
-    <div class="container mb-5">
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div class="card p-4 h-100 shadow-sm">
-            <h2 class="text-primary font-weight-bold mb-3">
-              Discover <%= tour.place %>
-            </h2>
-            <p class="mb-2">
-              <i class="fas fa-map-marker-alt text-danger"></i> <%=
-              tour.address.city %>, <%= tour.address.state %>, <%=
-              tour.address.district %>, <%= tour.address.country %>
-            </p>
-            <p class="text-muted mb-3"><%= tour.description %></p>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card p-4 h-100 shadow-sm">
-            <h4 class="text-success text-center mb-4">Package Summary</h4>
-            <table class="table table-bordered">
-              <% tour.packageSummary.forEach(function(pkg, i) { %> <%
-              pkg.day.forEach(function(d, index) { %>
-              <tr>
-                <th>Day <%= d %></th>
-                <td><%= pkg.daySummary[index] %></td>
-              </tr>
-              <% })%> <% }) %>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Amenities and Food -->
-    <div class="container mb-5">
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div class="card p-4 h-100 shadow-sm">
-            <h3 class="text-primary font-weight-bold mb-3">Amenities</h3>
-            <% if (tour.accommodation) { %>
-            <ul class="list-unstyled">
-              <% tour.accommodation.split(",").forEach(function(acc) { %>
-              <li>
-                <i class="fas fa-check text-success mr-2"></i><%= acc.trim() %>
-              </li>
-              <% }) %>
-            </ul>
-            <% } else { %>
-            <p class="text-muted">No amenity details available.</p>
-            <% } %>
-          </div>
-        </div>
-        <div class="col-md-6 mb-4">
-          <div class="card p-4 h-100 shadow-sm">
-            <h4 class="text-success text-center mb-4">Food Details</h4>
-            <table class="table table-bordered">
-              <% if(tour.foods.length>0) {%>
-              <tr>
-                <th>Breakfast</th>
-                <% tour.foods.forEach(function(food) {
-                food.breakfastItems.forEach(function(item) { %>
-                <td><%= item.name %></td>
-                <% }) }) %>
-              </tr>
-              <tr>
-                <th>Lunch</th>
-                <% tour.foods.forEach(function(food) {
-                food.lunchItems.forEach(function(item) { %>
-                <td><%= item.name %></td>
-                <% }) }) %>
-              </tr>
-              <tr>
-                <th>Snack</th>
-                <% tour.foods.forEach(function(food) {
-                food.snackItems.forEach(function(item) { %>
-                <td><%= item.name %></td>
-                <% }) }) %>
-              </tr>
-              <tr>
-                <th>Dinner</th>
-                <% tour.foods.forEach(function(food) {
-                food.dinnerItems.forEach(function(item) { %>
-                <td><%= item.name %></td>
-                <% }) }) %>
-              </tr>
-              <% } else { %>
-              <p class="text-muted">No Food available.</p>
-              <% } %>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Hotel Section -->
-    <% if (tour.hotels.length > 0) { %>
-    <div class="container mb-5">
-      <div class="row">
-        <div class="col-md-6 mb-4">
-          <div
-            class="carousel slide shadow rounded"
-            id="hotel-carousel"
-            data-ride="carousel"
+          <h3 class="text-primary font-weight-bold mb-md-0 mb-3">
+            <%= tour.place %> - <%= tour.packageDays %>days Plan
+          </h3>
+          <a href="#" class="btn btn-success font-weight-bold px-4 py-2"
+            >Plan your Trip</a
           >
-            <div class="carousel-inner">
-              <% tour.hotels[0].image.forEach(function(img, index) { %>
-              <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                <img
-                  src="/<%= img %>"
-                  class="d-block w-100"
-                  alt="Hotel Image"
-                />
-              </div>
-              <% }) %>
+        </div>
+      </div>
+
+      <!-- Tour Information Section -->
+      <div class="container mb-5">
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <div class="card p-4 h-100 shadow-sm">
+              <h2 class="text-primary font-weight-bold mb-3">
+                Discover <%= tour.place %>
+              </h2>
+              <p class="mb-2">
+                <i class="fas fa-map-marker-alt text-danger"></i> <%=
+                tour.address.city %>, <%= tour.address.state %>, <%=
+                tour.address.district %>, <%= tour.address.country %>
+              </p>
+              <p class="text-muted mb-3"><%= tour.description %></p>
             </div>
-            <a
-              class="carousel-control-prev"
-              href="#hotel-carousel"
-              role="button"
-              data-slide="prev"
-            >
-              <span class="carousel-control-prev-icon"></span>
-            </a>
-            <a
-              class="carousel-control-next"
-              href="#hotel-carousel"
-              role="button"
-              data-slide="next"
-            >
-              <span class="carousel-control-next-icon"></span>
-            </a>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card p-4 h-100 shadow-sm">
-            <h2 class="text-primary font-weight-bold mb-2">
-              <%= tour.hotels[0].name %>
-            </h2>
-            <p class="text-muted">
-              <i class="fas fa-map-marker-alt text-danger"></i> <%=
-              tour.hotels[0].location %>
-            </p>
-            <p>
-              <strong>Occupancy:</strong> <%= tour.hotels[0].occupancy.minPerson
-              %> - <%= tour.hotels[0].occupancy.maxPerson %> persons (Extra: <%=
-              tour.hotels[0].occupancy.extraAdult %> adults / <%=
-              tour.hotels[0].occupancy.extraChild %> children)
-            </p>
-            <p>
-              <strong>Room Details:</strong> <%= tour.hotels[0].bedRoom %> Bed
-              Room, <%= tour.hotels[0].hallRoom %> Hall, <%=
-              tour.hotels[0].kitchen %> Kitchen, <%= tour.hotels[0].bathRoom %>
-              Bathroom
-            </p>
-            <p>
-              <strong>Facilities:</strong> <%= tour.hotels[0].accommodation %>
-            </p>
-            <h4 class="text-success">
-              Price: ₹<%= tour.hotels[0].price %> / person
-            </h4>
-            <% if (tour.hotels[0].childPrice) { %>
-            <h5 class="text-success">
-              Child Price: ₹<%= tour.hotels[0].childPrice %> / child
-            </h5>
-            <% } %>
-            <a href="#" class="btn btn-success mt-3">Book Now</a>
+          <div class="col-md-6 mb-4">
+            <div class="card p-4 h-100 shadow-sm">
+              <h4 class="text-success text-center mb-4">Package Summary</h4>
+              <table class="table table-bordered">
+                <% tour.packageSummary.forEach(function(pkg, i) { %> <%
+                pkg.day.forEach(function(d, index) { %>
+                <tr>
+                  <th>Day <%= d %></th>
+                  <td><%= pkg.daySummary[index] %></td>
+                </tr>
+                <% })%> <% }) %>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <% } else { %>
-    <div class="container pt-5">
-      <h4 class="text-muted">No hotels available</h4>
-    </div>
-    <% } %>
 
-    <div
-      class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5"
-      style="margin-top: 90px"
-    >
-      <div class="row pt-5">
-        <div class="col-lg-3 col-md-6 mb-5">
-          <a href="" class="navbar-brand">
-            <h1 class="text-primary">
-              <span class="text-white">TRAVEL</span>ER
-            </h1>
-          </a>
-          <p>
-            Sed ipsum clita tempor ipsum ipsum amet sit ipsum lorem amet labore
-            rebum lorem ipsum dolor. No sed vero lorem dolor dolor
-          </p>
-          <h6
-            class="text-white text-uppercase mt-4 mb-3"
-            style="letter-spacing: 5px"
-          >
-            Follow Us
-          </h6>
-          <div class="d-flex justify-content-start">
-            <a class="btn btn-outline-primary btn-square mr-2" href="#"
-              ><i class="fab fa-twitter"></i
-            ></a>
-            <a class="btn btn-outline-primary btn-square mr-2" href="#"
-              ><i class="fab fa-facebook-f"></i
-            ></a>
-            <a class="btn btn-outline-primary btn-square mr-2" href="#"
-              ><i class="fab fa-linkedin-in"></i
-            ></a>
-            <a class="btn btn-outline-primary btn-square" href="#"
-              ><i class="fab fa-instagram"></i
-            ></a>
+      <!-- Amenities and Food -->
+      <div class="container mb-5">
+        <div class="row">
+          <div class="col-md-6 mb-4">
+            <div class="card p-4 h-100 shadow-sm">
+              <h3 class="text-primary font-weight-bold mb-3">Amenities</h3>
+              <% if (tour.accommodation) { %>
+              <ul class="list-unstyled">
+                <% tour.accommodation.split(",").forEach(function(acc) { %>
+                <li>
+                  <i class="fas fa-check text-success mr-2"></i><%= acc.trim()
+                  %>
+                </li>
+                <% }) %>
+              </ul>
+              <% } else { %>
+              <p class="text-muted">No amenity details available.</p>
+              <% } %>
+            </div>
+          </div>
+          <div class="col-md-6 mb-4">
+            <div class="card p-4 h-100 shadow-sm">
+              <h4 class="text-success text-center mb-4">Food Details</h4>
+              <table class="table table-bordered">
+                <% if(tour.foods.length>0) {%>
+                <tr>
+                  <th>Breakfast</th>
+                  <% tour.foods.forEach(function(food) {
+                  food.breakfastItems.forEach(function(item) { %>
+                  <td><%= item.name %></td>
+                  <% }) }) %>
+                </tr>
+                <tr>
+                  <th>Lunch</th>
+                  <% tour.foods.forEach(function(food) {
+                  food.lunchItems.forEach(function(item) { %>
+                  <td><%= item.name %></td>
+                  <% }) }) %>
+                </tr>
+                <tr>
+                  <th>Snack</th>
+                  <% tour.foods.forEach(function(food) {
+                  food.snackItems.forEach(function(item) { %>
+                  <td><%= item.name %></td>
+                  <% }) }) %>
+                </tr>
+                <tr>
+                  <th>Dinner</th>
+                  <% tour.foods.forEach(function(food) {
+                  food.dinnerItems.forEach(function(item) { %>
+                  <td><%= item.name %></td>
+                  <% }) }) %>
+                </tr>
+                <% } else { %>
+                <p class="text-muted">No Food available.</p>
+                <% } %>
+              </table>
+            </div>
           </div>
         </div>
-        <div class="col-lg-3 col-md-6 mb-5">
-          <h5
-            class="text-white text-uppercase mb-4"
-            style="letter-spacing: 5px"
-          >
-            Our Services
-          </h5>
-          <div class="d-flex flex-column justify-content-start">
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>About</a
+      </div>
+
+      <!-- Hotel Section -->
+      <% if (tour.hotels.length > 0) { %>
+      <div class="container mb-5">
+        <div class="row">
+          <% tour.hotels.forEach(function(hotel){ %>
+          <div class="col-md-6 mb-4">
+            <div
+              class="carousel slide shadow rounded"
+              id="hotel-carousel"
+              data-ride="carousel"
             >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Destination</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Services</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Packages</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Guides</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Testimonial</a
-            >
-            <a class="text-white-50" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Blog</a
-            >
+              <div class="carousel-inner">
+                <% hotel.image.forEach(function(img, index) { %>
+                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                  <img
+                    src="/<%= img %>"
+                    class="d-block w-100"
+                    alt="Hotel Image"
+                  />
+                </div>
+                <% }) %>
+              </div>
+              <a
+                class="carousel-control-prev"
+                href="#hotel-carousel"
+                role="button"
+                data-slide="prev"
+              >
+                <span class="carousel-control-prev-icon"></span>
+              </a>
+              <a
+                class="carousel-control-next"
+                href="#hotel-carousel"
+                role="button"
+                data-slide="next"
+              >
+                <span class="carousel-control-next-icon"></span>
+              </a>
+            </div>
           </div>
-        </div>
-        <div class="col-lg-3 col-md-6 mb-5">
-          <h5
-            class="text-white text-uppercase mb-4"
-            style="letter-spacing: 5px"
-          >
-            Usefull Links
-          </h5>
-          <div class="d-flex flex-column justify-content-start">
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>About</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Destination</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Services</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Packages</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Guides</a
-            >
-            <a class="text-white-50 mb-2" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Testimonial</a
-            >
-            <a class="text-white-50" href="#"
-              ><i class="fa fa-angle-right mr-2"></i>Blog</a
-            >
+          <div class="col-md-6">
+            <div class="card p-4 h-100 shadow-sm">
+              <h2 class="text-primary font-weight-bold mb-2">
+                <%= hotel.name %>
+              </h2>
+              <p class="text-muted">
+                <i class="fas fa-map-marker-alt text-danger"></i> <%=
+                hotel.location %>
+              </p>
+              <p>
+                <strong>Occupancy:</strong> <%= hotel.occupancy.minPerson %> -
+                <%= hotel.occupancy.maxPerson %> persons (Extra: <%=
+                hotel.occupancy.extraAdult %> adults / <%=
+                hotel.occupancy.extraChild %> children)
+              </p>
+              <p>
+                <strong>Room Details:</strong> <%= hotel.bedRoom %> Bed Room,
+                <%= hotel.hallRoom %> Hall, <%= tour.hotels[0].kitchen %>
+                Kitchen, <%= hotel.bathRoom %> Bathroom
+              </p>
+              <p><strong>Facilities:</strong> <%= hotel.accommodation %></p>
+              <h4 class="text-success">Price: ₹<%= hotel.price %> / person</h4>
+              <% if (hotel.childPrice) { %>
+              <h5 class="text-success">
+                Child Price: ₹<%= hotel.childPrice %> / child
+              </h5>
+              <% } %>
+
+              <a href="/booking/<%=hotel._id %>" class="btn btn-success mt-3"
+                >Book Now</a
+              >
+            </div>
           </div>
+          <% }) %>
         </div>
-        <div class="col-lg-3 col-md-6 mb-5">
-          <h5
-            class="text-white text-uppercase mb-4"
-            style="letter-spacing: 5px"
-          >
-            Contact Us
-          </h5>
-          <p>
-            <i class="fa fa-map-marker-alt mr-2"></i>123 Street, New York, USA
-          </p>
-          <p><i class="fa fa-phone-alt mr-2"></i>+012 345 67890</p>
-          <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
-          <h6
-            class="text-white text-uppercase mt-4 mb-3"
-            style="letter-spacing: 5px"
-          >
-            Newsletter
-          </h6>
-          <div class="w-100">
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control border-light"
-                style="padding: 25px"
-                placeholder="Your Email"
-              />
-              <div class="input-group-append">
-                <button class="btn btn-primary px-3">Sign Up</button>
+      </div>
+      <% } else { %>
+      <div class="container pt-5">
+        <h4 class="text-muted">No hotels available</h4>
+      </div>
+      <% } %>
+
+      <div
+        class="container-fluid bg-dark text-white-50 px-sm-3 px-lg-5"
+        style="margin-top: 90px"
+      >
+        <div class="row pt-5">
+          <div class="col-lg-3 col-md-6 mb-5">
+            <a href="" class="navbar-brand">
+              <h1 class="text-primary">
+                <span class="text-white">TRAVEL</span>ER
+              </h1>
+            </a>
+            <p>
+              Sed ipsum clita tempor ipsum ipsum amet sit ipsum lorem amet
+              labore rebum lorem ipsum dolor. No sed vero lorem dolor dolor
+            </p>
+            <h6
+              class="text-white text-uppercase mt-4 mb-3"
+              style="letter-spacing: 5px"
+            >
+              Follow Us
+            </h6>
+            <div class="d-flex justify-content-start">
+              <a class="btn btn-outline-primary btn-square mr-2" href="#"
+                ><i class="fab fa-twitter"></i
+              ></a>
+              <a class="btn btn-outline-primary btn-square mr-2" href="#"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a class="btn btn-outline-primary btn-square mr-2" href="#"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+              <a class="btn btn-outline-primary btn-square" href="#"
+                ><i class="fab fa-instagram"></i
+              ></a>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-5">
+            <h5
+              class="text-white text-uppercase mb-4"
+              style="letter-spacing: 5px"
+            >
+              Our Services
+            </h5>
+            <div class="d-flex flex-column justify-content-start">
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>About</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Destination</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Services</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Packages</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Guides</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Testimonial</a
+              >
+              <a class="text-white-50" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Blog</a
+              >
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-5">
+            <h5
+              class="text-white text-uppercase mb-4"
+              style="letter-spacing: 5px"
+            >
+              Usefull Links
+            </h5>
+            <div class="d-flex flex-column justify-content-start">
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>About</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Destination</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Services</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Packages</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Guides</a
+              >
+              <a class="text-white-50 mb-2" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Testimonial</a
+              >
+              <a class="text-white-50" href="#"
+                ><i class="fa fa-angle-right mr-2"></i>Blog</a
+              >
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-5">
+            <h5
+              class="text-white text-uppercase mb-4"
+              style="letter-spacing: 5px"
+            >
+              Contact Us
+            </h5>
+            <p>
+              <i class="fa fa-map-marker-alt mr-2"></i>123 Street, New York, USA
+            </p>
+            <p><i class="fa fa-phone-alt mr-2"></i>+012 345 67890</p>
+            <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+            <h6
+              class="text-white text-uppercase mt-4 mb-3"
+              style="letter-spacing: 5px"
+            >
+              Newsletter
+            </h6>
+            <div class="w-100">
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control border-light"
+                  style="padding: 25px"
+                  placeholder="Your Email"
+                />
+                <div class="input-group-append">
+                  <button class="btn btn-primary px-3">Sign Up</button>
+                </div>
               </div>
             </div>
           </div>

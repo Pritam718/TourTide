@@ -3,7 +3,8 @@ const { User } = require("../../models/userModel");
 const { verifyPassword } = require("../../helper/passwordHash");
 const jwt = require("jsonwebtoken");
 const { Tour } = require("../../models/tourModel");
-const { Hotel} = require("../../models/hotelModel");
+const { Hotel } = require("../../models/hotelModel");
+const { Food } = require("../../models/foodModel");
 
 class AdminEjsController {
   async dashboard(req, res) {
@@ -16,8 +17,13 @@ class AdminEjsController {
   async table(req, res) {
     try {
       const tourData = await Tour.find();
-      const hotelData=await Hotel.find()
-      res.render("adminTable",{hotels: hotelData, tours:tourData});
+      const hotelData = await Hotel.find();
+      const foodData = await Food.find();
+      res.render("adminTable", {
+        hotels: hotelData,
+        tours: tourData,
+        foods: foodData,
+      });
     } catch (error) {
       console.log(error);
     }

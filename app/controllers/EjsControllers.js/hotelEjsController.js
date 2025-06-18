@@ -209,6 +209,18 @@ class HotelController {
       console.log(error);
     }
   }
+  async hotelList(req,res){
+    try {
+      const data = await Hotel.find()
+      //console.log('data',data);
+      res.render("hotelAllDataList",{
+        title: "hotel list",
+        data: data
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
 }
 
 module.exports = new HotelController();

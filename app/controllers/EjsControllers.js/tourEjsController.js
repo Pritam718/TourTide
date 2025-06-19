@@ -3,15 +3,15 @@ const statusCode = require("../../helper/httpsStatusCode");
 const { Tour, tourValidationSchema } = require("../../models/tourModel");
 const path = require("path");
 const fs = require("fs");
-const { title } = require("process");
 
 class TourEjsController {
-  async getPlace(req, res) {
+  async tourPackagePage(req, res) {
     try {
-      const data = await Tour.find({});
-      res
-        .status(statusCode.success)
-        .json({ message: "Data fetch successfully done", data: data });
+      const tourData = await Tour.find({});
+      res.render("tourPackages", {
+        tour: tourData,
+        isAuthenticated: req.isAuthenticated,
+      });
     } catch (error) {
       console.log(error);
     }

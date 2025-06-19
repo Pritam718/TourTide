@@ -144,6 +144,33 @@
       <div class="container bg-light p-4 shadow">
         <form action="/book/<%= data._id %>" method="POST" novalidate id="book">
           <div class="form-group">
+            <label for="startingDate">Check in</label>
+            <input
+              type="date"
+              id="startingDate"
+              name="startingDate"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="endingDate">Check out</label>
+            <input
+              type="date"
+              id="endingDate"
+              name="endingDate"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="roomsBooked">Total rooms needed</label>
+            <input
+              type="Number"
+              id="roomsBooked"
+              name="roomsBooked"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
             <label for="personNumber">Person Number</label>
             <input
               type="Number"
@@ -161,15 +188,7 @@
               class="form-control"
             />
           </div>
-          <div class="form-group">
-            <label for="startingDate">Starting Date</label>
-            <input
-              type="date"
-              id="startingDate"
-              name="startingDate"
-              class="form-control"
-            />
-          </div>
+
           <button type="submit" class="btn btn-lg btn-info btn-block mt-4">
             Book Now
           </button>

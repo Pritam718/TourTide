@@ -14,6 +14,7 @@ const hotelValidationSchema = Joi.object({
   extraChild: Joi.number().integer().min(0).optional(),
   price: Joi.number().min(0).required(),
   childPrice: Joi.number().min(0).optional(),
+  total_capacity: Joi.number().min(0).required(),
   accommodation: Joi.string().required(),
   tour: Joi.string().required(),
 });
@@ -88,8 +89,9 @@ const hotelSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    capacity: {
+    total_capacity: {
       type: Number,
+      required: true,
     },
   },
   { timestamps: true }

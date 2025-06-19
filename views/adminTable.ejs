@@ -205,6 +205,8 @@
                           <th scope="col">price</th>
                           <th scope="col">childPrice</th>
                           <th scope="col">accommodation</th>
+                          <th scope="col">Total Capacity</th>
+                          <th scope="col">Total Booking Number</th>
                           <th scope="col">image</th>
                           <th colspan="2"></th>
                         </tr>
@@ -227,6 +229,8 @@
                           <td><%=item.price%></td>
                           <td><%=item.childPrice%></td>
                           <td><%=item.accommodation%></td>
+                          <td><%=item.total_capacity%></td>
+                          <td><%=item.bookingCount%></td>
 
                           <td>
                             <% item.image.map((img, index)=> { %>

@@ -23,14 +23,14 @@ class TourEjsController {
         {
           $match: { _id: new mongoose.Types.ObjectId(id) },
         },
-        {
-          $lookup: {
-            from: "hotels",
-            localField: "_id",
-            foreignField: "tour",
-            as: "hotels",
-          },
-        },
+        // {
+        //   $lookup: {
+        //     from: "hotels",
+        //     localField: "_id",
+        //     foreignField: "tour",
+        //     as: "hotels",
+        //   },
+        // },
         {
           $lookup: {
             from: "foods",
@@ -44,6 +44,7 @@ class TourEjsController {
       res.render("tourDetails", {
         tour: result[0],
         isAuthenticated: req.isAuthenticated,
+        hotels: 0,
       });
     } catch (error) {
       console.log(error);
@@ -227,15 +228,15 @@ class TourEjsController {
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
-  async tourList(req,res){
+  async tourList(req, res) {
     try {
       const data = await Tour.find();
-      res.render("tourAllDataList",{
+      res.render("tourAllDataList", {
         title: "tour list",
-        data: data
-      })
+        data: data,
+      });
     } catch (error) {
-      console.log(err)
+      console.log(err);
     }
   }
 }

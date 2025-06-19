@@ -234,11 +234,50 @@
         </div>
       </div>
 
+      <!-- Search Form -->
+      <div class="container mb-5">
+        <form action="/hotel/search/<%=tour._id%>" method="GET" class="row g-3">
+          <div class="col-md-3">
+            <label for="checkIn" class="form-label">Check-In Date</label>
+            <input
+              type="date"
+              id="checkIn"
+              name="checkIn"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="checkOut" class="form-label">Check-Out Date</label>
+            <input
+              type="date"
+              id="checkOut"
+              name="checkOut"
+              class="form-control"
+              required
+            />
+          </div>
+          <div class="col-md-3">
+            <label for="rooms" class="form-label">Number of Rooms</label>
+            <input
+              type="number"
+              id="rooms"
+              name="rooms"
+              class="form-control"
+              min="1"
+              required
+            />
+          </div>
+          <div class="col-md-3 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+          </div>
+        </form>
+      </div>
       <!-- Hotel Section -->
-      <% if (tour.hotels.length > 0) { %>
+      <% if (typeof hotels !== 'undefined' && hotels.length > 0) { %>
       <div class="container mb-5">
         <div class="row">
-          <% tour.hotels.forEach(function(hotel){ %>
+          <% hotels.forEach(function(hotel){ %>
           <div class="col-md-6 mb-4">
             <div
               class="carousel slide shadow rounded"
@@ -291,8 +330,8 @@
               </p>
               <p>
                 <strong>Room Details:</strong> <%= hotel.bedRoom %> Bed Room,
-                <%= hotel.hallRoom %> Hall, <%= tour.hotels[0].kitchen %>
-                Kitchen, <%= hotel.bathRoom %> Bathroom
+                <%= hotel.hallRoom %> Hall, <%= hotel.kitchen %> Kitchen, <%=
+                hotel.bathRoom %> Bathroom
               </p>
               <p><strong>Facilities:</strong> <%= hotel.accommodation %></p>
               <h4 class="text-success">Price: ₹<%= hotel.price %> / person</h4>
@@ -310,9 +349,14 @@
           <% }) %>
         </div>
       </div>
-      <% } else { %>
+      <% } else if (hotels===0) { %>
       <div class="container pt-5">
-        <h4 class="text-muted">No hotels available</h4>
+        <h4 class="text-muted">Search hotels available</h4>
+      </div>
+      <% }else { %>
+
+      <div class="container pt-5">
+        <h4 class="text-muted">Search hotels available</h4>
       </div>
       <% } %>
 

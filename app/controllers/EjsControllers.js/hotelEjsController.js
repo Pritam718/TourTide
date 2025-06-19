@@ -3,6 +3,33 @@ const { Hotel, hotelValidationSchema } = require("../../models/hotelModel");
 const { Tour } = require("../../models/tourModel");
 const path = require("path");
 const fs = require("fs");
+const booking = require("../../models/bookingModel");
+const { default: mongoose } = require("mongoose");
+// const isHotelAvailable = require("../../helper/availableHotel");
+
+const isHotelAvailable = async (hotelId, checkIn, checkOut, roomsRequested) => {
+  const hotel = await Hotel.findById(hotelId);
+  if (!hotel) throw new Error("Hotel not found");
+
+  // Get bookings that overlap
+  const bookings = await booking.find({
+    hotelId,
+    $or: [
+      {
+        startingDate: { $lt: new Date(checkOut) },
+        endingDate: { $gt: new Date(checkIn) },
+      },
+    ],
+  });
+
+  // Calculate total rooms booked during overlapping period
+  let totalRoomsBooked = 0;
+  bookings.forEach((b) => {
+    totalRoomsBooked += b.roomsBooked;
+  });
+
+  return hotel.total_capacity - totalRoomsBooked >= roomsRequested;
+};
 
 class HotelController {
   async getHotel(req, res) {
@@ -57,6 +84,7 @@ class HotelController {
         childPrice,
         accommodation,
         tour,
+        total_capacity,
       } = req.body;
 
       const hotel = new Hotel({
@@ -71,6 +99,7 @@ class HotelController {
         childPrice,
         accommodation,
         tour,
+        total_capacity,
       });
 
       if (req.files) {
@@ -133,6 +162,7 @@ class HotelController {
         childPrice,
         accommodation,
         tour,
+        total_capacity,
       } = req.body;
 
       const data = {
@@ -150,6 +180,7 @@ class HotelController {
         childPrice,
         accommodation,
         tour,
+        total_capacity,
       };
       const { error, value } = hotelValidationSchema.validate(data);
       if (error) {
@@ -172,6 +203,7 @@ class HotelController {
             childPrice,
             accommodation,
             tour,
+            total_capacity,
             image: updateImagePaths,
           },
           { new: true }
@@ -209,17 +241,54 @@ class HotelController {
       console.log(error);
     }
   }
-  async hotelList(req,res){
+  async hotelList(req, res) {
     try {
-      const data = await Hotel.find()
-      //console.log('data',data);
-      res.render("hotelAllDataList",{
+      const data = await Hotel.find();
+      res.render("hotelAllDataList", {
         title: "hotel list",
-        data: data
-      })
+        data: data,
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
+  }
+  async getAvailableHotels(req, res) {
+    const { checkIn, checkOut, rooms } = req.query;
+    const allHotels = await Hotel.find({ isAvailable: true });
+    const availableHotels = [];
+
+    for (const hotel of allHotels) {
+      const available = await isHotelAvailable(
+        hotel._id,
+        checkIn,
+        checkOut,
+        parseInt(rooms)
+      );
+      if (available) availableHotels.push(hotel);
+    }
+
+    const id = req.params.id;
+    const result = await Tour.aggregate([
+      {
+        $match: { _id: new mongoose.Types.ObjectId(id) },
+      },
+      {
+        $lookup: {
+          from: "foods",
+          localField: "_id",
+          foreignField: "tour",
+          as: "foods",
+        },
+      },
+    ]);
+    res.render("tourDetails", {
+      tour: result[0],
+      isAuthenticated: req.isAuthenticated,
+      hotels: availableHotels,
+      checkIn,
+      checkOut,
+      rooms,
+    });
   }
 }
 

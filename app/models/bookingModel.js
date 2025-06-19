@@ -14,6 +14,14 @@ const bookingSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    endingDate: {
+      type: Date,
+      required: true,
+    },
+    roomsBooked: {
+      type: Number,
+      required: true,
+    },
     tourId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Tour",

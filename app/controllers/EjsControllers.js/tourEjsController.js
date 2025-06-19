@@ -16,6 +16,20 @@ class TourEjsController {
       console.log(error);
     }
   }
+  async searchTour(req, res) {
+    try {
+      const city = req.query.city;
+      const tourData = await Tour.aggregate([
+        { $match: { "address.city": { $regex: city, $options: "i" } } },
+      ]);
+      res.render("tourPackages", {
+        tour: tourData,
+        isAuthenticated: req.isAuthenticated,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async specificTourDetails(req, res) {
     try {
       const id = req.params.id;

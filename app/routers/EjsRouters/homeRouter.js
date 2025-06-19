@@ -8,5 +8,6 @@ router.get("/about", homeController.aboutPage);
 router.get("/tour", tourEjsController.tourPackagePage);
 // router.get("/tourdetails", homeController.tourdetails);
 router.get("/tourdetails/:id", tourEjsController.specificTourDetails);
+router.get("/search", tourEjsController.searchTour);
 
 module.exports = router;

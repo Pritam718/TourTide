@@ -3,8 +3,17 @@ const { Tour } = require("../../models/tourModel");
 class HomeController {
   async homePage(req, res) {
     try {
-      const tourData = await Tour.aggregate([{ $limit: 3 }]);
-
+      const tourData = await Tour.aggregate([
+        {
+          $addFields: {
+            cityLower: { $toLower: "$address.city" },
+          },
+        },
+        { $group: { _id: "$cityLower", doc: { $first: "$$ROOT" } } },
+        { $replaceRoot: { newRoot: "$doc" } },
+        { $limit: 3 },
+      ]);
+      // console.log(tourData);
       res.render("home", {
         isAuthenticated: req.isAuthenticated,
         tour: tourData,
@@ -21,13 +30,20 @@ class HomeController {
     }
   }
 
-  // async tourdetails(req, res) {
-  //   try {
-  //     res.render("tourDetails", { isAuthenticated: req.isAuthenticated });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
+  async exploreTopDestination(req, res) {
+    try {
+      const city = req.params.city;
+      const tourData = await Tour.aggregate([
+        { $match: { "address.city": { $regex: city, $options: "i" } } },
+      ]);
+      res.render("tourPackages", {
+        tour: tourData,
+        isAuthenticated: req.isAuthenticated,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 module.exports = new HomeController();

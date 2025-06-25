@@ -8,7 +8,7 @@ const checkAuthentication = async (req, res, next) => {
     } else {
       const accessToken = req.cookies.accessToken;
       if (accessToken) {
-        const user = validateAccessToken(
+        const user = await validateAccessToken(
           process.env.ACCESS_TOKEN_SECRET,
           accessToken
         );

@@ -179,6 +179,7 @@ class UserEjsController {
         {
           userId: existingUser._id,
           name: existingUser.name,
+          email: existingUser.email,
           role: existingUser.role,
         },
         process.env.ACCESS_TOKEN_SECRET,
@@ -188,6 +189,7 @@ class UserEjsController {
         {
           userId: existingUser._id,
           name: existingUser.name,
+          email: existingUser.email,
           role: existingUser.role,
         },
         process.env.REFRESH_TOKEN_SECRET,
@@ -312,6 +314,15 @@ class UserEjsController {
       console.log(error);
     }
   }
+  async userProfile(req, res) {
+    try {
+      const userId = req.user ? req.user.userId : "null";
+      const user = await User.findById(userId);
+      res.render("userProfile", { isAuthenticated: req.isAuthenticated, user });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async userEditForm(req, res) {
     try {
       const userId = req.user ? req.user.userId : "null";
@@ -360,9 +371,8 @@ class UserEjsController {
         },
         { new: true }
       );
-      return res.status(200).json({
-        message: "Update Successfully",
-      });
+      req.flash("success_msg", "User Profile Update");
+      return res.redirect("/userProfile/");
     } catch (error) {
       console.log(error);
     }

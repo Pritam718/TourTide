@@ -18,6 +18,11 @@ router.get("/reset-password", userEjsController.confirmPasswordForm);
 router.post("/reset-password", userEjsController.confirmPassword);
 
 router.get(
+  "/userProfile/",
+  userCheckauthenticationToken,
+  userEjsController.userProfile
+);
+router.get(
   "/userEditForm/",
   userCheckauthenticationToken,
   userEjsController.userEditForm

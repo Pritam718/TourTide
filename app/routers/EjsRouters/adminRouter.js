@@ -24,7 +24,9 @@ router.get("/dashboard", adminEjsController.dashboard);
 router.get("/tourtable", adminEjsController.tourTable);
 router.get("/foodtable", adminEjsController.foodTable);
 router.get("/hoteltable", adminEjsController.hotelTable);
-
+router.get("/adminEditForm/", adminEjsController.adminEditForm);
+router.get("/adminProfile/", adminEjsController.adminProfile);
+router.post("/adminEdit/:id", adminEjsController.adminEdit);
 router.get("/touraddform", tourEjsController.tourAddForm);
 router.post(
   "/tourAdd",

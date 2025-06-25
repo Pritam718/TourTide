@@ -12,6 +12,7 @@ class TourEjsController {
       res.render("tourPackages", {
         tour: tourData,
         isAuthenticated: req.isAuthenticated,
+        user: req.user,
       });
     } catch (error) {
       console.log(error);
@@ -84,6 +85,7 @@ class TourEjsController {
       res.render("tourDetails", {
         tour: result[0],
         isAuthenticated: req.isAuthenticated,
+        user: req.user,
         hotels: 0,
         reviews,
       });
@@ -93,7 +95,7 @@ class TourEjsController {
   }
   async tourAddForm(req, res) {
     try {
-      res.render("tourAddForm");
+      res.render("tourAddForm", { user: req.user || null });
     } catch (error) {
       console.log(error);
     }

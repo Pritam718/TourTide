@@ -13,12 +13,74 @@ class AdminEjsController {
       const hotelDetails = await Hotel.find({});
       const foodDetails = await Food.find({});
       const userDetails = await User.find({});
+
       res.render("adminDashboard", {
         tourDetails,
         hotelDetails,
         foodDetails,
         userDetails,
+        user: req.user || null,
       });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async adminProfile(req, res) {
+    const userId = req.user ? req.user.userId : "null";
+    const user = await User.findById(userId);
+    res.render("adminProfile", { user });
+  }
+  async adminEditForm(req, res) {
+    try {
+      const userId = req.user ? req.user.userId : "null";
+      const user = await User.findById(userId);
+      const redirectTo = req.query.redirectTo || "/user/dashboard";
+
+      res.render("adminEditForm", { user, redirectTo });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async adminEdit(req, res) {
+    try {
+      const id = req.params.id;
+      console.log(id);
+      const existingUser = await User.findById(id);
+      if (!existingUser) {
+        console.log("User not found");
+      }
+
+      const {
+        name,
+        email,
+        phone,
+        country,
+        street,
+        houseNumber,
+        apartment,
+        city,
+        state,
+        postcode,
+        redirectTo,
+      } = req.body;
+      const updateData = await User.findByIdAndUpdate(
+        id,
+        {
+          name,
+          email,
+          phone,
+          country,
+          street,
+          houseNumber,
+          apartment,
+          city,
+          state,
+          postcode,
+        },
+        { new: true }
+      );
+      req.flash("success_msg", "User Profile Update");
+      return res.redirect("/admin/adminProfile/");
     } catch (error) {
       console.log(error);
     }
@@ -28,6 +90,7 @@ class AdminEjsController {
       const tourData = await Tour.find();
       res.render("tourTable", {
         tours: tourData,
+        user: req.user || null,
       });
     } catch (error) {
       console.log(error);
@@ -38,6 +101,7 @@ class AdminEjsController {
       const hotelData = await Hotel.find();
       res.render("hotelTable", {
         hotels: hotelData,
+        user: req.user || null,
       });
     } catch (error) {
       console.log(error);
@@ -56,7 +120,7 @@ class AdminEjsController {
         },
       ]);
       console.log(data);
-      res.render("foodTable", { foods: data });
+      res.render("foodTable", { foods: data, user: req.user || null });
     } catch (error) {
       console.log(error);
     }
@@ -88,6 +152,7 @@ class AdminEjsController {
         {
           userId: existingUser._id,
           name: existingUser.name,
+          email: existingUser.email,
           role: existingUser.role,
         },
         process.env.ACCESS_TOKEN_SECRET,
@@ -97,6 +162,7 @@ class AdminEjsController {
         {
           userId: existingUser._id,
           name: existingUser.name,
+          email: existingUser.email,
           role: existingUser.role,
         },
         process.env.REFRESH_TOKEN_SECRET,

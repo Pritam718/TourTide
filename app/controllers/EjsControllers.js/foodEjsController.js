@@ -30,7 +30,7 @@ class FoodController {
   async addFoodForm(req, res) {
     try {
       const tours = await Tour.find({});
-      res.render("foodAddForm", { tours });
+      res.render("foodAddForm", { tours, user: req.user || null });
     } catch (error) {
       console.log(error);
     }

@@ -6,7 +6,6 @@ const adminEjsRouter = require("./adminRouter");
 const bookingEjsRouter = require("./bookingEjsRouter");
 const reviewEjsRouter = require("./reviewEjsRouter");
 const checkAuthentication = require("../../middleware/checkAuthentication");
-
 router.use(checkAuthentication);
 
 router.use(homeEjsRouter);

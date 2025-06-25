@@ -108,10 +108,11 @@ class HotelController {
       }
 
       const data = await hotel.save();
-
-      res
-        .status(statusCode.create)
-        .json({ message: "Hotel add successfull", data: data });
+      req.flash("success_msg", "Hotel add successfull");
+      return res.redirect("/admin/hoteltable");
+      // res
+      //   .status(statusCode.create)
+      //   .json({ message: "Hotel add successfull", data: data });
     } catch (error) {
       console.log(error);
     }
@@ -184,7 +185,8 @@ class HotelController {
       };
       const { error, value } = hotelValidationSchema.validate(data);
       if (error) {
-        console.log(error);
+        req.flash("error_msg", error.details[0].message);
+        return res.redirect(`/admin/hotelEditPage/${id}`);
       } else {
         const updateData = await Hotel.findByIdAndUpdate(
           id,
@@ -209,9 +211,11 @@ class HotelController {
           { new: true }
         );
       }
-      return res.status(200).json({
-        message: "Update Successfully",
-      });
+      req.flash("success_msg", "Update Successfully");
+      return res.redirect("/admin/hoteltable");
+      // return res.status(200).json({
+      //   message: "Update Successfully",
+      // });
     } catch (error) {
       console.log(error);
     }
@@ -234,9 +238,11 @@ class HotelController {
         });
       }
       await Hotel.findByIdAndDelete(id);
-      res.status(200).json({
-        message: "Delete Successfully",
-      });
+      req.flash("delete_msg", "Delete Successfully");
+      return res.redirect("/admin/hoteltable");
+      // res.status(200).json({
+      //   message: "Delete Successfully",
+      // });
     } catch (error) {
       console.log(error);
     }

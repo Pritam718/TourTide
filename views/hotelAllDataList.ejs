@@ -1,84 +1,83 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
 
     <title>hotel data</title>
-</head>
+  </head>
 
-<body>
-   
+  <body>
     <div class="">
-        <div style="text-align: center; margin-top: 40px;">
-            <h1>All Hotel Listing</h1>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">No.</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Location</th>
-                    <th scope="col">BedRoom</th>
-                    <th scope="col">HallRoom</th>
-                    <th scope="col">Kitchen</th>
-                    <th scope="col">BathRoom</th>
-                    <th scope="col">minPerson</th>  
-                    <th scope="col">maxPerson</th>  
-                    <th scope="col">extraAdult</th>     
-                    <th scope="col">extraChild</th> 
-                    <th scope="col">price</th>
-                    <th scope="col">childPrice</th>
-                    <th scope="col">accommodation</th>
-                    <th scope="col">image</th>
-                    <th colspan="2"></th>
-                </tr>
-            </thead>
-            
-            <tbody>
-                <% let count = 1; %>
-                <% for (let item of data){%>
-                <tr>
-                    <th scope="row"><%= count++ %></th>
-                    <td><%=item.name%></td>
-                    <td><%=item.location%></td>
-                    <td><%=item.bedRoom%></td>
-                    <td><%=item.hallRoom%></td>
-                    <td><%=item.kitchen%></td>
-                    <td><%=item.bathRoom%></td>
-                    <td><%=item.occupancy.minPerson%></td>
-                    <td><%=item.occupancy.maxPerson%></td>
-                    <td><%=item.occupancy.extraAdult%></td>
-                    <td><%=item.occupancy.extraChild%></td>
-                    <td><%=item.price%></td>
-                    <td><%=item.childPrice%></td>
-                    <td><%=item.accommodation%></td>
+      <div style="text-align: center; margin-top: 40px">
+        <h1>All Hotel Listing</h1>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">No.</th>
+            <th scope="col">Name</th>
+            <th scope="col">Location</th>
+            <th scope="col">BedRoom</th>
+            <th scope="col">HallRoom</th>
+            <th scope="col">Kitchen</th>
+            <th scope="col">BathRoom</th>
+            <th scope="col">minPerson</th>
+            <th scope="col">maxPerson</th>
+            <th scope="col">extraAdult</th>
+            <th scope="col">extraChild</th>
+            <th scope="col">price</th>
+            <th scope="col">childPrice</th>
+            <th scope="col">accommodation</th>
+            <th scope="col">image</th>
+            <th colspan="2"></th>
+          </tr>
+        </thead>
 
-                    <td><% item.image.map((img, index) => { %>
-                <div >
-                  <img
-                    src="<%= img %>"
-                    class="d-block w-100"
-                    alt="tour image"
-                  />
-                </div>
-                <% }) %></td>
-                    <td><a href="#" class="btn btn-info">Edit</a></td>
-                    <td><form action="#" method="DELETE">
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form></td>
-                </tr>
-                <%}%>
-            </tbody>
-           
-        </table>
+        <tbody>
+          <% let count = 1; %> <% for (let item of data){%>
+          <tr>
+            <th scope="row"><%= count++ %></th>
+            <td><%=item.name%></td>
+            <td><%=item.location%></td>
+            <td><%=item.bedRoom%></td>
+            <td><%=item.hallRoom%></td>
+            <td><%=item.kitchen%></td>
+            <td><%=item.bathRoom%></td>
+            <td><%=item.occupancy.minPerson%></td>
+            <td><%=item.occupancy.maxPerson%></td>
+            <td><%=item.occupancy.extraAdult%></td>
+            <td><%=item.occupancy.extraChild%></td>
+            <td><%=item.price%></td>
+            <td><%=item.childPrice%></td>
+            <td><%=item.accommodation%></td>
+
+            <td>
+              <% item.image.map((img, index) => { %>
+              <div>
+                <img src="<%= img %>" class="d-block w-100" alt="tour image" />
+              </div>
+              <% }) %>
+            </td>
+            <td><a href="#" class="btn btn-info">Edit</a></td>
+            <td>
+              <form action="#" method="DELETE">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          <%}%>
+        </tbody>
+      </table>
     </div>
-</body>
-
+  </body>
 </html>

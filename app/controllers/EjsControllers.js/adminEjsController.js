@@ -9,25 +9,59 @@ const { Food } = require("../../models/foodModel");
 class AdminEjsController {
   async dashboard(req, res) {
     try {
-      res.render("adminDashboard");
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  async table(req, res) {
-    try {
-      const tourData = await Tour.find();
-      const hotelData = await Hotel.find();
-      const foodData = await Food.find();
-      res.render("adminTable", {
-        hotels: hotelData,
-        tours: tourData,
-        foods: foodData,
+      const tourDetails = await Tour.find({});
+      const hotelDetails = await Hotel.find({});
+      const foodDetails = await Food.find({});
+      const userDetails = await User.find({});
+      res.render("adminDashboard", {
+        tourDetails,
+        hotelDetails,
+        foodDetails,
+        userDetails,
       });
     } catch (error) {
       console.log(error);
     }
   }
+  async tourTable(req, res) {
+    try {
+      const tourData = await Tour.find();
+      res.render("tourTable", {
+        tours: tourData,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async hotelTable(req, res) {
+    try {
+      const hotelData = await Hotel.find();
+      res.render("hotelTable", {
+        hotels: hotelData,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async foodTable(req, res) {
+    try {
+      const data = await Food.aggregate([
+        {
+          $lookup: {
+            from: "tours",
+            localField: "tour",
+            foreignField: "_id",
+            as: "tour",
+          },
+        },
+      ]);
+      console.log(data);
+      res.render("foodTable", { foods: data });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   async login(req, res) {
     try {
       const { email, password } = req?.body;

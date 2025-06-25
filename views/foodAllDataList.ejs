@@ -1,113 +1,94 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
-        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+      integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N"
+      crossorigin="anonymous"
+    />
 
     <title>food data</title>
-</head>
+  </head>
 
-<body>
-
+  <body>
     <div class="">
-        <div style="text-align: center; margin-top: 40px;">
-            <h1>All Food Listing</h1>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">No.</th>
-                    <th scope="col">breakfastTime</th>
-                    <th scope="col">lunchTime</th>
-                    <th scope="col">snackTime</th>
-                    <th scope="col">dinnerTime</th>
-                    <th scope="col">breakfastItems</th>
-                    <th scope="col">lunchItems</th>
-                    <th scope="col">snackItems</th>
-                    <th scope="col">dinnerItems</th>
-                    <th scope="col">totalFoodPackage</th>
-                    <th colspan="2"></th>
-                </tr>
-            </thead>
+      <div style="text-align: center; margin-top: 40px">
+        <h1>All Food Listing</h1>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">No.</th>
+            <th scope="col">breakfastTime</th>
+            <th scope="col">lunchTime</th>
+            <th scope="col">snackTime</th>
+            <th scope="col">dinnerTime</th>
+            <th scope="col">breakfastItems</th>
+            <th scope="col">lunchItems</th>
+            <th scope="col">snackItems</th>
+            <th scope="col">dinnerItems</th>
+            <th scope="col">totalFoodPackage</th>
+            <th colspan="2"></th>
+          </tr>
+        </thead>
 
-            <tbody>
-                <% let count = 1; %>
-                <% for (let item of data){%>
-                    <tr>
-                        <th scope="row"><%= count++ %></th>
-                        <td>
-                            <%= item.breakfastTime %>
-                        </td>
-                        <td>
-                            <%= item.lunchTime %>
-                        </td>
-                        <td>
-                            <%= item.snackTime %>
-                        </td>
-                        <td>
-                            <%= item.dinnerTime %>
-                        </td>
-                        <td>
-                            <ul>
-                                <% for (let b of item.breakfastItems) { %>
-                                    <li>
-                                        <%= b.name %>
-                                    </li>
-                                    <% } %>
-                            </ul>
-                        </td>
-                        <td>
-                            <ul>
-                                <% for (let l of item.lunchItems) { %>
-                                    <li>
-                                        <%= l.name %> 
-                                    </li>
-                                    <% } %>
-                            </ul>
-                        </td>
+        <tbody>
+          <% let count = 1; %> <% for (let item of data){%>
+          <tr>
+            <th scope="row"><%= count++ %></th>
+            <td><%= item.breakfastTime %></td>
+            <td><%= item.lunchTime %></td>
+            <td><%= item.snackTime %></td>
+            <td><%= item.dinnerTime %></td>
+            <td>
+              <ul>
+                <% for (let b of item.breakfastItems) { %>
+                <li><%= b.name %></li>
+                <% } %>
+              </ul>
+            </td>
+            <td>
+              <ul>
+                <% for (let l of item.lunchItems) { %>
+                <li><%= l.name %></li>
+                <% } %>
+              </ul>
+            </td>
 
-                        <td>
-                            <ul>
-                                <% for (let s of item.snackItems) { %>
-                                    <li>
-                                        <%= s.name %>
-                                    </li>
-                                    <% } %>
-                            </ul>
-                        </td>
+            <td>
+              <ul>
+                <% for (let s of item.snackItems) { %>
+                <li><%= s.name %></li>
+                <% } %>
+              </ul>
+            </td>
 
-                        <td>
-                            <ul>
-                                <% for (let d of item.dinnerItems) { %>
-                                    <li>
-                                        <%= d.name %>
-                                    </li>
-                                    <% } %>
-                            </ul>
-                        </td>
+            <td>
+              <ul>
+                <% for (let d of item.dinnerItems) { %>
+                <li><%= d.name %></li>
+                <% } %>
+              </ul>
+            </td>
 
-                        <td>
-                            <%=item.totalFoodPackage%>
-                        </td>
+            <td><%=item.totalFoodPackage%></td>
 
-                        <td><a href="#" class="btn btn-info">Edit</a></td>
-                        <td>
-                            <form action="#" method="DELETE">
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    <%}%>
-            </tbody>
-
-        </table>
+            <td><a href="#" class="btn btn-info">Edit</a></td>
+            <td>
+              <form action="#" method="DELETE">
+                <button type="submit" class="btn btn-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          <%}%>
+        </tbody>
+      </table>
     </div>
-</body>
-
+  </body>
 </html>

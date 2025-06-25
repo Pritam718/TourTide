@@ -4,12 +4,22 @@ const { Tour } = require("../../models/tourModel");
 const path = require("path");
 const fs = require("fs");
 const { Hotel } = require("../../models/hotelModel");
-const { log } = require("console");
+const { default: mongoose } = require("mongoose");
 
 class FoodController {
   async getFood(req, res) {
     try {
-      const data = await Food.find({});
+      const data = await Food.aggregate([
+        {
+          $lookup: {
+            from: "tours",
+            localField: "tour",
+            foreignField: "_id",
+            as: "tour",
+          },
+        },
+      ]);
+      console.log(data);
       res
         .status(statusCode.success)
         .json({ message: "Data fetch successfully done", data: data });
@@ -60,9 +70,11 @@ class FoodController {
       });
       const data = await food.save();
 
-      res
-        .status(statusCode.create)
-        .json({ message: "Food add successfull", data: data });
+      req.flash("success_msg", "Food add successfull");
+      return res.redirect("/admin/foodtable");
+      // res
+      //   .status(statusCode.create)
+      //   .json({ message: "Food add successfull", data: data });
     } catch (error) {
       console.log(error);
     }
@@ -70,9 +82,21 @@ class FoodController {
   async foodEditPage(req, res) {
     try {
       const id = req.params.id;
-      const foods = await Food.findById(id);
-      const tours = await Tour.find({});
-      res.render("foodEditForm", { data: foods, tours });
+      const foods = await Food.aggregate([
+        { $match: { _id: new mongoose.Types.ObjectId(id) } },
+        {
+          $lookup: {
+            from: "tours",
+            localField: "tour",
+            foreignField: "_id",
+            as: "tour",
+          },
+        },
+      ]);
+
+      // const foods = await Food.findById(id);
+      // const tours = await Tour.find({});
+      res.render("foodEditForm", { data: foods[0] });
     } catch (error) {
       console.log(error);
     }
@@ -112,6 +136,8 @@ class FoodController {
       const { error, value } = foodSchemaValidation.validate(data);
       if (error) {
         console.log(error);
+        req.flash("error_msg", error.details[0].message);
+        return res.redirect(`/admin/foodEditPage/${id}`);
       } else {
         const updateData = await Food.findByIdAndUpdate(
           id,
@@ -129,9 +155,11 @@ class FoodController {
           },
           { new: true }
         );
-        return res.status(200).json({
-          message: "Update Successfully",
-        });
+        req.flash("success_msg", "Update Successfull");
+        return res.redirect("/admin/foodtable");
+        // return res.status(200).json({
+        //   message: "Update Successfully",
+        // });
       }
     } catch (error) {
       console.log(error);
@@ -142,8 +170,9 @@ class FoodController {
       const id = req.params.id;
       const foodData = await Food.findById(id);
       if (!foodData) {
-        // req.flash("error_msg", "Product not found");
-        res.json("Food not found");
+        // req.flash("success_msg", "Update Successfull");
+        req.flash("error_msg", "Product not found");
+        return res.redirect("/admin/foodtable");
       }
       if (foodData.image) {
         foodData.image.map((img) => {
@@ -154,20 +183,22 @@ class FoodController {
         });
       }
       await Food.findByIdAndDelete(id);
-      res.status(200).json({
-        message: "Delete Successfully",
-      });
+      req.flash("delete_msg", "Delete Successfully");
+      return res.redirect("/admin/foodtable");
+      // res.status(200).json({
+      //   message: "Delete Successfully",
+      // });
     } catch (error) {
       console.log(error);
     }
   }
-  async foodList(req,res){
+  async foodList(req, res) {
     try {
-      const data = await Food.find()
+      const data = await Food.find();
       //console.log(data);
-      res.render("foodAllDataList",{
+      res.render("foodAllDataList", {
         title: "food list",
-        data: data
+        data: data,
       });
     } catch (error) {
       console.log(error);

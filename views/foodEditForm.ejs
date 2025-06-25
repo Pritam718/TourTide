@@ -94,16 +94,22 @@
                   <form action="/admin/foodEdit/<%=data._id%>" method="POST">
                     <div class="form-group">
                       <label for="tour">Related Tour Place</label>
-                      <select id="tour" name="tour" class="form-control">
-                        <option value="" disabled selected>
-                          Select a Tour
-                        </option>
-                        <% tours.forEach(tour => { %>
-                        <option value="<%= tour._id %>">
-                          <%= tour.place %> - <%= tour.address.city %>
-                        </option>
-                        <% }) %>
-                      </select>
+                      <div class="form-group col-md-6">
+                        <!-- Display place name (user sees this, cannot edit) -->
+                        <input
+                          type="text"
+                          class="form-control"
+                          value="<%= data.tour[0].place %>"
+                          disabled
+                        />
+
+                        <!-- Hidden input (used for submitting tour ID) -->
+                        <input
+                          type="hidden"
+                          name="tour"
+                          value="<%= data.tour[0]._id %>"
+                        />
+                      </div>
                     </div>
                     <% const mealTypes = ['breakfast', 'lunch', 'snack',
                     'dinner']; %> <% mealTypes.forEach(meal => { %>
@@ -144,16 +150,6 @@
                             Remove
                           </button>
                         </div>
-
-                        <div class="form-group col-md-3">
-                          <input
-                            type="text"
-                            name="<%= meal %>Time"
-                            class="form-control"
-                            placeholder="<%= meal %> Timing with am/pm"
-                            value="<%= time %>"
-                          />
-                        </div>
                       </div>
                       <% }); %>
                     </div>
@@ -168,6 +164,7 @@
                     <% }); %>
 
                     <div class="form-group col-md-9">
+                      <label>Total food Package price</label>
                       <input
                         type="number"
                         name="totalFoodPackage"
@@ -176,7 +173,49 @@
                         value="<%= data.totalFoodPackage %>"
                       />
                     </div>
-                    <div>
+                    <div class="form-group col-md-9">
+                      <div class="row">
+                        <div class="form-group col-md-3">
+                          <label>Breakfast Timing</label>
+                          <input
+                            type="text"
+                            name="breakfastTime"
+                            class="form-control"
+                            placeholder="breakfastTime Timing with am/pm"
+                            value="<%= data.breakfastTime %>"
+                          />
+                        </div>
+                        <div class="form-group col-md-3">
+                          <label>Lunch Timing</label>
+                          <input
+                            type="text"
+                            name="lunchTime"
+                            class="form-control"
+                            placeholder="breakfastTime Timing with am/pm"
+                            value="<%= data.lunchTime %>"
+                          />
+                        </div>
+                        <div class="form-group col-md-3">
+                          <label>Snack Timing</label>
+                          <input
+                            type="text"
+                            name="snackTime"
+                            class="form-control"
+                            placeholder="breakfastTime Timing with am/pm"
+                            value="<%= data.snackTime %>"
+                          />
+                        </div>
+                        <div class="form-group col-md-3">
+                          <label>Dinner Timing</label>
+                          <input
+                            type="text"
+                            name="dinnerTime"
+                            class="form-control"
+                            placeholder="breakfastTime Timing with am/pm"
+                            value="<%= data.dinnerTime %>"
+                          />
+                        </div>
+                      </div>
                       <button type="submit" class="btn btn-primary">
                         Submit
                       </button>

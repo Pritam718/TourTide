@@ -22,9 +22,42 @@
           </p>
 
           <p>
-            We have sent a confirmation email to
+            A confirmation has been sent to
             <strong><%= user.email %></strong>
           </p>
+
+          <div class="mt-4 text-start">
+            <h5 class="text-dark">Booking Details:</h5>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <strong>Booking ID:</strong> <%= booking.bookingId %>
+              </li>
+              <li class="list-group-item">
+                <strong>Tour Place:</strong> <%= booking.tourPlace %>
+              </li>
+              <li class="list-group-item">
+                <strong>Hotel Name:</strong> <%= booking.hotelName %>
+              </li>
+              <li class="list-group-item">
+                <strong>Start Date:</strong> <%= booking.startingDate %>
+              </li>
+              <li class="list-group-item">
+                <strong>End Date:</strong> <%= booking.endingDate %>
+              </li>
+              <li class="list-group-item">
+                <strong>No. of Adults:</strong> <%= booking.personNumber %>
+              </li>
+              <li class="list-group-item">
+                <strong>No. of Children:</strong> <%= booking.childNumber %>
+              </li>
+              <li class="list-group-item">
+                <strong>Rooms Booked:</strong> <%= booking.roomsBooked %>
+              </li>
+              <li class="list-group-item">
+                <strong>Total Price:</strong> ₹<%= booking.totalPrice %>
+              </li>
+            </ul>
+          </div>
 
           <a href="/" class="btn btn-primary mt-4">Back to Home</a>
         </div>

@@ -25,8 +25,49 @@
           <a href="/about" class="nav-item nav-link">About</a>
           <a href="/tour" class="nav-item nav-link">Tour Packages</a>
           <a href="/contact" class="nav-item nav-link">Contact</a>
-          <% if (isAuthenticated) { %>
+          <!-- <% if (isAuthenticated) { %>
           <a href="/logout" class="nav-item nav-link">Logout</a>
+          <% } else { %>
+          <a href="/signin" class="nav-item nav-link">Login</a>
+          <% } %> -->
+          <% if (isAuthenticated) { %>
+          <!-- Profile Dropdown -->
+          <li class="nav-item dropdown">
+            <a
+              class="nav-link dropdown-toggle d-flex align-items-center"
+              href="#"
+              id="userDropdown"
+              role="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="false"
+            >
+              <img
+                src="/images/icon/dp.png"
+                alt="Profile"
+                class="rounded-circle"
+                width="30"
+                height="30"
+              />
+              <span class="ml-2"><%= user.name %></span>
+            </a>
+            <div
+              class="dropdown-menu dropdown-menu-right"
+              aria-labelledby="userDropdown"
+            >
+              <div class="px-3 py-2">
+                <strong><%= user.name %></strong><br />
+                <small><%= user.email %></small>
+              </div>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/userProfile/"
+                ><i class="zmdi zmdi-account"></i> Account Edit</a
+              >
+              <a class="dropdown-item text-danger" href="/logout"
+                ><i class="zmdi zmdi-power"></i> Logout</a
+              >
+            </div>
+          </li>
           <% } else { %>
           <a href="/signin" class="nav-item nav-link">Login</a>
           <% } %>

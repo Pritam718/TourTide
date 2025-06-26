@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const booking = require("../../models/bookingModel");
 const { default: mongoose } = require("mongoose");
+const { Review } = require("../../models/reviewModel");
 // const isHotelAvailable = require("../../helper/availableHotel");
 
 const isHotelAvailable = async (hotelId, checkIn, checkOut, roomsRequested) => {
@@ -54,7 +55,7 @@ class HotelController {
   async addHotelForm(req, res) {
     try {
       const tours = await Tour.find({});
-      res.render("hotelAddForm", { tours });
+      res.render("hotelAddForm", { tours, user: req.user || null });
     } catch (error) {
       console.log(error);
     }
@@ -108,10 +109,11 @@ class HotelController {
       }
 
       const data = await hotel.save();
-
-      res
-        .status(statusCode.create)
-        .json({ message: "Hotel add successfull", data: data });
+      req.flash("success_msg", "Hotel add successfull");
+      return res.redirect("/admin/hoteltable");
+      // res
+      //   .status(statusCode.create)
+      //   .json({ message: "Hotel add successfull", data: data });
     } catch (error) {
       console.log(error);
     }
@@ -184,7 +186,8 @@ class HotelController {
       };
       const { error, value } = hotelValidationSchema.validate(data);
       if (error) {
-        console.log(error);
+        req.flash("error_msg", error.details[0].message);
+        return res.redirect(`/admin/hotelEditPage/${id}`);
       } else {
         const updateData = await Hotel.findByIdAndUpdate(
           id,
@@ -209,9 +212,11 @@ class HotelController {
           { new: true }
         );
       }
-      return res.status(200).json({
-        message: "Update Successfully",
-      });
+      req.flash("success_msg", "Update Successfully");
+      return res.redirect("/admin/hoteltable");
+      // return res.status(200).json({
+      //   message: "Update Successfully",
+      // });
     } catch (error) {
       console.log(error);
     }
@@ -234,9 +239,11 @@ class HotelController {
         });
       }
       await Hotel.findByIdAndDelete(id);
-      res.status(200).json({
-        message: "Delete Successfully",
-      });
+      req.flash("delete_msg", "Delete Successfully");
+      return res.redirect("/admin/hoteltable");
+      // res.status(200).json({
+      //   message: "Delete Successfully",
+      // });
     } catch (error) {
       console.log(error);
     }
@@ -281,13 +288,40 @@ class HotelController {
         },
       },
     ]);
+    const reviews = await Review.aggregate([
+      {
+        $match: { tour: new mongoose.Types.ObjectId(id) },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userData",
+        },
+      },
+      {
+        $unwind: "$userData",
+      },
+      {
+        $project: {
+          _id: 1,
+          rating: 1,
+          comment: 1,
+          createdAt: 1,
+          "userData.name": 1,
+        },
+      },
+    ]);
     res.render("tourDetails", {
       tour: result[0],
       isAuthenticated: req.isAuthenticated,
+      user: req.user,
       hotels: availableHotels,
       checkIn,
       checkOut,
       rooms,
+      reviews,
     });
   }
 }

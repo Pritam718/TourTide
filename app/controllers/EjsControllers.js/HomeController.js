@@ -16,6 +16,7 @@ class HomeController {
       // console.log(tourData);
       res.render("home", {
         isAuthenticated: req.isAuthenticated,
+        user: req.user,
         tour: tourData,
       });
     } catch (error) {
@@ -24,7 +25,10 @@ class HomeController {
   }
   async aboutPage(req, res) {
     try {
-      res.render("about", { isAuthenticated: req.isAuthenticated });
+      res.render("about", {
+        isAuthenticated: req.isAuthenticated,
+        user: req.user,
+      });
     } catch (error) {
       console.log(error);
     }
@@ -39,6 +43,7 @@ class HomeController {
       res.render("tourPackages", {
         tour: tourData,
         isAuthenticated: req.isAuthenticated,
+        user: req.user,
       });
     } catch (error) {
       console.log(error);
@@ -47,14 +52,20 @@ class HomeController {
 
   async tourdetails(req, res) {
     try {
-      res.render("tourDetails", { isAuthenticated: req.isAuthenticated });
+      res.render("tourDetails", {
+        isAuthenticated: req.isAuthenticated,
+        user: req.user,
+      });
     } catch (error) {
       console.log(error);
     }
   }
-  async contactPage(req,res){
+  async contactPage(req, res) {
     try {
-      res.render("contact",{ isAuthenticated: req.isAuthenticated });
+      res.render("contact", {
+        isAuthenticated: req.isAuthenticated,
+        user: req.user,
+      });
     } catch (error) {
       console.log(error);
     }

@@ -360,6 +360,63 @@
       </div>
       <% } %>
 
+      <!-- Show User Reviews -->
+      <div class="container my-5">
+        <div class="card p-4 shadow-sm">
+          <h3 class="text-primary mb-4">User Reviews</h3>
+          <% if (reviews.length === 0) { %>
+          <p class="text-muted">No reviews yet. Be the first to write one!</p>
+          <% } else { %> <% reviews.forEach((review) => { %>
+          <div class="border-bottom pb-3 mb-3">
+            <strong><%= review.userData.name %></strong>
+            <div class="text-warning">
+              <% for (let i = 0; i < review.rating; i++) { %>★<% } %> <% for
+              (let i = review.rating; i < 5; i++) { %>☆<% } %>
+            </div>
+            <p class="mb-1"><%= review.comment %></p>
+            <small class="text-muted">
+              <%= new Date(review.createdAt).toLocaleDateString("en-IN", { year:
+              "numeric", month: "short", day: "numeric" }) %>
+            </small>
+          </div>
+          <% }) %> <% } %>
+        </div>
+      </div>
+
+      <!-- Review Submit Section -->
+      <div class="container mb-5">
+        <div class="card p-4 shadow-sm">
+          <h3 class="text-primary mb-4">Leave a Review</h3>
+          <form action="/addReview" method="POST">
+            <input type="hidden" name="tour" value="<%= tour._id %>" />
+
+            <div class="form-group">
+              <label for="rating">Rating (1 to 5):</label>
+              <select name="rating" class="form-control" required>
+                <option value="">-- Select --</option>
+                <% for(let i=1; i<=5; i++) { %>
+                <option value="<%= i %>"><%= i %></option>
+                <% } %>
+              </select>
+            </div>
+
+            <div class="form-group mt-3">
+              <label for="comment">Comment:</label>
+              <textarea
+                name="comment"
+                class="form-control"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success mt-3">
+              Submit Review
+            </button>
+          </form>
+        </div>
+      </div>
+
       <div
         class="container-fluid bg-dark text-white-50 px-sm-3 px-lg-5"
         style="margin-top: 90px"

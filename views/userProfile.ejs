@@ -9,7 +9,7 @@
     <meta content="Free HTML Templates" name="description">
 
     <!-- Favicon -->
-    <link href="img/favicon.ico" rel="icon">
+    <link href="/img/favicon.ico" rel="icon">
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
@@ -19,11 +19,11 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
 
     <!-- Libraries Stylesheet -->
-    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/style.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
 </head>
 
 <body>
@@ -37,11 +37,10 @@
     <div class="container-fluid page-header">
         <div class="container">
             <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 400px">
-                <h3 class="display-4 text-white text-uppercase">Contact</h3>
+                <h3 class="display-4 text-white text-uppercase">User Profile</h3>
                 <div class="d-inline-flex text-white">
-                    <p class="m-0 text-uppercase"><a class="text-white" href="">Home</a></p>
                     <i class="fa fa-angle-double-right pt-1 px-3"></i>
-                    <p class="m-0 text-uppercase">Contact</p>
+                    <p class="m-0 text-uppercase">See Your Details</p>
                 </div>
             </div>
         </div>
@@ -49,57 +48,30 @@
     <!-- Header End -->
 
 
-    <!-- Contact Start -->
-    <div class="container-fluid py-5">
-        <div class="container py-5">
-            <div class="text-center mb-3 pb-3">
-                <h6 class="text-primary text-uppercase" style="letter-spacing: 5px;">Contact</h6>
-                <h1>Contact For Any Query</h1>
-            </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="contact-form bg-white" style="padding: 30px;">
-                        <div id="success"></div>
-                        <form  id="contactForm" novalidate="novalidate"
-
-                        action="/addContact"
-                        method="POST"
-                        novalidate
-
-                        >
-                            <div class="form-row">
-                                <div class="control-group col-sm-6">
-                                    <input type="text" class="form-control p-4" id="name" placeholder="Your Name" name="name"
-                                        required="required" data-validation-required-message="Please enter your name" />
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                                <div class="control-group col-sm-6">
-                                    <input type="email" class="form-control p-4" id="email" placeholder="Your Email" name="email"
-                                        required="required" data-validation-required-message="Please enter your email" />
-                                    <p class="help-block text-danger"></p>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <input type="text" class="form-control p-4" id="subject" placeholder="Subject" name="subject"
-                                    required="required" data-validation-required-message="Please enter a subject" />
-                                <p class="help-block text-danger"></p>
-                            </div>
-                            <div class="control-group">
-                                <textarea class="form-control py-3 px-4" rows="5" id="message" placeholder="Message" name="message"
-                                    required="required"
-                                    data-validation-required-message="Please enter your message"></textarea>
-                                <p class="help-block text-danger"></p>
-                            </div>
-                            <div class="text-center">
-                                <button class="btn btn-primary py-3 px-4" type="submit" id="sendMessageButton">Send Message</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow p-4">
+        <h3 class="text-center mb-4">Welcome, <%= user.name %></h3>
+        <ul class="list-group">
+          <li class="list-group-item"><strong>Email:</strong> <%= user.email %></li>
+          <li class="list-group-item"><strong>Phone:</strong> <%= user.phone %></li>
+          <li class="list-group-item"><strong>Role:</strong> <%= user.role %></li>
+          <li class="list-group-item"><strong>Verified:</strong> <%= user.is_verified ? "Yes" : "No" %></li>
+          <li class="list-group-item"><strong>City:</strong> <%= user.city %></li>
+          <li class="list-group-item"><strong>State:</strong> <%= user.state %></li>
+          <li class="list-group-item"><strong>Country:</strong> <%= user.country %></li>
+          <li class="list-group-item"><strong>Address:</strong>
+            <%= user.houseNumber %>, <%= user.street %>, <%= user.apartment || "-" %>, <%= user.city %> - <%= user.postcode %>
+          </li>
+          <li class="list-group-item"><strong>Account Created:</strong> <%= user.createdAt.toDateString() %></li>
+        </ul>
+      </div>
+      <a href="/userEditForm/" class="btn btn-success mt-3">Edit Profile</a>
     </div>
-    <!-- Contact End -->
+  </div>
+</div>
+
 
 
     <!-- Footer Start -->
@@ -181,18 +153,18 @@
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="/lib/easing/easing.min.js"></script>
+    <script src="/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
 
     <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
+    <script src="/mail/jqBootstrapValidation.min.js"></script>
     <!-- <script src="mail/contact.js"></script> -->
 
     <!-- Template Javascript -->
-    <script src="js/main.js"></script>
+    <script src="/js/main.js"></script>
 </body>
 
 </html>

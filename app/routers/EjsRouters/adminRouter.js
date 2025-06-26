@@ -21,8 +21,12 @@ router.use(checkPermission("admin_record"));
 router.get("/logout", adminEjsController.logout);
 
 router.get("/dashboard", adminEjsController.dashboard);
-router.get("/table", adminEjsController.table);
-
+router.get("/tourtable", adminEjsController.tourTable);
+router.get("/foodtable", adminEjsController.foodTable);
+router.get("/hoteltable", adminEjsController.hotelTable);
+router.get("/adminEditForm/", adminEjsController.adminEditForm);
+router.get("/adminProfile/", adminEjsController.adminProfile);
+router.post("/adminEdit/:id", adminEjsController.adminEdit);
 router.get("/touraddform", tourEjsController.tourAddForm);
 router.post(
   "/tourAdd",
@@ -36,7 +40,7 @@ router.post(
   tourEjsController.tourEdit
 );
 router.get("/tourDelete/:id", tourEjsController.deleteTour);
-router.get("/tourList" ,tourEjsController.tourList)
+router.get("/tourList", tourEjsController.tourList);
 
 router.get("/hoteladdform", hotelEjsController.addHotelForm);
 router.get("/gethotel", hotelEjsController.getHotel);
@@ -52,13 +56,13 @@ router.post(
   hotelEjsController.hotelEdit
 );
 router.get("/hotelDelete/:id", hotelEjsController.deleteHotel);
-router.get("/hotelList", hotelEjsController.hotelList)
+router.get("/hotelList", hotelEjsController.hotelList);
 
 router.get("/foodaddform", foodEjsController.addFoodForm);
 router.post("/addFood", foodEjsController.addFood);
 router.get("/foodEditPage/:id", foodEjsController.foodEditPage);
 router.post("/foodEdit/:id", foodEjsController.foodEdit);
 router.get("/foodDelete/:id", foodEjsController.deleteFood);
-router.get("/foodList", foodEjsController.foodList)
+router.get("/foodList", foodEjsController.foodList);
 
 module.exports = router;

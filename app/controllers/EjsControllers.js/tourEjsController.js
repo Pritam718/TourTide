@@ -3,6 +3,7 @@ const statusCode = require("../../helper/httpsStatusCode");
 const { Tour, tourValidationSchema } = require("../../models/tourModel");
 const path = require("path");
 const fs = require("fs");
+const { Review } = require("../../models/reviewModel");
 
 class TourEjsController {
   async tourPackagePage(req, res) {
@@ -11,6 +12,7 @@ class TourEjsController {
       res.render("tourPackages", {
         tour: tourData,
         isAuthenticated: req.isAuthenticated,
+        user: req.user,
       });
     } catch (error) {
       console.log(error);
@@ -54,11 +56,38 @@ class TourEjsController {
           },
         },
       ]);
+      const reviews = await Review.aggregate([
+        {
+          $match: { tour: new mongoose.Types.ObjectId(id) },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "userData",
+          },
+        },
+        {
+          $unwind: "$userData",
+        },
+        {
+          $project: {
+            _id: 1,
+            rating: 1,
+            comment: 1,
+            createdAt: 1,
+            "userData.name": 1,
+          },
+        },
+      ]);
       // res.json(result);
       res.render("tourDetails", {
         tour: result[0],
         isAuthenticated: req.isAuthenticated,
+        user: req.user,
         hotels: 0,
+        reviews,
       });
     } catch (error) {
       console.log(error);
@@ -66,7 +95,7 @@ class TourEjsController {
   }
   async tourAddForm(req, res) {
     try {
-      res.render("tourAddForm");
+      res.render("tourAddForm", { user: req.user || null });
     } catch (error) {
       console.log(error);
     }
@@ -115,10 +144,11 @@ class TourEjsController {
       }
 
       const data = await tour.save();
-
-      res
-        .status(statusCode.create)
-        .json({ message: "Tour place add successfull", data: data });
+      req.flash("success_msg", error.details[0].message);
+      return res.redirect("/admin/tourtable");
+      // res
+      //   .status(statusCode.create)
+      //   .json({ message: "Tour place add successfull", data: data });
     } catch (error) {
       console.log(error);
     }
@@ -183,7 +213,8 @@ class TourEjsController {
       };
       const { error, value } = tourValidationSchema.validate(data);
       if (error) {
-        console.log(error);
+        req.flash("error_msg", error.details[0].message);
+        return res.redirect(`/admin/tourEditPage/${id}`);
       } else {
         const updateData = await Tour.findByIdAndUpdate(
           id,
@@ -205,9 +236,11 @@ class TourEjsController {
           { new: true }
         );
       }
-      return res.status(200).json({
-        message: "Update Successfully",
-      });
+      req.flash("success_msg", "Update Successfully");
+      return res.redirect("/admin/tourtable");
+      // return res.status(200).json({
+      //   message: "Update Successfully",
+      // });
     } catch (error) {
       console.log(error);
     }
@@ -234,9 +267,11 @@ class TourEjsController {
       // Delete tour data from DB
       await Tour.findByIdAndDelete(id);
 
-      res.status(200).json({
-        message: "Tour deleted successfully",
-      });
+      req.flash("delete_msg", "Delete Successfully");
+      return res.redirect("/admin/tourtable");
+      // res.status(200).json({
+      //   message: "Tour deleted successfully",
+      // });
     } catch (error) {
       console.error("Error deleting tour:", error);
       res.status(500).json({ message: "Internal Server Error" });

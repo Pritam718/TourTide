@@ -79,7 +79,7 @@ class AdminEjsController {
         },
         { new: true }
       );
-      req.flash("success_msg", "User Profile Update");
+      req.flash("success_msg", "User profile update");
       return res.redirect("/admin/adminProfile/");
     } catch (error) {
       console.log(error);

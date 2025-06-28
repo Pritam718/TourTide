@@ -9,6 +9,7 @@ const adminCheckauthenticationToken = require("../../middleware/adminAuth");
 const tourImageUpload = require("../../helper/tourImage");
 const router = express.Router();
 
+router.get("/hotelbooking-history", hotelEjsController.getHotelBooking);
 router.get("/", (req, res) => {
   res.render("adminLogin");
 });
@@ -24,6 +25,7 @@ router.get("/dashboard", adminEjsController.dashboard);
 router.get("/tourtable", adminEjsController.tourTable);
 router.get("/foodtable", adminEjsController.foodTable);
 router.get("/hoteltable", adminEjsController.hotelTable);
+
 router.get("/adminEditForm/", adminEjsController.adminEditForm);
 router.get("/adminProfile/", adminEjsController.adminProfile);
 router.post("/adminEdit/:id", adminEjsController.adminEdit);

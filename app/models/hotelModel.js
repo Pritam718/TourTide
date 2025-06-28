@@ -85,10 +85,6 @@ const hotelSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
-    bookingCount: {
-      type: Number,
-      default: 0,
-    },
     total_capacity: {
       type: Number,
       required: true,

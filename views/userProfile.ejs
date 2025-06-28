@@ -1,80 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>User Dashboard</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <link href="/img/favicon.ico" rel="icon" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="/lib/owlcarousel/assets/owl.carousel.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css"
+      rel="stylesheet"
+    />
+    <link href="/css/style.css" rel="stylesheet" />
+  </head>
 
-<head>
-    <meta charset="utf-8">
-    <title>Contact Page</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Free HTML Templates" name="keywords">
-    <meta content="Free HTML Templates" name="description">
+  <body>
+    <%- include("./layouts/topbar") %> <%- include("./layouts/navbar") %> <%-
+    include("./layouts/flash") %>
 
-    <!-- Favicon -->
-    <link href="/img/favicon.ico" rel="icon">
-
-    <!-- Google Web Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"> 
-
-    <!-- Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-    <!-- Libraries Stylesheet -->
-    <link href="/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-    <link href="/lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
-
-    <!-- Customized Bootstrap Stylesheet -->
-    <link href="/css/style.css" rel="stylesheet">
-</head>
-
-<body>
-    <!-- Topbar -->
-    <%-include("./layouts/topbar") %>
-    <!-- Navbar -->
-    <%-include("./layouts/navbar") %>
-    <%- include("./layouts/flash") %>
-
-    <!-- Header Start -->
     <div class="container-fluid page-header">
-        <div class="container">
-            <div class="d-flex flex-column align-items-center justify-content-center" style="min-height: 400px">
-                <h3 class="display-4 text-white text-uppercase">User Profile</h3>
-                <div class="d-inline-flex text-white">
-                    <i class="fa fa-angle-double-right pt-1 px-3"></i>
-                    <p class="m-0 text-uppercase">See Your Details</p>
-                </div>
-            </div>
+      <div class="container">
+        <div
+          class="d-flex flex-column align-items-center justify-content-center"
+          style="min-height: 400px"
+        >
+          <h3 class="display-4 text-white text-uppercase">User Dashboard</h3>
+          <div class="d-inline-flex text-white">
+            <i class="fa fa-angle-double-right pt-1 px-3"></i>
+            <p class="m-0 text-uppercase">Welcome, <%= user.name %></p>
+          </div>
         </div>
+      </div>
     </div>
-    <!-- Header End -->
-
 
     <div class="container py-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow p-4">
-        <h3 class="text-center mb-4">Welcome, <%= user.name %></h3>
-        <ul class="list-group">
-          <li class="list-group-item"><strong>Email:</strong> <%= user.email %></li>
-          <li class="list-group-item"><strong>Phone:</strong> <%= user.phone %></li>
-          <li class="list-group-item"><strong>Role:</strong> <%= user.role %></li>
-          <li class="list-group-item"><strong>Verified:</strong> <%= user.is_verified ? "Yes" : "No" %></li>
-          <li class="list-group-item"><strong>City:</strong> <%= user.city %></li>
-          <li class="list-group-item"><strong>State:</strong> <%= user.state %></li>
-          <li class="list-group-item"><strong>Country:</strong> <%= user.country %></li>
-          <li class="list-group-item"><strong>Address:</strong>
-            <%= user.houseNumber %>, <%= user.street %>, <%= user.apartment || "-" %>, <%= user.city %> - <%= user.postcode %>
-          </li>
-          <li class="list-group-item"><strong>Account Created:</strong> <%= user.createdAt.toDateString() %></li>
-        </ul>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="card shadow p-4 h-100">
+            <h4 class="text-center mb-3">Profile Details</h4>
+            <ul class="list-group">
+              <li class="list-group-item">
+                <strong>Email:</strong> <%= user.email %>
+              </li>
+              <li class="list-group-item">
+                <strong>Phone:</strong> <%= user.phone %>
+              </li>
+              <li class="list-group-item">
+                <strong>Role:</strong> <%= user.role %>
+              </li>
+              <li class="list-group-item">
+                <strong>Verified:</strong> <%= user.is_verified ? "Yes" : "No"
+                %>
+              </li>
+              <li class="list-group-item">
+                <strong>City:</strong> <%= user.city %>
+              </li>
+              <li class="list-group-item">
+                <strong>State:</strong> <%= user.state %>
+              </li>
+              <li class="list-group-item">
+                <strong>Country:</strong> <%= user.country %>
+              </li>
+              <li class="list-group-item">
+                <strong>Address:</strong>
+                <%= user.houseNumber %>, <%= user.street %>, <%= user.apartment
+                || "-" %>, <%= user.city %> - <%= user.postcode %>
+              </li>
+              <li class="list-group-item">
+                <strong>Joined:</strong> <%= user.createdAt.toDateString() %>
+              </li>
+            </ul>
+            <a href="/userEditForm/" class="btn btn-success mt-3 w-100"
+              >Edit Profile</a
+            >
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="card shadow p-4">
+            <h4 class="mb-4 text-center">Booking History</h4>
+            <% if (bookings.length > 0) { %>
+            <div class="table-responsive">
+              <table class="table table-bordered text-center">
+                <thead class="thead-dark">
+                  <tr>
+                    <th>#</th>
+                    <th>Tour Place</th>
+                    <th>Hotel</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Rooms</th>
+                    <th>Persons</th>
+                    <th>Children</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% bookings.forEach((b, i) => { %>
+                  <tr>
+                    <td><%= i + 1 %></td>
+                    <td><%= b.tour?.place || '-' %></td>
+                    <td><%= b.hotel?.name || '-' %></td>
+                    <td>
+                      <%= b.startingDate ? new
+                      Date(b.startingDate).toISOString().split('T')[0] : '-' %>
+                    </td>
+                    <td>
+                      <%= b.endingDate ? new
+                      Date(b.endingDate).toISOString().split('T')[0] : '-' %>
+                    </td>
+                    <td><%= b.roomsBooked %></td>
+                    <td><%= b.personNumber %></td>
+                    <td><%= b.childNumber %></td>
+                  </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+            <% } else { %>
+            <div class="alert alert-warning text-center">
+              You have no bookings yet.
+            </div>
+            <% } %>
+          </div>
+        </div>
       </div>
-      <a href="/userEditForm/" class="btn btn-success mt-3">Edit Profile</a>
     </div>
-  </div>
-</div>
 
-
-
-    <!-- Footer Start -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"
+      ><i class="fa fa-angle-double-up"></i
+    ></a>
+<!-- Footer Start -->
     <div class="container-fluid bg-dark text-white-50 py-5 px-sm-3 px-lg-5" style="margin-top: 90px;">
         <div class="row pt-5">
             <div class="col-lg-3 col-md-6 mb-5">
@@ -138,19 +203,12 @@
                 </p>
             </div>
             <div class="col-lg-6 text-center text-md-right">
-                <p class="m-0 text-white-50">Designed by <a href="#">HTML Codex</a>
+                <p class="m-0 text-white-50">Designed by <a href="https://htmlcodex.com">HTML Codex</a>
                 </p>
             </div>
         </div>
     </div>
     <!-- Footer End -->
-
-
-    <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
-
-
-    <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="/lib/easing/easing.min.js"></script>
@@ -158,13 +216,7 @@
     <script src="/lib/tempusdominus/js/moment.min.js"></script>
     <script src="/lib/tempusdominus/js/moment-timezone.min.js"></script>
     <script src="/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-    <!-- Contact Javascript File -->
     <script src="/mail/jqBootstrapValidation.min.js"></script>
-    <!-- <script src="mail/contact.js"></script> -->
-
-    <!-- Template Javascript -->
     <script src="/js/main.js"></script>
-</body>
-
+  </body>
 </html>

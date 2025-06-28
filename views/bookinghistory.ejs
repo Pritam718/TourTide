@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags-->
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="au theme template" />
+    <meta name="author" content="Hau Nguyen" />
+    <meta name="keywords" content="au theme template" />
+
+    <!-- Title Page-->
+    <title>Dashboard</title>
+
+    <!-- Fontfaces CSS-->
+    <link href="css/font-face.css" rel="stylesheet" media="all" />
+    <link
+      href="/vendor/font-awesome-4.7/css/font-awesome.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+    <link
+      href="/vendor/font-awesome-5/css/fontawesome-all.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+    <link
+      href="/vendor/mdi-font/css/material-design-iconic-font.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+
+    <!-- Bootstrap CSS-->
+    <link
+      href="/vendor/bootstrap-4.1/bootstrap.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+
+    <!-- Vendor CSS-->
+    <link
+      href="/vendor/animsition/animsition.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+    <link
+      href="/vendor/bootstrap-progressbar/bootstrap-progressbar-3.3.4.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+    <link href="/vendor/wow/animate.css" rel="stylesheet" media="all" />
+    <link
+      href="/vendor/css-hamburgers/hamburgers.min.css"
+      rel="stylesheet"
+      media="all"
+    />
+    <link href="/vendor/slick/slick.css" rel="stylesheet" media="all" />
+    <link href="/vendor/select2/select2.min.css" rel="stylesheet" media="all" />
+    <link
+      href="/vendor/perfect-scrollbar/perfect-scrollbar.css"
+      rel="stylesheet"
+      media="all"
+    />
+
+    <!-- Main CSS-->
+    <link href="/css/theme.css" rel="stylesheet" media="all" />
+  </head>
+  <body class="animsition">
+  <div class="page-wrapper">
+    <!-- HEADER MOBILE-->
+    <%- include("./layouts/adminHeaderMobile") %>
+    <!-- END HEADER MOBILE-->
+
+    <!-- MENU SIDEBAR-->
+    <%- include("./layouts/adminSidebar") %>
+    <!-- END MENU SIDEBAR-->
+
+    <!-- PAGE CONTAINER-->
+    <div class="page-container">
+      <!-- HEADER DESKTOP-->
+      <%- include("./layouts/adminHeader") %>
+      <!-- END HEADER DESKTOP-->
+
+      <!-- MAIN CONTENT-->
+      <div class="main-content">
+        <div class="section__content section__content--p30">
+          <div class="container-fluid">
+            <h2 class="mb-4">Hotel Booking History</h2>
+            <form method="GET" action="/admin/hotelbooking-history" class="row g-3 mb-5">
+              <div class="col-md-4">
+                <label for="hotelId" class="form-label">Select Hotel</label>
+                <select class="form-select" id="hotelId" name="hotelId" required>
+                  <% hotels.forEach(hotel => { %>
+                    <option value="<%= hotel._id %>" <%= hotel._id.toString() === selectedHotelId ? 'selected' : '' %>>
+                      <%= hotel.name %>
+                    </option>
+                  <% }) %>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="startDate" class="form-label">Start Date</label>
+                <input type="date" class="form-control" id="startDate" name="startDate" value="<%= startDate %>" required>
+              </div>
+              <div class="col-md-3">
+                <label for="endDate" class="form-label">End Date</label>
+                <input type="date" class="form-control" id="endDate" name="endDate" value="<%= endDate %>" required>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Get History</button>
+              </div>
+            </form>
+
+            <% if (bookings && bookings.length > 0) { %>
+              <div class="alert alert-success">
+                <strong><%= bookings.length %></strong> bookings found.
+                Total Rooms Booked: <strong><%= totalRoomsBooked %></strong>
+              </div>
+
+              <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                  <tr>
+                    <th>Booking ID</th>
+                    <th>User</th>
+                    <th>Tour Place</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Rooms</th>
+                    <th>Persons</th>
+                    <th>Children</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% bookings.forEach(b => { %>
+                    <tr>
+                      <td><%= b.bookingId %></td>
+                      <td><%= b.user.name %> (<%= b.user.email %>)</td>
+                      <td><%= b.tour.place %></td>
+                      <td><%= b.startingDate.toISOString().split('T')[0] %></td>
+                      <td><%= b.endingDate.toISOString().split('T')[0] %></td>
+                      <td><%= b.roomsBooked %></td>
+                      <td><%= b.personNumber %></td>
+                      <td><%= b.childNumber %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+
+              <!-- Export Button -->
+              <div class="row mb-4">
+                <div class="col-md-12 text-end">
+                  <form method="GET" action="/admin/export-booking-history">
+                    <input type="hidden" name="hotelId" value="<%= selectedHotelId %>">
+                    <input type="hidden" name="startDate" value="<%= startDate %>">
+                    <input type="hidden" name="endDate" value="<%= endDate %>">
+                    <button type="submit" class="btn btn-success">Export CSV</button>
+                  </form>
+                </div>
+              </div>
+
+            <% } else if (bookings) { %>
+              <div class="alert alert-warning">No bookings found for this range.</div>
+            <% } %>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="copyright">
+                  <p>Copyright © 2025 TourTide. All rights reserved.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- END MAIN CONTENT-->
+    </div>
+    <!-- END PAGE CONTAINER-->
+  </div>
+
+  <!-- Jquery JS-->
+  <script src="/vendor/jquery-3.2.1.min.js"></script>
+  <script src="/vendor/bootstrap-4.1/popper.min.js"></script>
+  <script src="/vendor/bootstrap-4.1/bootstrap.min.js"></script>
+  <script src="/vendor/slick/slick.min.js"></script>
+  <script src="/vendor/wow/wow.min.js"></script>
+  <script src="/vendor/animsition/animsition.min.js"></script>
+  <script src="/vendor/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+  <script src="/vendor/counter-up/jquery.waypoints.min.js"></script>
+  <script src="/vendor/counter-up/jquery.counterup.min.js"></script>
+  <script src="/vendor/circle-progress/circle-progress.min.js"></script>
+  <script src="/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script src="/vendor/chartjs/Chart.bundle.min.js"></script>
+  <script src="/vendor/select2/select2.min.js"></script>
+  <script src="/js/main1.js"></script>
+</body>
+
+</html>

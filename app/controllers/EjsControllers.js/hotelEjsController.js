@@ -13,7 +13,7 @@ const isHotelAvailable = async (hotelId, checkIn, checkOut, roomsRequested) => {
   if (!hotel) throw new Error("Hotel not found");
 
   // Get bookings that overlap
-  const bookings = await booking.find({
+  const overlappingBookings = await booking.find({
     hotelId,
     $or: [
       {
@@ -24,12 +24,16 @@ const isHotelAvailable = async (hotelId, checkIn, checkOut, roomsRequested) => {
   });
 
   // Calculate total rooms booked during overlapping period
-  let totalRoomsBooked = 0;
-  bookings.forEach((b) => {
-    totalRoomsBooked += b.roomsBooked;
-  });
+  // let totalRoomsBooked = 0;
+  // bookings.forEach((b) => {
+  //   totalRoomsBooked += b.roomsBooked;
+  // });
+  const totalRoomsBooked = overlappingBookings.reduce(
+    (sum, booking) => sum + (booking.roomsBooked || 1),
+    0
+  );
 
-  return hotel.total_capacity - totalRoomsBooked >= roomsRequested;
+  return totalRoomsBooked + roomsRequested <= hotel.total_capacity;
 };
 
 class HotelController {
@@ -52,6 +56,158 @@ class HotelController {
       console.log(error);
     }
   }
+  // async getHotelBooking(req, res) {
+  //   try {
+  //     const { hotelId, startDate, endDate } = req.query;
+
+  //     if (!hotelId || !startDate || !endDate) {
+  //       return res.status(400).json({ message: "Missing query parameters." });
+  //     }
+
+  //     const hotelObjectId = new mongoose.Types.ObjectId(hotelId);
+
+  //     const bookings = await booking.aggregate([
+  //       {
+  //         $match: {
+  //           hotelId: hotelObjectId,
+  //           startingDate: { $lte: new Date(endDate) },
+  //           endingDate: { $gte: new Date(startDate) },
+  //         },
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "users", // collection name in MongoDB (usually lowercase plural)
+  //           localField: "userId",
+  //           foreignField: "_id",
+  //           as: "user",
+  //         },
+  //       },
+  //       {
+  //         $unwind: "$user",
+  //       },
+  //       {
+  //         $lookup: {
+  //           from: "tours",
+  //           localField: "tourId",
+  //           foreignField: "_id",
+  //           as: "tour",
+  //         },
+  //       },
+  //       {
+  //         $unwind: "$tour",
+  //       },
+  //       {
+  //         $project: {
+  //           _id: 1,
+  //           bookingId: 1,
+  //           startingDate: 1,
+  //           endingDate: 1,
+  //           roomsBooked: 1,
+  //           personNumber: 1,
+  //           childNumber: 1,
+  //           "user.name": 1,
+  //           "user.email": 1,
+  //           "tour.place": 1,
+  //         },
+  //       },
+  //     ]);
+  //     console.log("booking", bookings);
+
+  //     // Calculate total rooms booked
+  //     const totalRoomsBooked = bookings.reduce(
+  //       (sum, b) => sum + (b.roomsBooked || 1),
+  //       0
+  //     );
+
+  //     res.status(200).json({
+  //       totalBookings: bookings.length,
+  //       totalRoomsBooked,
+  //       bookings,
+  //     });
+  //   } catch (err) {
+  //     console.error("Admin booking history aggregation error:", err);
+  //     res.status(500).json({ message: "Server error" });
+  //   }
+  // }
+
+  async getHotelBooking(req, res) {
+    try {
+      const hotels = await Hotel.find({}, "_id name");
+
+      const { hotelId, startDate, endDate } = req.query;
+
+      if (!hotelId || !startDate || !endDate) {
+        return res.render("bookinghistory", {
+          hotels,
+          bookings: null,
+          totalRoomsBooked: 0,
+          selectedHotelId: "",
+          startDate: "",
+          endDate: "",
+          user: req.user || null,
+        });
+      }
+
+      const bookings = await booking.aggregate([
+        {
+          $match: {
+            hotelId: new mongoose.Types.ObjectId(hotelId),
+            startingDate: { $lte: new Date(endDate) },
+            endingDate: { $gte: new Date(startDate) },
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        { $unwind: "$user" },
+        {
+          $lookup: {
+            from: "tours",
+            localField: "tourId",
+            foreignField: "_id",
+            as: "tour",
+          },
+        },
+        { $unwind: "$tour" },
+        {
+          $project: {
+            bookingId: 1,
+            startingDate: 1,
+            endingDate: 1,
+            roomsBooked: 1,
+            personNumber: 1,
+            childNumber: 1,
+            user: { name: "$user.name", email: "$user.email" },
+            tour: { place: "$tour.place" },
+          },
+        },
+      ]);
+
+      const totalRoomsBooked = bookings.reduce(
+        (sum, b) => sum + (b.roomsBooked || 1),
+        0
+      );
+
+      res.render("bookinghistory", {
+        hotels,
+        bookings,
+        totalRoomsBooked,
+        selectedHotelId: hotelId,
+        startDate,
+        endDate,
+        user: req.user || null,
+      });
+    } catch (err) {
+      console.error("Booking history view error:", err);
+      res.status(500).send("Server error");
+    }
+  }
+
   async addHotelForm(req, res) {
     try {
       const tours = await Tour.find({});
@@ -260,8 +416,10 @@ class HotelController {
     }
   }
   async getAvailableHotels(req, res) {
+    const id = req.params.id;
     const { checkIn, checkOut, rooms } = req.query;
-    const allHotels = await Hotel.find({ isAvailable: true });
+    const allHotels = await Hotel.find({ tour: id, isAvailable: true });
+    console.log(allHotels);
     const availableHotels = [];
 
     for (const hotel of allHotels) {
@@ -274,7 +432,6 @@ class HotelController {
       if (available) availableHotels.push(hotel);
     }
 
-    const id = req.params.id;
     const result = await Tour.aggregate([
       {
         $match: { _id: new mongoose.Types.ObjectId(id) },

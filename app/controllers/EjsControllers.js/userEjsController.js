@@ -6,6 +6,8 @@ const { User, userSchemaValidation } = require("../../models/userModel");
 const sendEmailVerificationOTP = require("../../helper/smsValidation");
 const EmailVerifyModel = require("../../models/otpModel");
 const { equal } = require("joi");
+const booking = require("../../models/bookingModel");
+const { default: mongoose } = require("mongoose");
 
 class UserEjsController {
   async signupPage(req, res) {
@@ -318,7 +320,60 @@ class UserEjsController {
     try {
       const userId = req.user ? req.user.userId : "null";
       const user = await User.findById(userId);
-      res.render("userProfile", { isAuthenticated: req.isAuthenticated, user });
+      const userBookings = await booking.aggregate([
+        {
+          $match: { userId: new mongoose.Types.ObjectId(userId) },
+        },
+        {
+          $lookup: {
+            from: "tours",
+            localField: "tourId",
+            foreignField: "_id",
+            as: "tour",
+          },
+        },
+        {
+          $unwind: {
+            path: "$tour",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $lookup: {
+            from: "hotels",
+            localField: "hotelId",
+            foreignField: "_id",
+            as: "hotel",
+          },
+        },
+        {
+          $unwind: {
+            path: "$hotel",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            bookingId: 1,
+            startingDate: 1,
+            endingDate: 1,
+            roomsBooked: 1,
+            personNumber: 1,
+            childNumber: 1,
+            "tour.place": 1,
+            "hotel.name": 1,
+          },
+        },
+        {
+          $sort: { startingDate: -1 }, // Sort by latest first
+        },
+      ]);
+      console.log(userBookings);
+      res.render("userProfile", {
+        isAuthenticated: req.isAuthenticated,
+        user,
+        bookings: userBookings,
+      });
     } catch (error) {
       console.log(error);
     }

@@ -102,6 +102,7 @@ class TourEjsController {
   }
   async addPlace(req, res) {
     try {
+      console.log(req.body);
       const { error } = tourValidationSchema.validate(req.body);
       if (error) {
         console.log(error);
@@ -144,7 +145,7 @@ class TourEjsController {
       }
 
       const data = await tour.save();
-      req.flash("success_msg", error.details[0].message);
+      req.flash("success_msg", "Tour place add successfull");
       return res.redirect("/admin/tourtable");
       // res
       //   .status(statusCode.create)

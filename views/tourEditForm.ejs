@@ -240,20 +240,7 @@
                             value="<%= data.price %>"
                           />
                         </div>
-                        <div class="form-group">
-                          <label for="packageDays" class="control-label mb-1"
-                            >Total Package Days</label
-                          >
-                          <input
-                            id="packageDays"
-                            name="packageDays"
-                            type="number"
-                            class="form-control"
-                            aria-required="true"
-                            aria-invalid="false"
-                            value="<%= data.packageDays %>"
-                          />
-                        </div>
+
                         <% data.packageSummary.forEach(function(pkg, i) { %> <%
                         pkg.day.forEach(function(d,i){ %>
                         <div id="formItems">
@@ -265,7 +252,6 @@
                               <input
                                 id="day"
                                 name="day[]"
-                                type="number"
                                 class="form-control"
                                 aria-required="true"
                                 aria-invalid="false"
@@ -298,6 +284,79 @@
                           </div>
                         </div>
                         <% }) %> <% }) %>
+
+                        <h4 class="mt-4">Tour Schedules</h4>
+                        <div id="schedules-container">
+                          <% if (data.schedules && data.schedules.length > 0) {
+                          %> <% data.schedules.forEach(function(schedule, index)
+                          { %>
+                          <div class="schedule-row mb-3 border p-3 rounded">
+                            <div class="row">
+                              <div class="col-md-2">
+                                <label>Duration (days)</label>
+                                <input
+                                  type="number"
+                                  name="scheduleDuration[]"
+                                  class="form-control"
+                                  value="<%= schedule.duration %>"
+                                  required
+                                />
+                              </div>
+                              <div class="col-md-3">
+                                <label>Group Name</label>
+                                <input
+                                  type="text"
+                                  name="scheduleGroup[]"
+                                  class="form-control"
+                                  value="<%= schedule.groupName %>"
+                                  required
+                                />
+                              </div>
+                              <div class="col-md-3">
+                                <label>Start Date</label>
+                                <input
+                                  type="date"
+                                  name="scheduleStart[]"
+                                  class="form-control"
+                                  value="<%= schedule.startDate.toISOString().split('T')[0] %>"
+                                  required
+                                />
+                              </div>
+                              <div class="col-md-3">
+                                <label>End Date</label>
+                                <input
+                                  type="date"
+                                  name="scheduleEnd[]"
+                                  class="form-control"
+                                  value="<%= schedule.endDate.toISOString().split('T')[0] %>"
+                                  required
+                                />
+                              </div>
+                              <div class="col-md-1">
+                                <label>Slots</label>
+                                <input
+                                  type="number"
+                                  name="scheduleSlots[]"
+                                  class="form-control"
+                                  value="<%= schedule.availableSlots %>"
+                                  required
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <% }) %> <% } %>
+                        </div>
+
+                        <!-- Add Schedule Button -->
+                        <div class="mb-4">
+                          <button
+                            type="button"
+                            class="btn btn-sm btn-success"
+                            onclick="addSchedule()"
+                          >
+                            + Add Schedule
+                          </button>
+                        </div>
 
                         <button
                           type="button"
@@ -410,6 +469,38 @@
       function removeItem(button) {
         const itemGroup = button.closest(".item-group");
         itemGroup.remove();
+      }
+    </script>
+    <script>
+      function addSchedule() {
+        const container = document.getElementById("schedules-container");
+        const html = `
+      <div class="schedule-row mb-3 border p-3 rounded">
+        <div class="row">
+          <div class="col-md-2">
+            <label>Duration (days)</label>
+            <input type="number" name="scheduleDuration[]" class="form-control" required />
+          </div>
+          <div class="col-md-3">
+            <label>Group Name</label>
+            <input type="text" name="scheduleGroup[]" class="form-control" required />
+          </div>
+          <div class="col-md-3">
+            <label>Start Date</label>
+            <input type="date" name="scheduleStart[]" class="form-control" required />
+          </div>
+          <div class="col-md-3">
+            <label>End Date</label>
+            <input type="date" name="scheduleEnd[]" class="form-control" required />
+          </div>
+          <div class="col-md-1">
+            <label>Slots</label>
+            <input type="number" name="scheduleSlots[]" class="form-control" required />
+          </div>
+        </div>
+      </div>
+    `;
+        container.insertAdjacentHTML("beforeend", html);
       }
     </script>
   </body>

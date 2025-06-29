@@ -27,6 +27,7 @@ class TourEjsController {
       res.render("tourPackages", {
         tour: tourData,
         isAuthenticated: req.isAuthenticated,
+        user: req.user || null,
       });
     } catch (error) {
       console.log(error);
@@ -39,14 +40,14 @@ class TourEjsController {
         {
           $match: { _id: new mongoose.Types.ObjectId(id) },
         },
-        // {
-        //   $lookup: {
-        //     from: "hotels",
-        //     localField: "_id",
-        //     foreignField: "tour",
-        //     as: "hotels",
-        //   },
-        // },
+        {
+          $lookup: {
+            from: "hotels",
+            localField: "_id",
+            foreignField: "tour",
+            as: "hotels",
+          },
+        },
         {
           $lookup: {
             from: "foods",
@@ -102,7 +103,6 @@ class TourEjsController {
   }
   async addPlace(req, res) {
     try {
-      console.log(req.body);
       const { error } = tourValidationSchema.validate(req.body);
       if (error) {
         console.log(error);
@@ -123,13 +123,46 @@ class TourEjsController {
         packageDays,
         day,
         daySummary,
+        scheduleDuration,
+        scheduleGroup,
+        scheduleStart,
+        scheduleEnd,
+        scheduleSlots,
       } = req.body;
 
-      const packageSummary = day.map((d, i) => ({
-        day: d,
-        daySummary: daySummary[i],
-      }));
+      // 1. Handle packageSummary and schedules based on durations
+      let packageSummary = [];
+      let schedules = [];
 
+      let dayIndex = 0;
+      for (let i = 0; i < scheduleDuration.length; i++) {
+        const duration = parseInt(scheduleDuration[i]);
+
+        const dayItems = [];
+        const daySummaries = [];
+
+        for (let j = 0; j < duration; j++) {
+          dayItems.push(day[dayIndex]);
+          daySummaries.push(daySummary[dayIndex]);
+          dayIndex++;
+        }
+
+        packageSummary.push({
+          day: dayItems,
+          daySummary: daySummaries,
+        });
+
+        schedules.push({
+          duration,
+          groupName: scheduleGroup[i],
+          startDate: new Date(scheduleStart[i]),
+          endDate: new Date(scheduleEnd[i]),
+          availableSlots: parseInt(scheduleSlots[i]),
+          bookedSlots: 0,
+        });
+      }
+
+      // 2. Create the new tour object
       const tour = new Tour({
         place,
         address: { fullAddress, city, district, state, pin, country },
@@ -137,23 +170,27 @@ class TourEjsController {
         price,
         packageDays,
         packageSummary,
+        schedules,
       });
 
-      if (req.files) {
+      // 3. Save images if uploaded
+      if (req.files && req.files.length > 0) {
         const imagePaths = req.files.map((file) => file.path);
         tour.image = imagePaths;
       }
 
-      const data = await tour.save();
-      req.flash("success_msg", "Tour place add successfull");
+      // 4. Save to database
+      await tour.save();
+
+      req.flash("success_msg", "Tour place added successfully");
       return res.redirect("/admin/tourtable");
-      // res
-      //   .status(statusCode.create)
-      //   .json({ message: "Tour place add successfull", data: data });
     } catch (error) {
-      console.log(error);
+      console.error("Add Place Error:", error);
+      req.flash("error_msg", "Something went wrong. Please try again.");
+      return res.redirect("/admin/touraddform");
     }
   }
+
   async tourEditPage(req, res) {
     try {
       const id = req.params.id;
@@ -161,7 +198,7 @@ class TourEjsController {
       if (!existinData) {
         console.log("Tour not found");
       }
-      res.render("tourEditForm", { data: existinData });
+      res.render("tourEditForm", { data: existinData, user: req.user || null });
     } catch (error) {
       console.log(error);
     }
@@ -169,21 +206,7 @@ class TourEjsController {
   async tourEdit(req, res) {
     try {
       const id = req.params.id;
-      const existinData = await Tour.findById(id);
-      if (!existinData) {
-        console.log("Data not found");
-      }
-      let updateImagePaths = existinData.image;
-
-      if (req.files && req.files.length > 0) {
-        existinData.image.map((img) => {
-          const imageFullPath = path.join(__dirname, "../../../", img);
-          fs.unlink(imageFullPath, (err) => {
-            if (err) console.error("Failed to delete image", err);
-          });
-        });
-        updateImagePaths = req.files.map((file) => file.path);
-      }
+      console.log(req.body);
       const {
         place,
         fullAddress,
@@ -194,10 +217,15 @@ class TourEjsController {
         country,
         description,
         price,
-        packageDays,
         day,
         daySummary,
+        scheduleDuration,
+        scheduleGroup,
+        scheduleStart,
+        scheduleEnd,
+        scheduleSlots,
       } = req.body;
+
       const data = {
         place,
         fullAddress,
@@ -208,42 +236,84 @@ class TourEjsController {
         country,
         description,
         price,
-        packageDays,
         day,
         daySummary,
       };
-      const { error, value } = tourValidationSchema.validate(data);
+
+      req.body.scheduleDuration = req.body.scheduleDuration.map(Number);
+      req.body.scheduleSlots = req.body.scheduleSlots.map(Number);
+      req.body.scheduleStart = req.body.scheduleStart.map(
+        (date) => new Date(date)
+      );
+      req.body.scheduleEnd = req.body.scheduleEnd.map((date) => new Date(date));
+      req.body.day = req.body.day.map((val) => val.toString());
+      req.body.daySummary = req.body.daySummary.map((val) => val.toString());
+      req.body.price = Number(req.body.price);
+      req.body.pin = Number(req.body.pin);
+
+      // Validate
+      const { error } = tourValidationSchema.validate(req.body, {
+        abortEarly: false,
+      });
       if (error) {
-        req.flash("error_msg", error.details[0].message);
-        return res.redirect(`/admin/tourEditPage/${id}`);
-      } else {
-        const updateData = await Tour.findByIdAndUpdate(
-          id,
-          {
-            place,
-            fullAddress,
-            city,
-            district,
-            state,
-            pin,
-            country,
-            description,
-            price,
-            packageDays,
-            day,
-            daySummary,
-            image: updateImagePaths,
-          },
-          { new: true }
-        );
+        console.log(error.details); // important
+        return res.status(400).json({ error: error.details });
       }
-      req.flash("success_msg", "Update Successfully");
+
+      // Handle images
+      const tour = await Tour.findById(id);
+      const updateImagePaths = tour.image;
+
+      // Ensure all fields are arrays
+      const scheduleDurationArray = Array.isArray(scheduleDuration)
+        ? scheduleDuration
+        : [scheduleDuration];
+      const scheduleGroupArray = Array.isArray(scheduleGroup)
+        ? scheduleGroup
+        : [scheduleGroup];
+      const scheduleStartArray = Array.isArray(scheduleStart)
+        ? scheduleStart
+        : [scheduleStart];
+      const scheduleEndArray = Array.isArray(scheduleEnd)
+        ? scheduleEnd
+        : [scheduleEnd];
+      const scheduleSlotsArray = Array.isArray(scheduleSlots)
+        ? scheduleSlots
+        : [scheduleSlots];
+
+      // Build schedules
+      const schedules = scheduleDurationArray.map((duration, i) => ({
+        duration: parseInt(duration),
+        groupName: scheduleGroupArray[i],
+        startDate: new Date(scheduleStartArray[i]),
+        endDate: new Date(scheduleEndArray[i]),
+        availableSlots: parseInt(scheduleSlotsArray[i]),
+        bookedSlots: 0,
+      }));
+
+      await Tour.findByIdAndUpdate(
+        id,
+        {
+          place,
+          address: { fullAddress, city, district, state, pin, country },
+          description,
+          price,
+          packageSummary: day.map((d, i) => ({
+            day: d,
+            daySummary: daySummary[i],
+          })),
+          schedules,
+          image: updateImagePaths,
+        },
+        { new: true }
+      );
+
+      req.flash("success_msg", "Tour updated successfully");
       return res.redirect("/admin/tourtable");
-      // return res.status(200).json({
-      //   message: "Update Successfully",
-      // });
     } catch (error) {
-      console.log(error);
+      console.error("Error in tourEdit:", error);
+      req.flash("error_msg", "Something went wrong while updating the tour.");
+      return res.redirect(`/admin/tourEditPage/${req.params.id}`);
     }
   }
 

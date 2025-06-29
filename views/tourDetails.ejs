@@ -55,515 +55,342 @@
   </head>
 
   <body>
-    <%- include("./layouts/flash") %>
-    <!-- Topbar -->
-    <%-include("./layouts/topbar") %>
-    <!-- Navbar -->
-    <%-include("./layouts/navbar") %>
+    <%- include("./layouts/flash") %> <%- include("./layouts/topbar") %> <%-
+    include("./layouts/navbar") %>
 
-    <!-- Header Start -->
-    <div class="container-fluid page-header">
+    <!-- Tour Image Carousel -->
+    <div class="container-fluid bg-dark py-5">
       <div class="container">
-        <div
-          class="d-flex flex-column align-items-center justify-content-center"
-          style="min-height: 400px"
-        >
-          <h3 class="display-4 text-white text-uppercase">Explore More</h3>
-          <div class="d-inline-flex text-white">
-            <p class="m-0 text-uppercase">
-              <a class="text-white" href="">Tour Packages</a>
-            </p>
-            <i class="fa fa-angle-double-right pt-1 px-3"></i>
-            <p class="m-0 text-uppercase">Explore</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- Header End -->
-    <!-- carousal-->
-    <!-- Page Header -->
-
-    <!-- Image Carousel -->
-    <div
-      class="d-flex justify-content-center align-items-center"
-      style="min-height: 80vh"
-    >
-      <div class="container" style="max-width: 1100px">
-        <div id="header-carousel" class="carousel slide" data-ride="carousel">
+        <div id="tourCarousel" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner">
-            <% tour.image.forEach((imageFilename, index) => { %>
+            <% tour.image.forEach((img, index) => { %>
             <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
               <img
+                src="/<%= img %>"
                 class="d-block w-100 rounded"
-                src="/<%= imageFilename %>"
-                alt="Image"
+                alt="Tour Image"
+                style="max-height: 450px; object-fit: cover"
               />
             </div>
             <% }); %>
           </div>
-
-          <!-- Controls -->
           <a
             class="carousel-control-prev"
-            href="#header-carousel"
+            href="#tourCarousel"
             data-slide="prev"
           >
-            <div class="btn btn-dark" style="width: 45px; height: 45px">
-              <span class="carousel-control-prev-icon mb-n2"></span>
-            </div>
+            <span class="carousel-control-prev-icon"></span>
           </a>
           <a
             class="carousel-control-next"
-            href="#header-carousel"
+            href="#tourCarousel"
             data-slide="next"
           >
-            <div class="btn btn-dark" style="width: 45px; height: 45px">
-              <span class="carousel-control-next-icon mb-n2"></span>
-            </div>
+            <span class="carousel-control-next-icon"></span>
           </a>
         </div>
       </div>
     </div>
-    <!-- Tour Summary Card -->
-    <div class="">
-      <div class="container my-5">
-        <div
-          class="card p-4 d-flex flex-md-row flex-column justify-content-between align-items-center shadow-sm"
-        >
-          <h3 class="text-primary font-weight-bold mb-md-0 mb-3">
-            <%= tour.place %> - <%= tour.packageDays %>days Plan
-          </h3>
-          <a href="#" class="btn btn-success font-weight-bold px-4 py-2"
-            >Plan your Trip</a
+
+    <!-- Tour Overview -->
+    <div class="container my-5">
+      <div class="card p-4 shadow-sm">
+        <h2 class="text-primary"><%= tour.place %></h2>
+        <p>
+          <i class="fas fa-map-marker-alt text-danger"></i>
+          <%= tour.address.city %>, <%= tour.address.state %>, <%=
+          tour.address.country %>
+        </p>
+        <p class="text-muted"><%= tour.description %></p>
+      </div>
+    </div>
+
+    <!-- Quick Schedule Overview -->
+    <div class="container mb-5">
+      <h3 class="text-center mb-4">Available Tour Schedules</h3>
+      <div class="row">
+        <% tour.schedules.forEach((schedule) => { const today = new Date();
+        const startDate = new Date(schedule.startDate); const available =
+        schedule.availableSlots - schedule.bookedSlots; if (startDate >= today)
+        { %>
+        <div class="col-md-4 mb-3">
+          <div class="card shadow-sm p-3 h-100">
+            <h5><%= schedule.groupName %> — <%= schedule.duration %> Days</h5>
+            <p>
+              <strong>Dates:</strong> <%= new
+              Date(schedule.startDate).toLocaleDateString() %> - <%= new
+              Date(schedule.endDate).toLocaleDateString() %>
+            </p>
+            <p><strong>Available Slots:</strong> <%= available %></p>
+            <a
+              href="/booking/<%= tour._id %>?scheduleIndex=<%= tour.schedules.indexOf(schedule) %>"
+              class="btn btn-sm btn-success"
+              >Book Now</a
+            >
+          </div>
+        </div>
+        <% } }) %>
+      </div>
+    </div>
+
+    <!-- Toggle Tabs for Amenities | Hotels | Food -->
+    <div class="container mb-5">
+      <h3 class="text-center mb-4">Explore More Details</h3>
+      <ul class="nav nav-tabs" id="infoTabs" role="tablist">
+        <li class="nav-item">
+          <a
+            class="nav-link active"
+            id="amenities-tab"
+            data-toggle="tab"
+            href="#amenities"
+            role="tab"
+            >Amenities</a
           >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="hotels-tab"
+            data-toggle="tab"
+            href="#hotels"
+            role="tab"
+            >Hotels</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="food-tab"
+            data-toggle="tab"
+            href="#food"
+            role="tab"
+            >Food</a
+          >
+        </li>
+      </ul>
+      <div class="tab-content border p-4 shadow-sm" id="infoTabsContent">
+        <!-- Amenities Tab -->
+        <div class="tab-pane fade show active" id="amenities" role="tabpanel">
+          <% if (tour.accommodation) { %>
+          <ul>
+            <% tour.accommodation.split(',').forEach(item => { %>
+            <li>
+              <i class="fas fa-check text-success mr-2"></i><%= item.trim() %>
+            </li>
+            <% }) %>
+          </ul>
+          <% } else { %>
+          <p>No amenities listed.</p>
+          <% } %>
         </div>
-      </div>
 
-      <!-- Tour Information Section -->
-      <div class="container mb-5">
-        <div class="row">
-          <div class="col-md-6 mb-4">
-            <div class="card p-4 h-100 shadow-sm">
-              <h2 class="text-primary font-weight-bold mb-3">
-                Discover <%= tour.place %>
-              </h2>
-              <p class="mb-2">
-                <i class="fas fa-map-marker-alt text-danger"></i> <%=
-                tour.address.city %>, <%= tour.address.state %>, <%=
-                tour.address.district %>, <%= tour.address.country %>
-              </p>
-              <p class="text-muted mb-3"><%= tour.description %></p>
-            </div>
-          </div>
-          <div class="col-md-6 mb-4">
-            <div class="card p-4 h-100 shadow-sm">
-              <h4 class="text-success text-center mb-4">Package Summary</h4>
-              <table class="table table-bordered">
-                <% tour.packageSummary.forEach(function(pkg, i) { %> <%
-                pkg.day.forEach(function(d, index) { %>
-                <tr>
-                  <th>Day <%= d %></th>
-                  <td><%= pkg.daySummary[index] %></td>
-                </tr>
-                <% })%> <% }) %>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+        <!-- Hotels Tab -->
+        <!-- Hotels Tab -->
+        <div class="tab-pane fade" id="hotels" role="tabpanel">
+          <% if (tour.hotels && tour.hotels.length > 0) { const hotel =
+          tour.hotels[0]; %>
 
-      <!-- Amenities and Food -->
-      <div class="container mb-5">
-        <div class="row">
-          <div class="col-md-6 mb-4">
-            <div class="card p-4 h-100 shadow-sm">
-              <h3 class="text-primary font-weight-bold mb-3">Amenities</h3>
-              <% if (tour.accommodation) { %>
-              <ul class="list-unstyled">
-                <% tour.accommodation.split(",").forEach(function(acc) { %>
-                <li>
-                  <i class="fas fa-check text-success mr-2"></i><%= acc.trim()
-                  %>
-                </li>
-                <% }) %>
-              </ul>
+          <div class="row">
+            <!-- Hotel Image Carousel -->
+            <div class="col-md-6 mb-3">
+              <% if (hotel.image && hotel.image.length > 0) { %>
+              <div
+                id="hotelCarousel"
+                class="carousel slide"
+                data-ride="carousel"
+              >
+                <div class="carousel-inner">
+                  <% hotel.image.forEach((img, index) => { %>
+                  <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                    <img
+                      src="/<%= img %>"
+                      class="d-block w-100"
+                      style="height: 300px; object-fit: cover"
+                      alt="Hotel Image"
+                    />
+                  </div>
+                  <% }) %>
+                </div>
+                <a
+                  class="carousel-control-prev"
+                  href="#hotelCarousel"
+                  role="button"
+                  data-slide="prev"
+                >
+                  <span class="carousel-control-prev-icon"></span>
+                </a>
+                <a
+                  class="carousel-control-next"
+                  href="#hotelCarousel"
+                  role="button"
+                  data-slide="next"
+                >
+                  <span class="carousel-control-next-icon"></span>
+                </a>
+              </div>
               <% } else { %>
-              <p class="text-muted">No amenity details available.</p>
+              <p>No hotel images available.</p>
               <% } %>
             </div>
-          </div>
-          <div class="col-md-6 mb-4">
-            <div class="card p-4 h-100 shadow-sm">
-              <h4 class="text-success text-center mb-4">Food Details</h4>
-              <table class="table table-bordered">
-                <% if(tour.foods.length>0) {%>
-                <tr>
-                  <th>Breakfast</th>
-                  <% tour.foods.forEach(function(food) {
-                  food.breakfastItems.forEach(function(item) { %>
-                  <td><%= item.name %></td>
-                  <% }) }) %>
-                </tr>
-                <tr>
-                  <th>Lunch</th>
-                  <% tour.foods.forEach(function(food) {
-                  food.lunchItems.forEach(function(item) { %>
-                  <td><%= item.name %></td>
-                  <% }) }) %>
-                </tr>
-                <tr>
-                  <th>Snack</th>
-                  <% tour.foods.forEach(function(food) {
-                  food.snackItems.forEach(function(item) { %>
-                  <td><%= item.name %></td>
-                  <% }) }) %>
-                </tr>
-                <tr>
-                  <th>Dinner</th>
-                  <% tour.foods.forEach(function(food) {
-                  food.dinnerItems.forEach(function(item) { %>
-                  <td><%= item.name %></td>
-                  <% }) }) %>
-                </tr>
-                <% } else { %>
-                <p class="text-muted">No Food available.</p>
-                <% } %>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Search Form -->
-      <div class="container mb-5">
-        <form action="/hotel/search/<%=tour._id%>" method="GET" class="row g-3">
-          <div class="col-md-3">
-            <label for="checkIn" class="form-label">Check-In Date</label>
-            <input
-              type="date"
-              id="checkIn"
-              name="checkIn"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="col-md-3">
-            <label for="checkOut" class="form-label">Check-Out Date</label>
-            <input
-              type="date"
-              id="checkOut"
-              name="checkOut"
-              class="form-control"
-              required
-            />
-          </div>
-          <div class="col-md-3">
-            <label for="rooms" class="form-label">Number of Rooms</label>
-            <input
-              type="number"
-              id="rooms"
-              name="rooms"
-              class="form-control"
-              min="1"
-              required
-            />
-          </div>
-          <div class="col-md-3 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary w-100">Search</button>
-          </div>
-        </form>
-      </div>
-      <!-- Hotel Section -->
-      <% if (typeof hotels !== 'undefined' && hotels.length > 0) { %>
-      <div class="container mb-5">
-        <div class="row">
-          <% hotels.forEach(function(hotel){ %>
-          <div class="col-md-6 mb-4">
-            <div
-              class="carousel slide shadow rounded"
-              id="hotel-carousel"
-              data-ride="carousel"
-            >
-              <div class="carousel-inner">
-                <% hotel.image.forEach(function(img, index) { %>
-                <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-                  <img
-                    src="/<%= img %>"
-                    class="d-block w-100"
-                    alt="Hotel Image"
-                  />
-                </div>
-                <% }) %>
-              </div>
-              <a
-                class="carousel-control-prev"
-                href="#hotel-carousel"
-                role="button"
-                data-slide="prev"
-              >
-                <span class="carousel-control-prev-icon"></span>
-              </a>
-              <a
-                class="carousel-control-next"
-                href="#hotel-carousel"
-                role="button"
-                data-slide="next"
-              >
-                <span class="carousel-control-next-icon"></span>
-              </a>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card p-4 h-100 shadow-sm">
-              <h2 class="text-primary font-weight-bold mb-2">
-                <%= hotel.name %>
-              </h2>
-              <p class="text-muted">
-                <i class="fas fa-map-marker-alt text-danger"></i> <%=
-                hotel.location %>
+            <!-- Hotel Info -->
+            <div class="col-md-6">
+              <h5><%= hotel.name %></h5>
+              <p><i class="fas fa-map-marker-alt"></i> <%= hotel.location %></p>
+              <p>
+                <strong>Room:</strong> <%= hotel.bedRoom %> Bed, <%=
+                hotel.bathRoom %> Bath, <%= hotel.hallRoom %> Hall, <%=
+                hotel.kitchen %> Kitchen
               </p>
               <p>
                 <strong>Occupancy:</strong> <%= hotel.occupancy.minPerson %> -
-                <%= hotel.occupancy.maxPerson %> persons (Extra: <%=
-                hotel.occupancy.extraAdult %> adults / <%=
-                hotel.occupancy.extraChild %> children)
-              </p>
-              <p>
-                <strong>Room Details:</strong> <%= hotel.bedRoom %> Bed Room,
-                <%= hotel.hallRoom %> Hall, <%= hotel.kitchen %> Kitchen, <%=
-                hotel.bathRoom %> Bathroom
+                <%= hotel.occupancy.maxPerson %> persons
               </p>
               <p><strong>Facilities:</strong> <%= hotel.accommodation %></p>
-              <h4 class="text-success">Price: ₹<%= hotel.price %> / person</h4>
-              <% if (hotel.childPrice) { %>
-              <h5 class="text-success">
-                Child Price: ₹<%= hotel.childPrice %> / child
-              </h5>
-              <% } %>
-
-              <a href="/booking/<%=hotel._id %>" class="btn btn-success mt-3"
-                >Book Now</a
-              >
             </div>
           </div>
-          <% }) %>
+
+          <% } else { %>
+          <p>No hotel details available.</p>
+          <% } %>
         </div>
-      </div>
-      <% } else if (hotels===0) { %>
-      <div class="container pt-5">
-        <h4 class="text-muted">Search hotels available</h4>
-      </div>
-      <% }else { %>
 
-      <div class="container pt-5">
-        <h4 class="text-muted">Search hotels available</h4>
-      </div>
-      <% } %>
-
-      <!-- Show User Reviews -->
-      <div class="container my-5">
-        <div class="card p-4 shadow-sm">
-          <h3 class="text-primary mb-4">User Reviews</h3>
-          <% if (reviews.length === 0) { %>
-          <p class="text-muted">No reviews yet. Be the first to write one!</p>
-          <% } else { %> <% reviews.forEach((review) => { %>
-          <div class="border-bottom pb-3 mb-3">
-            <strong><%= review.userData.name %></strong>
-            <div class="text-warning">
-              <% for (let i = 0; i < review.rating; i++) { %>★<% } %> <% for
-              (let i = review.rating; i < 5; i++) { %>☆<% } %>
-            </div>
-            <p class="mb-1"><%= review.comment %></p>
-            <small class="text-muted">
-              <%= new Date(review.createdAt).toLocaleDateString("en-IN", { year:
-              "numeric", month: "short", day: "numeric" }) %>
-            </small>
-          </div>
-          <% }) %> <% } %>
-        </div>
-      </div>
-
-      <!-- Review Submit Section -->
-      <div class="container mb-5">
-        <div class="card p-4 shadow-sm">
-          <h3 class="text-primary mb-4">Leave a Review</h3>
-          <form action="/addReview" method="POST">
-            <input type="hidden" name="tour" value="<%= tour._id %>" />
-
-            <div class="form-group">
-              <label for="rating">Rating (1 to 5):</label>
-              <select name="rating" class="form-control" required>
-                <option value="">-- Select --</option>
-                <% for(let i=1; i<=5; i++) { %>
-                <option value="<%= i %>"><%= i %></option>
-                <% } %>
-              </select>
-            </div>
-
-            <div class="form-group mt-3">
-              <label for="comment">Comment:</label>
-              <textarea
-                name="comment"
-                class="form-control"
-                rows="3"
-                required
-              ></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-success mt-3">
-              Submit Review
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div
-        class="container-fluid bg-dark text-white-50 px-sm-3 px-lg-5"
-        style="margin-top: 90px"
-      >
-        <div class="row pt-5">
-          <div class="col-lg-3 col-md-6 mb-5">
-            <a href="" class="navbar-brand">
-              <h1 class="text-primary">
-                <span class="text-white">TRAVEL</span>ER
-              </h1>
-            </a>
-            <p>
-              Sed ipsum clita tempor ipsum ipsum amet sit ipsum lorem amet
-              labore rebum lorem ipsum dolor. No sed vero lorem dolor dolor
-            </p>
-            <h6
-              class="text-white text-uppercase mt-4 mb-3"
-              style="letter-spacing: 5px"
-            >
-              Follow Us
-            </h6>
-            <div class="d-flex justify-content-start">
-              <a class="btn btn-outline-primary btn-square mr-2" href="#"
-                ><i class="fab fa-twitter"></i
-              ></a>
-              <a class="btn btn-outline-primary btn-square mr-2" href="#"
-                ><i class="fab fa-facebook-f"></i
-              ></a>
-              <a class="btn btn-outline-primary btn-square mr-2" href="#"
-                ><i class="fab fa-linkedin-in"></i
-              ></a>
-              <a class="btn btn-outline-primary btn-square" href="#"
-                ><i class="fab fa-instagram"></i
-              ></a>
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 mb-5">
-            <h5
-              class="text-white text-uppercase mb-4"
-              style="letter-spacing: 5px"
-            >
-              Our Services
-            </h5>
-            <div class="d-flex flex-column justify-content-start">
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>About</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Destination</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Services</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Packages</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Guides</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Testimonial</a
-              >
-              <a class="text-white-50" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Blog</a
-              >
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 mb-5">
-            <h5
-              class="text-white text-uppercase mb-4"
-              style="letter-spacing: 5px"
-            >
-              Usefull Links
-            </h5>
-            <div class="d-flex flex-column justify-content-start">
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>About</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Destination</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Services</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Packages</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Guides</a
-              >
-              <a class="text-white-50 mb-2" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Testimonial</a
-              >
-              <a class="text-white-50" href="#"
-                ><i class="fa fa-angle-right mr-2"></i>Blog</a
-              >
-            </div>
-          </div>
-          <div class="col-lg-3 col-md-6 mb-5">
-            <h5
-              class="text-white text-uppercase mb-4"
-              style="letter-spacing: 5px"
-            >
-              Contact Us
-            </h5>
-            <p>
-              <i class="fa fa-map-marker-alt mr-2"></i>123 Street, New York, USA
-            </p>
-            <p><i class="fa fa-phone-alt mr-2"></i>+012 345 67890</p>
-            <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
-            <h6
-              class="text-white text-uppercase mt-4 mb-3"
-              style="letter-spacing: 5px"
-            >
-              Newsletter
-            </h6>
-            <div class="w-100">
-              <div class="input-group">
-                <input
-                  type="text"
-                  class="form-control border-light"
-                  style="padding: 25px"
-                  placeholder="Your Email"
-                />
-                <div class="input-group-append">
-                  <button class="btn btn-primary px-3">Sign Up</button>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- Food Tab -->
+        <div class="tab-pane fade" id="food" role="tabpanel">
+          <% if(tour.foods.length>0) {%>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Meal</th>
+                <th>Items</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% ['breakfast', 'lunch', 'snack', 'dinner'].forEach(meal => { %>
+              <tr>
+                <td><%= meal.charAt(0).toUpperCase() + meal.slice(1) %></td>
+                <td>
+                  <% tour.foods.forEach(food => { food[meal +
+                  'Items'].forEach(item => { %>
+                  <span class="badge badge-pill badge-info m-1"
+                    ><%= item.name %></span
+                  >
+                  <% }) }) %>
+                </td>
+              </tr>
+              <% }) %>
+            </tbody>
+          </table>
+          <% } else { %>
+          <p>No food data available.</p>
+          <% } %>
         </div>
       </div>
     </div>
-    <!-- JavaScript Libraries -->
+
+    <!-- Schedule Booking Table -->
+    <div class="container mb-5">
+      <div class="card p-4 shadow-sm">
+        <h3 class="mb-4">All Tour Schedules & Booking</h3>
+        <table class="table table-bordered text-center">
+          <thead class="thead-dark">
+            <tr>
+              <th>Group</th>
+              <th>Duration</th>
+              <th>Start</th>
+              <th>End</th>
+              <th>Available</th>
+              <th>Booked</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% tour.schedules.forEach((s, i) => { const start = new
+            Date(s.startDate); const available = s.availableSlots -
+            s.bookedSlots; if (start >= new Date()) { %>
+            <tr>
+              <td><%= s.groupName %></td>
+              <td><%= s.duration %> Days</td>
+              <td><%= new Date(s.startDate).toLocaleDateString('en-IN') %></td>
+              <td><%= new Date(s.endDate).toLocaleDateString('en-IN') %></td>
+              <td><%= s.availableSlots %></td>
+              <td><%= s.bookedSlots %></td>
+              <td><%= available > 0 ? 'Available' : 'Full' %></td>
+              <td>
+                <% if (available > 0) { %>
+                <a
+                  href="/booking/<%= tour._id %>?scheduleIndex=<%= i %>"
+                  class="btn btn-success btn-sm"
+                  >Book Now</a
+                >
+                <% } else { %>
+                <button class="btn btn-secondary btn-sm" disabled>
+                  Closed
+                </button>
+                <% } %>
+              </td>
+            </tr>
+            <% } }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- User Reviews -->
+    <div class="container mb-5">
+      <div class="card p-4 shadow-sm">
+        <h3 class="mb-4 text-primary">User Reviews</h3>
+        <% if (reviews.length === 0) { %>
+        <p>No reviews yet.</p>
+        <% } else { reviews.forEach((r) => { %>
+        <div class="mb-3 border-bottom pb-2">
+          <strong><%= r.userData.name %></strong>
+          <div class="text-warning">
+            <% for (let i = 0; i < r.rating; i++) { %>★<% } %> <% for (let i =
+            r.rating; i < 5; i++) { %>☆<% } %>
+          </div>
+          <p><%= r.comment %></p>
+          <small
+            ><%= new Date(r.createdAt).toLocaleDateString("en-IN") %></small
+          >
+        </div>
+        <% }) } %>
+      </div>
+    </div>
+
+    <!-- Submit Review -->
+    <div class="container mb-5">
+      <div class="card p-4 shadow-sm">
+        <h4 class="text-primary mb-3">Leave a Review</h4>
+        <form action="/addReview" method="POST">
+          <input type="hidden" name="tour" value="<%= tour._id %>" />
+          <div class="form-group">
+            <label>Rating</label>
+            <select name="rating" class="form-control" required>
+              <option value="">Select</option>
+              <% for (let i = 1; i <= 5; i++) { %>
+              <option value="<%= i %>"><%= i %></option>
+              <% } %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Comment</label>
+            <textarea
+              name="comment"
+              rows="3"
+              class="form-control"
+              required
+            ></textarea>
+          </div>
+          <button class="btn btn-success mt-2" type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
+    <!-- jQuery first -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+    <!-- Then Bootstrap Bundle (includes Popper.js) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-    <script src="lib/easing/easing.min.js"></script>
-    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="lib/tempusdominus/js/moment.min.js"></script>
-    <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-    <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
-
-    <!-- Contact Javascript File -->
-    <script src="mail/jqBootstrapValidation.min.js"></script>
-    <script src="mail/contact.js"></script>
-
-    <!-- Template Javascript -->
-    <script src="js/main.js"></script>
   </body>
 </html>

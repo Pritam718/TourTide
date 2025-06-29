@@ -96,7 +96,7 @@ class FoodController {
 
       // const foods = await Food.findById(id);
       // const tours = await Tour.find({});
-      res.render("foodEditForm", { data: foods[0] });
+      res.render("foodEditForm", { data: foods[0], user: req.user || null });
     } catch (error) {
       console.log(error);
     }

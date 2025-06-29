@@ -282,7 +282,11 @@ class HotelController {
       if (!hotelData) {
         console.log("Hotel data not found");
       }
-      res.render("hotelEditForm", { data: hotelData, tours });
+      res.render("hotelEditForm", {
+        data: hotelData,
+        tours,
+        user: req.user || null,
+      });
     } catch (error) {
       console.log(error);
     }

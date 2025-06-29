@@ -1,18 +1,21 @@
 const express = require("express");
 const bookingEjsController = require("../../controllers/EjsControllers.js/bookingEjsController");
 const userCheckauthenticationToken = require("../../middleware/auth");
-const hotelEjsController = require("../../controllers/EjsControllers.js/hotelEjsController");
 const router = express.Router();
 
-router.get("/hotel/search/:id", hotelEjsController.getAvailableHotels);
+// ❌ Old hotel-based route — keep if still needed for legacy or admin
+// router.get("/hotel/search/:id", hotelEjsController.getAvailableHotels);
 
+// ✅ Updated booking page — based on Tour and selected schedule
 router.get(
-  "/booking/:id",
+  "/booking/:tourId",
   userCheckauthenticationToken,
   bookingEjsController.bookingPage
 );
+
+// ✅ Booking POST — create booking for selected schedule
 router.post(
-  "/book/:id",
+  "/book/:tourId",
   userCheckauthenticationToken,
   bookingEjsController.book
 );

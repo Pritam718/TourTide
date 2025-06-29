@@ -230,64 +230,20 @@
                             aria-invalid="false"
                           />
                         </div>
-                        <div class="form-group">
-                          <label for="packageDays" class="control-label mb-1"
-                            >Total Package Days</label
-                          >
-                          <input
-                            id="packageDays"
-                            name="packageDays"
-                            type="number"
-                            class="form-control"
-                            aria-required="true"
-                            aria-invalid="false"
-                          />
+
+                        <hr />
+                        <h4>Tour Schedules (Group-wise by Duration)</h4>
+
+                        <div id="scheduleContainer">
+                          <!-- Empty initially, schedules will be added dynamically -->
                         </div>
-                        <div id="formItems">
-                          <div class="row form-group item-group">
-                            <div class="col-md-2">
-                              <label for="day" class="control-label mb-1"
-                                >Day</label
-                              >
-                              <input
-                                id="day"
-                                name="day[]"
-                                type="number"
-                                class="form-control"
-                                aria-required="true"
-                                aria-invalid="false"
-                              />
-                            </div>
-                            <div class="col-md-8">
-                              <label for="daySummary" class="control-label mb-1"
-                                >Day Summary</label
-                              >
-                              <input
-                                id="daySummary"
-                                name="daySummary[]"
-                                type="text"
-                                class="form-control"
-                                aria-required="true"
-                                aria-invalid="false"
-                              />
-                            </div>
-                            <div class="col-md-2">
-                              <button
-                                type="button"
-                                class="btn btn-danger mt-4"
-                                onclick="removeItem(this)"
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        </div>
+
                         <button
                           type="button"
                           class="btn btn-secondary my-2"
-                          onclick="addItem()"
+                          onclick="addSchedule()"
                         >
-                          Add Item
+                          Add Schedule
                         </button>
                         <div class="form-group">
                           <label for="image" class="form-control-label"
@@ -393,6 +349,82 @@
       function removeItem(button) {
         const itemGroup = button.closest(".item-group");
         itemGroup.remove();
+      }
+    </script>
+    <script>
+      function addSchedule() {
+        const container = document.getElementById("scheduleContainer");
+
+        const index = document.querySelectorAll(".schedule-item").length;
+
+        const scheduleItem = document.createElement("div");
+        scheduleItem.className = "schedule-item row form-group border p-2 my-2";
+
+        scheduleItem.innerHTML = `
+      <div class="col-md-2">
+        <label>Duration (days)</label>
+        <select name="scheduleDuration[]" class="form-control" onchange="generateDaySummaryFields(this, ${index})" required>
+          <option value="">Select</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label>Group Name</label>
+        <input type="text" name="scheduleGroup[]" class="form-control" required />
+      </div>
+      <div class="col-md-2">
+        <label>Start Date</label>
+        <input type="date" name="scheduleStart[]" class="form-control" required />
+      </div>
+      <div class="col-md-2">
+        <label>End Date</label>
+        <input type="date" name="scheduleEnd[]" class="form-control" required />
+      </div>
+      <div class="col-md-2">
+        <label>Available Slots</label>
+        <input type="number" name="scheduleSlots[]" class="form-control" required />
+      </div>
+      <div class="col-md-1">
+        <button type="button" class="btn btn-danger mt-4" onclick="removeSchedule(this)">×</button>
+      </div>
+      <div class="col-md-12 mt-3" id="summaryContainer${index}">
+        <!-- Dynamic day + summary inputs will appear here -->
+      </div>
+    `;
+
+        container.appendChild(scheduleItem);
+      }
+
+      function generateDaySummaryFields(selectElement, index) {
+        const dayCount = parseInt(selectElement.value);
+        const summaryContainer = document.getElementById(
+          `summaryContainer${index}`
+        );
+        summaryContainer.innerHTML = "";
+
+        for (let i = 1; i <= dayCount; i++) {
+          summaryContainer.innerHTML += `
+        <div class="row mb-2">
+          <div class="col-md-2">
+            <label>Day ${i}</label>
+            <input type="text" name="day[]" class="form-control" value="Day ${i}" required />
+          </div>
+          <div class="col-md-10">
+            <label>Day ${i} Summary</label>
+            <textarea name="daySummary[]" class="form-control" required></textarea>
+          </div>
+        </div>
+      `;
+        }
+      }
+
+      function removeSchedule(button) {
+        const scheduleItem = button.closest(".schedule-item");
+        if (scheduleItem) {
+          scheduleItem.remove();
+        }
       }
     </script>
   </body>

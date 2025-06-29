@@ -11,11 +11,14 @@ class ReviewEjsController {
         ...req.body,
         user: req.user.userId,
       });
-
+      console.log(newReview.tour);
       await newReview.save();
-      res
-        .status(201)
-        .json({ message: "Review added successfully", review: newReview });
+      req.flash("success_msg", "Review added successfully");
+      res.redirect(`/tourdetails/${newReview.tour}`);
+
+      // res
+      //   .status(201)
+      //   .json({ message: "Review added successfully", review: newReview });
     } catch (error) {
       console.log(error);
     }

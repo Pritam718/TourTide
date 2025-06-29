@@ -23,7 +23,6 @@ const bookingSchema = new mongoose.Schema(
     },
     roomsBooked: {
       type: Number,
-      required: true,
     },
     tourId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -40,6 +39,11 @@ const bookingSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+    },
+    schedule: {
+      groupName: String, // optional but helpful for quick viewing
+      startDate: Date,
+      endDate: Date,
     },
   },
   { timestamps: true }

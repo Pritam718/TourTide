@@ -54,115 +54,122 @@ const isHotelAvailable = async (hotelId, checkIn, checkOut, roomsRequested) => {
 class BookingEjs {
   async bookingPage(req, res) {
     try {
-      const userId = req.user ? req.user.userId : "null";
+      const userId = req.user ? req.user.userId : null;
       const user = await User.findById(userId);
-      const id = req.params.id;
-      const result = await Hotel.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(id),
-          },
-        },
-        {
-          $lookup: {
-            from: "tours",
-            localField: "tour",
-            foreignField: "_id",
-            as: "tour",
-          },
-        },
-        {
-          $lookup: {
-            from: "foods",
-            localField: "_id",
-            foreignField: "tour",
-            as: "foods",
-          },
-        },
-      ]);
 
-      // res.json(result[0]);
+      const tourId = req.params.tourId;
+      const scheduleIndex = req.query.scheduleIndex;
+
+      if (!tourId || scheduleIndex === undefined) {
+        return res.status(400).send("Missing tour ID or schedule index");
+      }
+
+      const tour = await Tour.findById(tourId);
+      if (!tour) return res.status(404).send("Tour not found");
+
+      const schedule = tour.schedules[scheduleIndex];
+      const summary = tour.packageSummary[scheduleIndex];
+
+      if (!schedule) return res.status(400).send("Invalid schedule index");
+
       res.render("bookingPage", {
-        data: result[0],
         isAuthenticated: req.isAuthenticated,
         user,
+        tour,
+        schedule,
+        summary,
+        scheduleIndex,
       });
     } catch (error) {
-      console.log(error);
+      console.error("bookingPage error:", error);
+      res.status(500).send("Internal server error");
     }
   }
 
   async book(req, res) {
     try {
-      const userId = req.user ? req.user.userId : "null";
-      const hotelId = req.params.id;
-      const hotelData = await Hotel.findById(hotelId);
-      const user = await User.find({ _id: userId });
-      const {
-        startingDate,
-        endingDate,
-        roomsBooked,
-        personNumber,
-        childNumber,
-      } = req.body;
+      const userId = req.user ? req.user.userId : null;
+      const tourId = req.params.tourId;
+      const scheduleIndex = req.query.scheduleIndex;
 
-      const available = await isHotelAvailable(
-        hotelId,
-        startingDate,
-        endingDate,
-        roomsBooked
-      );
+      const { personNumber, childNumber } = req.body;
 
-      if (!available) {
+      if (!tourId || scheduleIndex === undefined) {
+        return res.status(400).send("Missing tourId or scheduleIndex");
+      }
+
+      const tourData = await Tour.findById(tourId);
+      if (!tourData) {
+        return res.status(404).send("Tour not found");
+      }
+      const hotelData = await Hotel.find({ tour: tourId });
+      console.log(hotelData);
+
+      const schedule = tourData.schedules[scheduleIndex];
+      if (!schedule) {
+        return res.status(400).send("Invalid schedule index");
+      }
+
+      const availableSlots = schedule.availableSlots - schedule.bookedSlots;
+
+      if (availableSlots < parseInt(personNumber) + parseInt(childNumber)) {
         return res
           .status(400)
-          .send("Hotel not available for the selected dates and room count");
+          .send("Not enough slots available for selected schedule");
       }
+
       const bookingId = generateBookingId(
-        hotelData.name,
-        startingDate,
-        endingDate
+        tourData.place,
+        schedule.startDate,
+        schedule.endDate
       );
+
       const newBooking = new booking({
         bookingId,
         personNumber,
         childNumber,
-        startingDate,
-        endingDate,
-        roomsBooked,
-        tourId: hotelData.tour,
-        hotelId,
+        startingDate: schedule.startDate,
+        endingDate: schedule.endDate,
+        tourId: tourId,
         userId: userId,
+        hotelId: hotelData[0]._id,
+        roomsBooked: hotelData[0].roomsBooked,
+        schedule: {
+          groupName: schedule.groupName,
+          startDate: schedule.startDate,
+          endDate: schedule.endDate,
+        },
       });
 
       await newBooking.save();
-      const tourdata = await Tour.findById(hotelData.tour);
-      // Optionally, you can increment hotel.bookingCount here:
-      await Hotel.findByIdAndUpdate(hotelId, { $inc: { bookingCount: 1 } });
 
-      await bookingSms(req, user[0]);
+      // Update bookedSlots in the tour's selected schedule
+      tourData.schedules[scheduleIndex].bookedSlots +=
+        parseInt(personNumber) + parseInt(childNumber);
+      await tourData.save();
+
+      const user = await User.findById(userId);
+      await bookingSms(req, user);
+
       res.render("bookingConfirmed", {
-        user: user[0],
+        user,
         booking: {
-          tourPlace: tourdata.place || "Unknown", // or fetch from Tour if you store name separately
-          hotelName: hotelData.name,
-          startingDate,
-          endingDate,
+          tourPlace: tourData.place,
+          startingDate: schedule.startDate,
+          endingDate: schedule.endDate,
           personNumber,
           childNumber,
-          roomsBooked,
-          totalPrice: calculateTotalPrice(
-            hotelData.price,
-            hotelData.childPrice,
-            roomsBooked,
-            startingDate,
-            endingDate
-          ), // optional
+          totalPrice:
+            tourData.price * (parseInt(personNumber) + parseInt(childNumber)), // Simplified pricing
           bookingId,
+          groupName: schedule.groupName,
+          hotelName: hotelData[0].name,
+          roomsBooked: hotelData[0].roomsBooked,
         },
       });
     } catch (error) {
-      console.log(error);
+      console.error("Booking Error:", error);
+      res.status(500).send("Something went wrong while booking");
     }
   }
 }

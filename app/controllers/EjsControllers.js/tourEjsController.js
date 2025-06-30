@@ -33,6 +33,21 @@ class TourEjsController {
       console.log(error);
     }
   }
+  async searchCity(req, res) {
+    try {
+      const city = req.params.city;
+      const tourData = await Tour.aggregate([
+        { $match: { "address.city": { $regex: city, $options: "i" } } },
+      ]);
+      res.render("tourPackages", {
+        tour: tourData,
+        isAuthenticated: req.isAuthenticated,
+        user: req.user || null,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   async specificTourDetails(req, res) {
     try {
       const id = req.params.id;
@@ -128,6 +143,7 @@ class TourEjsController {
         scheduleStart,
         scheduleEnd,
         scheduleSlots,
+        amenities,
       } = req.body;
 
       // 1. Handle packageSummary and schedules based on durations
@@ -171,6 +187,7 @@ class TourEjsController {
         packageDays,
         packageSummary,
         schedules,
+        amenities: Array.isArray(amenities) ? amenities : [amenities],
       });
 
       // 3. Save images if uploaded
@@ -224,6 +241,7 @@ class TourEjsController {
         scheduleStart,
         scheduleEnd,
         scheduleSlots,
+        amenities,
       } = req.body;
 
       const data = {
@@ -250,6 +268,7 @@ class TourEjsController {
       req.body.daySummary = req.body.daySummary.map((val) => val.toString());
       req.body.price = Number(req.body.price);
       req.body.pin = Number(req.body.pin);
+      req.body.amenities = Array.isArray(amenities) ? amenities : [amenities];
 
       // Validate
       const { error } = tourValidationSchema.validate(req.body, {
@@ -298,6 +317,7 @@ class TourEjsController {
           address: { fullAddress, city, district, state, pin, country },
           description,
           price,
+          amenities: req.body.amenities,
           packageSummary: day.map((d, i) => ({
             day: d,
             daySummary: daySummary[i],

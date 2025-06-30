@@ -120,6 +120,7 @@ class AdminEjsController {
         },
       ]);
       console.log(data);
+      // res.json(data);
       res.render("foodTable", { foods: data, user: req.user || null });
     } catch (error) {
       console.log(error);

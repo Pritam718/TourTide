@@ -171,16 +171,16 @@
       <div class="tab-content border p-4 shadow-sm" id="infoTabsContent">
         <!-- Amenities Tab -->
         <div class="tab-pane fade show active" id="amenities" role="tabpanel">
-          <% if (tour.accommodation) { %>
-          <ul>
-            <% tour.accommodation.split(',').forEach(item => { %>
+          <% if (tour.amenities && tour.amenities.length > 0) { %>
+          <ul class="list-unstyled">
+            <% tour.amenities.forEach(item => { %>
             <li>
               <i class="fas fa-check text-success mr-2"></i><%= item.trim() %>
             </li>
             <% }) %>
           </ul>
           <% } else { %>
-          <p>No amenities listed.</p>
+          <p class="text-muted">No accommodation details available.</p>
           <% } %>
         </div>
 
@@ -387,6 +387,7 @@
         </form>
       </div>
     </div>
+    <%-include("./layouts/footer")%>
     <!-- jQuery first -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 

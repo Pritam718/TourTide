@@ -123,6 +123,7 @@ const tourValidationSchema = Joi.object({
   country: Joi.string().required(),
   description: Joi.string().required(),
   price: Joi.number().required(),
+  amenities: Joi.array().items(Joi.string().required()).required(),
 
   scheduleDuration: Joi.array().items(Joi.number().valid(2, 3, 4)).required(),
   scheduleGroup: Joi.array().items(Joi.string().required()).required(),
@@ -147,6 +148,11 @@ const tourSchema = new mongoose.Schema(
     },
     description: { type: String, required: true },
     price: { type: Number, required: true },
+    amenities: {
+      type: [String],
+      required: true,
+    },
+
     image: { type: [String], required: true },
     packageSummary: [
       {

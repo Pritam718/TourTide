@@ -8,7 +8,6 @@ const userCheckauthenticationToken = require("../../middleware/auth");
 router.get("/", homeController.homePage);
 router.get("/about", homeController.aboutPage);
 router.get("/tour", tourEjsController.tourPackagePage);
-// router.get("/:city", homeController.exploreTopDestination);
 
 // router.get("/tourdetails", homeController.tourdetails);
 router.get(
@@ -18,6 +17,8 @@ router.get(
 );
 router.get("/contact", homeController.contactPage);
 router.post("/addContact", contactEjsController.addContact);
+router.get("/explore/:city", homeController.exploreTopDestination);
 router.get("/search", tourEjsController.searchTour);
+// router.get("/:city", tourEjsController.searchCity);
 
 module.exports = router;

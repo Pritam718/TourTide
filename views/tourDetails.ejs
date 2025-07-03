@@ -101,6 +101,10 @@
           <%= tour.address.city %>, <%= tour.address.state %>, <%=
           tour.address.country %>
         </p>
+        <h3 class="text-primary" style="font-size: 1.5rem">
+          ₹ <%= tour.price %>
+        </h3>
+
         <p class="text-muted"><%= tour.description %></p>
       </div>
     </div>
@@ -122,6 +126,7 @@
               Date(schedule.endDate).toLocaleDateString() %>
             </p>
             <p><strong>Available Slots:</strong> <%= available %></p>
+
             <a
               href="/booking/<%= tour._id %>?scheduleIndex=<%= tour.schedules.indexOf(schedule) %>"
               class="btn btn-sm btn-success"
@@ -165,6 +170,16 @@
             href="#food"
             role="tab"
             >Food</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            id="day-tab"
+            data-toggle="tab"
+            href="#day"
+            role="tab"
+            >Day Summary</a
           >
         </li>
       </ul>
@@ -283,6 +298,24 @@
           </table>
           <% } else { %>
           <p>No food data available.</p>
+          <% } %>
+        </div>
+
+        <!-- Days Tab -->
+        <div class="tab-pane fade show active" id="day" role="tabpanel">
+          <% if (tour.packageSummary && tour.packageSummary.length > 0) { %>
+          <ul class="list-unstyled">
+            <% tour.packageSummary.forEach((item) => { %> <% for (let i = 0; i <
+            item.day.length; i++) { %>
+            <li class="mb-2">
+              <i class="fas fa-check text-success mr-2"></i>
+              <strong><%= item.day[i] %></strong>
+              <p class="mb-1 ml-4 text-muted"><%= item.daySummary[i] %></p>
+            </li>
+            <% } %> <% }) %>
+          </ul>
+          <% } else { %>
+          <p class="text-muted">No package summary available.</p>
           <% } %>
         </div>
       </div>

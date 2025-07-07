@@ -4,6 +4,7 @@ const { User } = require("../../models/userModel");
 const booking = require("../../models/bookingModel");
 const bookingSms = require("../../helper/booking.Sms");
 const { Tour } = require("../../models/tourModel");
+const crypto = require("crypto");
 
 function calculateTotalPrice(pricePerRoom, childPrice, rooms, start, end) {
   const startDate = new Date(start);
@@ -92,7 +93,24 @@ class BookingEjs {
       const tourId = req.params.tourId;
       const scheduleIndex = req.query.scheduleIndex;
 
-      const { personNumber, childNumber } = req.body;
+      const {
+        personNumber,
+        childNumber,
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+      } = req.body;
+
+      const body = razorpay_order_id + "|" + razorpay_payment_id;
+      const expectedSignature = crypto
+        .createHmac("sha256", process.env.RAZORPAY_SECRET)
+        .update(body.toString())
+        .digest("hex");
+
+      const isAuthentic = expectedSignature === razorpay_signature;
+      if (!isAuthentic) {
+        return res.status(400).send("Payment verification failed");
+      }
 
       if (!tourId || scheduleIndex === undefined) {
         return res.status(400).send("Missing tourId or scheduleIndex");
@@ -103,7 +121,6 @@ class BookingEjs {
         return res.status(404).send("Tour not found");
       }
       const hotelData = await Hotel.find({ tour: tourId });
-      console.log(hotelData);
 
       const schedule = tourData.schedules[scheduleIndex];
       if (!schedule) {

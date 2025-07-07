@@ -145,6 +145,16 @@
         <li class="nav-item">
           <a
             class="nav-link active"
+            id="day-tab"
+            data-toggle="tab"
+            href="#day"
+            role="tab"
+            >Day Summary</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class="nav-link "
             id="amenities-tab"
             data-toggle="tab"
             href="#amenities"
@@ -172,20 +182,27 @@
             >Food</a
           >
         </li>
-        <li class="nav-item">
-          <a
-            class="nav-link"
-            id="day-tab"
-            data-toggle="tab"
-            href="#day"
-            role="tab"
-            >Day Summary</a
-          >
-        </li>
       </ul>
       <div class="tab-content border p-4 shadow-sm" id="infoTabsContent">
+        <!-- Days Tab -->
+        <div class="tab-pane fade show active" id="day" role="tabpanel">
+          <% if (tour.packageSummary && tour.packageSummary.length > 0) { %>
+          <ul class="list-unstyled">
+            <% tour.packageSummary.forEach((item) => { %> <% for (let i = 0; i <
+            item.day.length; i++) { %>
+            <li class="mb-2">
+              <i class="fas fa-check text-success mr-2"></i>
+              <strong><%= item.day[i] %></strong>
+              <p class="mb-1 ml-4 text-muted"><%= item.daySummary[i] %></p>
+            </li>
+            <% } %> <% }) %>
+          </ul>
+          <% } else { %>
+          <p class="text-muted">No package summary available.</p>
+          <% } %>
+        </div>
         <!-- Amenities Tab -->
-        <div class="tab-pane fade show active" id="amenities" role="tabpanel">
+        <div class="tab-pane fade show" id="amenities" role="tabpanel">
           <% if (tour.amenities && tour.amenities.length > 0) { %>
           <ul class="list-unstyled">
             <% tour.amenities.forEach(item => { %>
@@ -298,24 +315,6 @@
           </table>
           <% } else { %>
           <p>No food data available.</p>
-          <% } %>
-        </div>
-
-        <!-- Days Tab -->
-        <div class="tab-pane fade show" id="day" role="tabpanel">
-          <% if (tour.packageSummary && tour.packageSummary.length > 0) { %>
-          <ul class="list-unstyled">
-            <% tour.packageSummary.forEach((item) => { %> <% for (let i = 0; i <
-            item.day.length; i++) { %>
-            <li class="mb-2">
-              <i class="fas fa-check text-success mr-2"></i>
-              <strong><%= item.day[i] %></strong>
-              <p class="mb-1 ml-4 text-muted"><%= item.daySummary[i] %></p>
-            </li>
-            <% } %> <% }) %>
-          </ul>
-          <% } else { %>
-          <p class="text-muted">No package summary available.</p>
           <% } %>
         </div>
       </div>

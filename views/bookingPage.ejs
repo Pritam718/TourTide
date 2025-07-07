@@ -150,12 +150,7 @@
     <!-- Booking Form -->
     <div class="container-fluid">
       <div class="container bg-light p-4 shadow">
-        <form
-          action="/book/<%= tour._id %>?scheduleIndex=<%= scheduleIndex %>"
-          method="POST"
-          novalidate
-          id="book"
-        >
+        <form novalidate id="bookingForm">
           <div class="form-group">
             <label for="personNumber">Person Number</label>
             <input
@@ -177,15 +172,86 @@
             />
           </div>
 
-          <button type="submit" class="btn btn-lg btn-info btn-block mt-4">
-            Confirm Booking
+          <button
+            type="submit"
+            class="btn btn-lg btn-info btn-block mt-4"
+            id="paynow"
+          >
+            Pay & Confirm Booking
           </button>
         </form>
       </div>
     </div>
 
-
     <!-- Scripts -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+      document.getElementById("paynow").onclick = async function (e) {
+        e.preventDefault();
+
+        const personNumber =
+          parseInt(document.getElementById("personNumber").value) || 0;
+        const childNumber =
+          parseInt(document.getElementById("childNumber").value) || 0;
+
+        if (personNumber <= 0 && childNumber <= 0) {
+          alert("Please enter at least one person or child.");
+          return;
+        }
+
+        const totalPeople = parseInt(personNumber) + parseInt(childNumber);
+        const amount = Number("<%= tour.price %>") * totalPeople;
+
+        // Step 1: Create Razorpay order from backend
+        const orderRes = await fetch("/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount }),
+        });
+
+        const { order } = await orderRes.json();
+
+        // Step 2: Razorpay payment options
+        const options = {
+          key: "<%= process.env.RAZORPAY_KEY_ID %>", // fallback for dev
+          amount: order.amount,
+          currency: "INR",
+          name: "TourTide",
+          description: "Tour Booking",
+          order_id: order.id,
+          handler: async function (response) {
+            // Step 3: Send payment + booking data to backend
+            const confirmRes = await fetch(
+              `/book/${"<%= tour._id %>"}?scheduleIndex=${"<%= scheduleIndex %>"}`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  tourId: "<%= tour._id %>",
+                  scheduleIndex: "<%= scheduleIndex %>",
+                  personNumber,
+                  childNumber,
+                }),
+              }
+            );
+
+            const html = await confirmRes.text();
+            document.open();
+            document.write(html);
+            document.close();
+          },
+          theme: {
+            color: "#17a2b8",
+          },
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      };
+    </script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="lib/easing/easing.min.js"></script>

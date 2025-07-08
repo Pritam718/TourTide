@@ -4,6 +4,7 @@ const { Tour, tourValidationSchema } = require("../../models/tourModel");
 const path = require("path");
 const fs = require("fs");
 const { Review } = require("../../models/reviewModel");
+const bucket = require("../../firebaseConfig/firebaseConfig");
 
 class TourEjsController {
   async tourPackagePage(req, res) {
@@ -192,7 +193,18 @@ class TourEjsController {
 
       // 3. Save images if uploaded
       if (req.files && req.files.length > 0) {
-        const imagePaths = req.files.map((file) => file.path);
+        // const imagePaths = req.files.map((file) => file.path);
+        console.log(req.files);
+        const imagePaths = await Promise.all(
+          req.files.map(async (file) => {
+            const firebasepath = `tours/${Date.now()}_${file.originalname}`;
+            await bucket.file(firebasepath).save(file.buffer, {
+              public: true,
+              metadata: { contentType: file.mimetype },
+            });
+            return `https://storage.googleapis.com/${bucket.name}/${firebasepath}`;
+          })
+        );
         tour.image = imagePaths;
       }
 

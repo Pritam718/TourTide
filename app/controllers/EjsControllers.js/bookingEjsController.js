@@ -155,6 +155,8 @@ class BookingEjs {
           groupName: schedule.groupName,
           startDate: schedule.startDate,
           endDate: schedule.endDate,
+          bookedSlots: parseInt(personNumber) + parseInt(childNumber),
+          availableSlots: availableSlots,
         },
       });
 
@@ -163,6 +165,7 @@ class BookingEjs {
       // Update bookedSlots in the tour's selected schedule
       tourData.schedules[scheduleIndex].bookedSlots +=
         parseInt(personNumber) + parseInt(childNumber);
+
       await tourData.save();
 
       const user = await User.findById(userId);
@@ -187,6 +190,45 @@ class BookingEjs {
     } catch (error) {
       console.error("Booking Error:", error);
       res.status(500).send("Something went wrong while booking");
+    }
+  }
+
+  async cancelBooking(req, res) {
+    try {
+      const id = req.params.id;
+      const bookingdata = await booking.findById(id);
+      if (!bookingdata) {
+        req.flash("error_msg", "Booking not found");
+        return res.redirect("back");
+      }
+      const tour = await Tour.findById(bookingdata.tourId);
+
+      if (tour) {
+        const schedule = tour.schedules.find(
+          (s) =>
+            s.groupName === bookingdata.schedule.groupName &&
+            s.startDate.toISOString() ===
+              new Date(bookingdata.schedule.startDate).toISOString()
+        );
+
+        if (schedule) {
+          schedule.bookedSlots = Math.max(
+            schedule.bookedSlots - bookingdata.schedule.bookedSlots,
+            0
+          );
+          console.log("bookedslots", schedule.bookedSlots);
+        }
+
+        tour.bookingCount = Math.max(tour.bookingCount - 1, 0);
+        await tour.save();
+      }
+
+      await booking.findByIdAndDelete(id);
+
+      req.flash("success_msg", "Booking canceled successfully");
+      res.redirect("/userProfile");
+    } catch (error) {
+      console.log(error);
     }
   }
 }

@@ -44,6 +44,8 @@ const bookingSchema = new mongoose.Schema(
       groupName: String, // optional but helpful for quick viewing
       startDate: Date,
       endDate: Date,
+      bookedSlots: Number,
+      availableSlots: Number,
     },
   },
   { timestamps: true }

@@ -368,7 +368,7 @@ class UserEjsController {
           $sort: { startingDate: -1 }, // Sort by latest first
         },
       ]);
-      console.log(userBookings);
+
       res.render("userProfile", {
         isAuthenticated: req.isAuthenticated,
         user,

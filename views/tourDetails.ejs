@@ -66,7 +66,7 @@
             <% tour.image.forEach((img, index) => { %>
             <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
               <img
-                src="/<%= img %>"
+                src="<%= img %>"
                 class="d-block w-100 rounded"
                 alt="Tour Image"
                 style="max-height: 450px; object-fit: cover"
@@ -127,11 +127,15 @@
             </p>
             <p><strong>Available Slots:</strong> <%= available %></p>
 
+            <% if (available > 0) { %>
             <a
               href="/booking/<%= tour._id %>?scheduleIndex=<%= tour.schedules.indexOf(schedule) %>"
-              class="btn btn-sm btn-success"
+              class="btn btn-success btn-sm"
               >Book Now</a
             >
+            <% } else { %>
+            <button class="btn btn-secondary btn-sm" disabled>Closed</button>
+            <% } %>
           </div>
         </div>
         <% } }) %>
@@ -154,7 +158,7 @@
         </li>
         <li class="nav-item">
           <a
-            class="nav-link "
+            class="nav-link"
             id="amenities-tab"
             data-toggle="tab"
             href="#amenities"

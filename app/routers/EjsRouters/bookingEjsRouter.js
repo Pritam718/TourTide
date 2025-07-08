@@ -20,4 +20,10 @@ router.post(
   bookingEjsController.book
 );
 
+router.post(
+  "/cancelBooking/:id",
+  userCheckauthenticationToken,
+  bookingEjsController.cancelBooking
+);
+
 module.exports = router;

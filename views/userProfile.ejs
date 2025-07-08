@@ -43,7 +43,7 @@
       </div>
     </div>
 
-    <div class="container py-5">
+    <div class="p-5">
       <div class="row">
         <div class="col-md-4 mb-4">
           <div class="card shadow p-4 h-100">
@@ -94,7 +94,6 @@
               <table class="table table-bordered text-center">
                 <thead class="thead-dark">
                   <tr>
-                    <th>#</th>
                     <th>Tour Place</th>
                     <th>Hotel</th>
                     <th>Start Date</th>
@@ -102,12 +101,12 @@
                     <th>Rooms</th>
                     <th>Persons</th>
                     <th>Children</th>
+                    <th>Cancel Booking</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% bookings.forEach((b, i) => { %>
                   <tr>
-                    <td><%= i + 1 %></td>
                     <td><%= b.tour?.place || '-' %></td>
                     <td><%= b.hotel?.name || '-' %></td>
                     <td>
@@ -121,6 +120,17 @@
                     <td><%= b.roomsBooked %></td>
                     <td><%= b.personNumber %></td>
                     <td><%= b.childNumber %></td>
+                    <td>
+                      <form
+                        action="/cancelBooking/<%= b._id %>"
+                        method="POST"
+                        onsubmit="return confirm('Are you sure you want to cancel this booking?');"
+                      >
+                        <button class="btn btn-danger btn-sm" type="submit">
+                          Cancel
+                        </button>
+                      </form>
+                    </td>
                   </tr>
                   <% }) %>
                 </tbody>

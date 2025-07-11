@@ -194,7 +194,7 @@ class TourEjsController {
       // 3. Save images if uploaded
       if (req.files && req.files.length > 0) {
         // const imagePaths = req.files.map((file) => file.path);
-        console.log(req.files);
+        // console.log(req.files);
         const imagePaths = await Promise.all(
           req.files.map(async (file) => {
             const firebasepath = `tours/${Date.now()}_${file.originalname}`;
@@ -235,7 +235,7 @@ class TourEjsController {
   async tourEdit(req, res) {
     try {
       const id = req.params.id;
-      console.log(req.body);
+      // console.log(req.body);
       const {
         place,
         fullAddress,
@@ -287,13 +287,27 @@ class TourEjsController {
         abortEarly: false,
       });
       if (error) {
-        console.log(error.details); // important
+        // console.log(error.details); // important
         return res.status(400).json({ error: error.details });
       }
 
       // Handle images
       const tour = await Tour.findById(id);
-      const updateImagePaths = tour.image;
+      // const updateImagePaths = tour.image;
+      let updatedImagePaths = tour.image;
+      if (req.files && req.files.length > 0) {
+        const imagePaths = await Promise.all(
+          req.files.map(async (file) => {
+            const firebasepath = `tours/${Date.now()}_${file.originalname}`;
+            await bucket.file(firebasepath).save(file.buffer, {
+              public: true,
+              metadata: { contentType: file.mimetype },
+            });
+            return `https://storage.googleapis.com/${bucket.name}/${firebasepath}`;
+          })
+        );
+        updatedImagePaths = imagePaths;
+      }
 
       // Ensure all fields are arrays
       const scheduleDurationArray = Array.isArray(scheduleDuration)
@@ -335,7 +349,7 @@ class TourEjsController {
             daySummary: daySummary[i],
           })),
           schedules,
-          image: updateImagePaths,
+          image: updatedImagePaths,
         },
         { new: true }
       );
@@ -358,14 +372,14 @@ class TourEjsController {
         return res.status(404).json({ message: "Tour not found" });
       }
 
-      if (tourData.image) {
-        tourData.image.map((img) => {
-          const imageFullPath = path.join(__dirname, "../../../", img);
-          fs.unlink(imageFullPath, (err) => {
-            if (err) console.error("Failed to delete image:", err);
-          });
-        });
-      }
+      // if (tourData.image) {
+      //   tourData.image.map((img) => {
+      //     const imageFullPath = path.join(__dirname, "../../../", img);
+      //     fs.unlink(imageFullPath, (err) => {
+      //       if (err) console.error("Failed to delete image:", err);
+      //     });
+      //   });
+      // }
 
       // Delete tour data from DB
       await Tour.findByIdAndDelete(id);

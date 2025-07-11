@@ -6,6 +6,7 @@ const fs = require("fs");
 const booking = require("../../models/bookingModel");
 const { default: mongoose } = require("mongoose");
 const { Review } = require("../../models/reviewModel");
+const bucket = require("../../firebaseConfig/firebaseConfig");
 // const isHotelAvailable = require("../../helper/availableHotel");
 
 const isHotelAvailable = async (hotelId, checkIn, checkOut, roomsRequested) => {
@@ -259,8 +260,21 @@ class HotelController {
         total_capacity,
       });
 
-      if (req.files) {
-        const imagePaths = req.files.map((file) => file.path);
+      // if (req.files) {
+      //   const imagePaths = req.files.map((file) => file.path);
+      //   hotel.image = imagePaths;
+      // }
+      if (req.files && req.files.length > 0) {
+        const imagePaths = await Promise.all(
+          req.files.map(async (file) => {
+            const firebasepath = `hotels/${Date.now()}_${file.originalname}`;
+            await bucket.file(firebasepath).save(file.buffer, {
+              public: true,
+              metadata: { contentType: file.mimetype },
+            });
+            return `https://storage.googleapis.com/${bucket.name}/${firebasepath}`;
+          })
+        );
         hotel.image = imagePaths;
       }
 
@@ -301,13 +315,17 @@ class HotelController {
 
       let updateImagePaths = existinData.image;
       if (req.files && req.files.length > 0) {
-        existinData.image.map((img) => {
-          const imageFullPath = path.join(__dirname, "../../../", img);
-          fs.unlink(imageFullPath, (err) => {
-            if (err) console.error("Failed to delete image", err);
-          });
-        });
-        updateImagePaths = req.files.map((file) => file.path);
+        const imagePaths = await Promise.all(
+          req.files.map(async (file) => {
+            const firebasepath = `hotels/${Date.now()}_${file.originalname}`;
+            await bucket.file(firebasepath).save(file.buffer, {
+              public: true,
+              metadata: { contentType: file.mimetype },
+            });
+            return `https://storage.googleapis.com/${bucket.name}/${firebasepath}`;
+          })
+        );
+        updateImagePaths = imagePaths;
       }
       const {
         name,

@@ -66,6 +66,31 @@
 
     <!-- Main CSS-->
     <link href="css/theme.css" rel="stylesheet" media="all" />
+    <style>
+      .tooltip-inner {
+        max-width: 220px !important;
+        white-space: normal !important;
+        background-color: #343a40 !important;
+        color: #fff !important;
+        padding: 8px 10px;
+        font-size: 13px;
+        border-radius: 6px;
+        text-align: left;
+      }
+
+      .tooltip.bs-tooltip-top .arrow::before {
+        border-top-color: #343a40 !important;
+      }
+      .tooltip.bs-tooltip-bottom .arrow::before {
+        border-bottom-color: #343a40 !important;
+      }
+      .tooltip.bs-tooltip-left .arrow::before {
+        border-left-color: #343a40 !important;
+      }
+      .tooltip.bs-tooltip-right .arrow::before {
+        border-right-color: #343a40 !important;
+      }
+    </style>
   </head>
 
   <body class="animsition">
@@ -89,12 +114,14 @@
           <div class="section__content section__content--p30">
             <div class="container-fluid">
               <%- include("./layouts/flash") %>
+
               <div class="row">
                 <div class="p-3 mb-2 bg-light mx-4 rounded">
                   <h3 class="title-3">
                     <i class="zmdi zmdi-account-calendar"></i>Tour data
                   </h3>
                 </div>
+
                 <div class="col-lg-12">
                   <div class="table-responsive table--no-card m-b-30">
                     <table
@@ -102,68 +129,104 @@
                     >
                       <thead>
                         <tr>
-                          <th scope="col">No.</th>
-                          <th scope="col">place</th>
-                          <th scope="col">fullAddress</th>
-                          <th scope="col">city</th>
-                          <th scope="col">district</th>
-                          <th scope="col">state</th>
-                          <th scope="col">pin</th>
-                          <th scope="col">country</th>
-                          <th scope="col">description</th>
-                          <th scope="col">price</th>
-                          <th scope="col">P_Days</th>
-                          <th scope="col">P_Summary</th>
-                          <th scope="col">image</th>
+                          <th>No.</th>
+                          <th>place</th>
+                          <th>fullAddress</th>
+                          <th>city</th>
+                          <th>district</th>
+                          <th>state</th>
+                          <th>pin</th>
+                          <th>country</th>
+                          <th>description</th>
+                          <th>price</th>
+                          <th>P_Days</th>
+                          <th>P_Summary</th>
+                          <th>image</th>
                           <th colspan="2"></th>
                         </tr>
                       </thead>
 
                       <tbody>
-                        <%tours.forEach(function(item,index){%>
+                        <% tours.forEach(function(item, index) { %>
                         <tr>
-                          <th scope="row"><%= index+1 %></th>
-                          <td><%=item.place%></td>
-                          <td><%=item.address.fullAddress%></td>
-                          <td><%=item.address.city%></td>
-                          <td><%=item.address.district%></td>
-                          <td><%=item.address.state%></td>
-                          <td><%=item.address.pin%></td>
-                          <td><%=item.address.country%></td>
-                          <td><%=item.description%></td>
-                          <td><%=item.price%></td>
-                          <td><%=item.packageDays%></td>
+                          <th scope="row"><%= index + 1 %></th>
+                          <td><%= item.place %></td>
+
+                          <td>
+                            <span
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title="<%= item.address.fullAddress %>"
+                            >
+                              <%= item.address.fullAddress.length > 25 ?
+                              item.address.fullAddress.substring(0, 25) + "..."
+                              : item.address.fullAddress %>
+                            </span>
+                          </td>
+
+                          <td><%= item.address.city %></td>
+                          <td><%= item.address.district %></td>
+                          <td><%= item.address.state %></td>
+                          <td><%= item.address.pin %></td>
+                          <td><%= item.address.country %></td>
+
+                          <td>
+                            <span
+                              data-toggle="tooltip"
+                              data-placement="top"
+                              title="<%= item.description %>"
+                            >
+                              <%= item.description.length > 25 ?
+                              item.description.substring(0, 25) + "..." :
+                              item.description %>
+                            </span>
+                          </td>
+
+                          <td><%= item.price %></td>
+                          <td><%= item.packageDays %></td>
+
                           <td>
                             <ul>
                               <% item.packageSummary.forEach(summary => { %>
                               <li>
-                                <strong><%= summary.day %>:</strong> <%=
-                                summary.daySummary %>
+                                <strong><%= summary.day %>:</strong>
+                                <span
+                                  data-toggle="tooltip"
+                                  data-placement="top"
+                                  title="<%= summary.daySummary %>"
+                                >
+                                  <%= summary.daySummary.length > 25 ?
+                                  summary.daySummary.substring(0, 25) + "..." :
+                                  summary.daySummary %>
+                                </span>
                               </li>
                               <% }) %>
                             </ul>
                           </td>
+
                           <td>
                             <% item.image.map((img, index) => { %>
                             <div>
                               <img
-                                src="/<%= img %>"
+                                src="<%= img %>"
                                 class="d-block w-100 m-1"
                                 alt="tour image"
                               />
                             </div>
                             <% }) %>
                           </td>
+
                           <td>
                             <a
-                              href="/admin/tourEditPage/<%=item._id%>"
+                              href="/admin/tourEditPage/<%= item._id %>"
                               class="btn btn-info"
                               >Edit</a
                             >
                           </td>
+
                           <td>
                             <form
-                              action="/admin/tourDelete/<%=item._id%>"
+                              action="/admin/tourDelete/<%= item._id %>"
                               method="DELETE"
                             >
                               <button type="submit" class="btn btn-danger">
@@ -172,7 +235,7 @@
                             </form>
                           </td>
                         </tr>
-                        <%})%>
+                        <% }) %>
                       </tbody>
                     </table>
                   </div>
@@ -214,6 +277,12 @@
 
     <!-- Main JS-->
     <script src="js/main1.js"></script>
+    <script>
+  $(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+  });
+</script>
+
   </body>
 </html>
 <!-- end document-->

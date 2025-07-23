@@ -20,6 +20,7 @@ class FoodController {
         },
       ]);
       console.log(data);
+  
       res
         .status(statusCode.success)
         .json({ message: "Data fetch successfully done", data: data });
